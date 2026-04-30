@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router';
 import { Home, Package, AlertCircle, ShoppingCart, LogOut, User } from 'lucide-react';
 import { useEffect } from 'react';
+import { ingredientStore } from '../store/ingredientStore';
 
 export default function Root() {
   const location = useLocation();
@@ -8,7 +9,7 @@ export default function Root() {
 
   // 로그인 여부 확인
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     if (!isLoggedIn) {
       navigate('/login');
     }
@@ -16,7 +17,9 @@ export default function Root() {
 
   const handleLogout = () => {
     if (confirm('로그아웃 하시겠습니까?')) {
-      localStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('token');
+      ingredientStore.clear();
       navigate('/login');
     }
   };

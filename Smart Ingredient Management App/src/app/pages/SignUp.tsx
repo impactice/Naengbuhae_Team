@@ -21,32 +21,45 @@ export default function SignUp() {
     allergies: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 비밀번호 확인
     if (formData.password !== formData.confirmPassword) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
     }
 
-    // 회원가입 로직 - localStorage에 저장
-    const userProfile = {
-      name: formData.name,
-      gender: formData.gender,
-      height: formData.height,
-      weight: formData.weight,
-      birthDate: formData.birthDate,
-      email: formData.email,
-      activityLevel: formData.activityLevel,
-      dietGoal: formData.dietGoal,
-      allergies: formData.allergies,
-    };
+    try {
+      const response = await fetch('http://localhost:8080/user/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+          name: formData.name,
+          gender: formData.gender,
+          birthDate: formData.birthDate,
+          height: parseInt(formData.height),
+          weight: parseInt(formData.weight),
+          email: formData.email,
+          activityLevel: formData.activityLevel,
+          dietGoal: formData.dietGoal,
+          allergies: formData.allergies || null,
+        }),
+      });
 
-    localStorage.setItem('userProfile', JSON.stringify(userProfile));
-    console.log('회원가입:', formData);
-    alert('회원가입이 완료되었습니다!');
-    navigate('/login');
+      const data = await response.json();
+
+      if (data.success) {
+        alert(data.message);
+        navigate('/login');
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('회원가입 실패:', error);
+      alert('서버 연결 실패');
+    }
   };
 
   const handleChange = (

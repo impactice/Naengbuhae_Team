@@ -10,17 +10,39 @@ export default function Login() {
     password: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 로그인 로직 (임시로 바로 홈으로 이동)
-    localStorage.setItem('isLoggedIn', 'true');
-    navigate('/');
+
+    try {
+      const response = await fetch('http://localhost:8080/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('isLoggedIn', 'true');
+        alert(data.message);
+        navigate('/');
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('로그인 실패:', error);
+      alert('서버 연결 실패');
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
     // 소셜 로그인 로직
     console.log(`${provider} 로그인`);
-    localStorage.setItem('isLoggedIn', 'true');
+    sessionStorage.setItem('isLoggedIn', 'true');
     navigate('/');
   };
 

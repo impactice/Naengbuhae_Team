@@ -6,12 +6,15 @@ export function useIngredients() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
   useEffect(() => {
-    const loadIngredients = () => {
+    const syncFromCache = () => {
       setIngredients(ingredientStore.getIngredients());
     };
 
-    loadIngredients();
-    const unsubscribe = ingredientStore.subscribe(loadIngredients);
+    // 처음 한 번 백엔드에서 받아오기
+    ingredientStore.fetchIngredients();
+
+    // 캐시 변경 시 자동 동기화
+    const unsubscribe = ingredientStore.subscribe(syncFromCache);
     return unsubscribe;
   }, []);
 
