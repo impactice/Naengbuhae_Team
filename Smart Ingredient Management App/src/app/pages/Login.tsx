@@ -50,12 +50,8 @@ export default function Login() {
 
   const handleSocialLogin = (provider: 'kakao' | 'naver' | 'google') => {
     // 백엔드 OAuth 인증 엔드포인트로 이동
-    // 백엔드에서 카카오 → JWT 발급 → /oauth/callback으로 redirect
-    if (provider === 'kakao') {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
-      return;
-    }
-    alert(`${provider === 'naver' ? '네이버' : '구글'} 로그인은 준비 중입니다.`);
+    // 백엔드에서 인증 처리 → JWT 발급 → /oauth/callback으로 redirect
+    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
   };
 
   return (

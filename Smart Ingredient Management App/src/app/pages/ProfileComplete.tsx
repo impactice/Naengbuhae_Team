@@ -29,6 +29,9 @@ export default function ProfileComplete() {
   // 기존 프로필이 있으면 폼 초기값으로 채워넣기 (이름 등)
   useEffect(() => {
     if (!profile) return;
+    // 백엔드는 yyyy-MM-dd로 보내므로 month/day가 0 패딩됨 ("05").
+    // select 옵션은 0 패딩 없는 값("5")이라 그대로 넣으면 매칭 안 돼서 빈 값으로 표시됨.
+    // → parseInt로 0 제거 후 문자열화.
     const [year, month, day] = (profile.birthDate ?? '').split('-');
     setFormData((prev) => ({
       ...prev,
@@ -37,8 +40,8 @@ export default function ProfileComplete() {
       height: profile.height ? String(profile.height) : '',
       weight: profile.weight ? String(profile.weight) : '',
       birthYear: year ?? '',
-      birthMonth: month ?? '',
-      birthDay: day ?? '',
+      birthMonth: month ? String(parseInt(month, 10)) : '',
+      birthDay: day ? String(parseInt(day, 10)) : '',
       activityLevel: profile.activityLevel ?? '',
       dietGoal: profile.dietGoal ?? '',
       allergies: profile.allergies ?? '',

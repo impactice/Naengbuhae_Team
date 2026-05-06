@@ -8,31 +8,30 @@
 
 ## 🆕 이번 작업 정리 (프론트 담당자용)
 
-이번 작업의 큰 줄기 두 가지:
-1. **카카오 OAuth 소셜 로그인 흐름 통합** (콜백/추가 정보 페이지 신규 + 마이페이지 안내 추가)
-2. **회원가입 페이지 검증 강화** (백엔드 응답 처리 통합 + 클라이언트 검증 세분화)
+이번 작업의 큰 줄기:
+1. **3개 OAuth 제공자 (카카오/구글/네이버) 모두 연동** — 콜백 페이지 / 추가 정보 페이지 / 마이페이지 안내
+2. **네이버 로그인은 성별·생년월일까지 자동 prefill** — 백엔드가 받은 정보로 회원 정보 자동 채움
+3. **회원가입 페이지 검증 강화** (백엔드 응답 처리 통합 + 클라이언트 검증 세분화)
 
 ---
 
-### 1) 로그인 페이지 — 카카오 버튼 실제 연결
+### 1) 로그인 페이지 — 카카오/구글/네이버 버튼 실제 연결
 
 `Smart Ingredient Management App/src/app/pages/Login.tsx`
 
 **변경 사항**
-- `handleSocialLogin('카카오')`가 `alert('소셜 로그인은 추후 구현 예정입니다.')`만 띄우던 것 → **백엔드 OAuth 엔드포인트로 실제 redirect**
-- 네이버/구글은 아직 백엔드 미구현이므로 안내 메시지 유지
+- 처음엔 카카오만 연결 → 이후 구글, 마지막에 네이버까지 추가
+- 세 제공자 모두 백엔드의 `/oauth2/authorization/{provider}` 엔드포인트로 redirect (Spring Security가 자동 처리)
+- 한 줄로 통합
 
 **왜?**
-- 백엔드(`/oauth2/authorization/kakao`)가 카카오 인증 플로우를 시작 → 카카오 → 백엔드 콜백 → JWT 발급 → **프론트 콜백 페이지(`/oauth/callback`)로 redirect** 까지 자동 처리됨
+- 백엔드(`/oauth2/authorization/{provider}`)가 OAuth 플로우를 시작 → 제공자 인증 → 백엔드 콜백 → JWT 발급 → **프론트 콜백 페이지(`/oauth/callback`)로 redirect**
+- 모든 제공자에 동일한 패턴이라 한 줄로 처리 가능
 
-**핵심 코드**
+**핵심 코드 (최종)**
 ```ts
 const handleSocialLogin = (provider: 'kakao' | 'naver' | 'google') => {
-  if (provider === 'kakao') {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
-    return;
-  }
-  alert(`${provider === 'naver' ? '네이버' : '구글'} 로그인은 준비 중입니다.`);
+  window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
 };
 ```
 
@@ -74,14 +73,29 @@ userStore.fetchUserProfile().finally(() => {
 라우트: `/profile/complete`
 
 **역할**
-- 카카오로 로그인한 사용자가 **신체정보(키/몸무게/성별/생년월일/활동량/식단목표/알레르기)** 를 나중에 채워넣는 전용 페이지
+- 소셜 로그인한 사용자가 **신체정보(키/몸무게/성별/생년월일/활동량/식단목표/알레르기)** 를 나중에 채워넣는 전용 페이지
 - `PUT /user/me`로 저장하면 백엔드가 권장 칼로리도 자동 재계산해서 응답
+- **이미 입력된 값(백엔드가 prefill해준 네이버 사용자의 성별/생년월일 포함)은 form 초기값으로 자동 표시**
 
 **왜?**
-- 카카오 로그인의 메리트는 "회원가입 정보 입력 귀찮음 회피"인데, 로그인 직후 강제로 신체정보 입력시키면 사용자 이탈 위험
+- 소셜 로그인의 메리트는 "회원가입 정보 입력 귀찮음 회피"인데, 로그인 직후 강제로 신체정보 입력시키면 사용자 이탈 위험
 - 그래서 OAuth 콜백에선 강제 진입 없이 홈으로 보내고, **마이페이지에서 자발적으로 들어올 때만** 이 페이지를 띄움
+- 네이버 사용자는 이미 4개 항목(이름/이메일/성별/생년월일)이 채워진 상태로 진입해서 입력 부담이 절반 이하로 줄어듦
 
-**전체 폼은 회원가입 페이지의 신체 정보 부분과 동일 + 사용자가 이미 입력한 값이 있으면 form 초기값으로 prefill**
+**버그 수정 (2026-05-06)**
+- 네이버 prefill 도입 시 발견: birthDate가 `yyyy-MM-dd` 포맷(0 패딩됨)으로 오는데 select 옵션 값은 0 패딩 없는 정수("1"~"12") → 1~9월 생인 사용자는 월이 prefill 안 되던 버그
+- `parseInt(month, 10)`로 0 제거 후 문자열화해서 매칭
+
+```ts
+const [year, month, day] = (profile.birthDate ?? '').split('-');
+setFormData((prev) => ({
+  ...prev,
+  birthYear: year ?? '',
+  birthMonth: month ? String(parseInt(month, 10)) : '',  // "05" → "5"
+  birthDay: day ? String(parseInt(day, 10)) : '',
+  // ... 나머지 필드들
+}));
+```
 
 ---
 
@@ -230,15 +244,18 @@ import ProfileComplete from "./pages/ProfileComplete";
 - **빈 순환 참조 해결**: `PasswordEncoder` 빈을 `PasswordEncoderConfig`로 분리
 - **회원가입 아이디 정규식 강화**: `^[a-zA-Z0-9]{6,}$` → `^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{6,}$` (영문만/숫자만 통과 차단)
 - **성별 enum 정렬**: 새 프론트가 `'남'`/`'여'`로 보내므로 백엔드 검증/시드/계산 로직도 모두 `(남|여)` 기준으로 정렬
+- **구글 OAuth 추가**: Spring Security 내장 provider 사용, scope=profile,email
+- **네이버 OAuth 추가 + 회원정보 자동 prefill**:
+  - 동의 항목으로 받은 성별(M/F→남/여)/생일/출생연도를 회원 정보에 자동 입력
+  - `User.prefillFromOAuth(gender, birthDate)` — 비어있을 때만 채우는 안전한 setter
+  - 사용자는 키/몸무게/활동량/식단목표 4개만 추가 입력하면 됨
 
 ---
 
-## ⚠️ 아직 카카오 외 다른 OAuth는 미구현
+## ✅ OAuth 제공자 구현 현황
 
-| 제공자 | 백엔드 | 프론트 |
-|---|---|---|
-| 카카오 | ✅ 완료 (이번 세션) | ✅ 완료 (이번 세션) |
-| 네이버 | OAuth2UserInfo 파서만 작성 / properties 미설정 | 버튼은 있으나 "준비 중" alert |
-| 구글 | OAuth2UserInfo 파서만 작성 / properties 미설정 | 버튼은 있으나 "준비 중" alert |
-
-네이버/구글 추가 시 작업량은 카카오 대비 적음 (DB 마이그레이션 불필요, properties + 콘솔 등록만).
+| 제공자 | 백엔드 | 프론트 | 자동 prefill |
+|---|---|---|---|
+| 카카오 | ✅ 완료 | ✅ 완료 | name (일반 앱은 email 못 받음 → placeholder 처리) |
+| 구글 | ✅ 완료 | ✅ 완료 | name, email |
+| 네이버 | ✅ 완료 | ✅ 완료 | **name, email, 성별, 생년월일** (동의 항목 4개 + 출생연도) |
