@@ -58,11 +58,29 @@ export default function SignUp() {
     if (!formData.email || !formData.email.includes('@')) {
       newErrors.email = '올바른 이메일을 입력해주세요';
     }
-    if (!formData.username || formData.username.length < 6) {
+    if (!formData.username) {
+      newErrors.username = '아이디를 입력해주세요';
+    } else if (formData.username.length < 6) {
       newErrors.username = '아이디는 6자 이상이어야 합니다';
+    } else if (!/^[a-zA-Z0-9]+$/.test(formData.username)) {
+      newErrors.username = '아이디는 영문과 숫자만 사용할 수 있습니다';
+    } else if (!/[a-zA-Z]/.test(formData.username)) {
+      newErrors.username = '아이디에 영문을 포함해야 합니다';
+    } else if (!/\d/.test(formData.username)) {
+      newErrors.username = '아이디에 숫자를 포함해야 합니다';
     }
-    if (!formData.password || formData.password.length < 8) {
+    if (!formData.password) {
+      newErrors.password = '비밀번호를 입력해주세요';
+    } else if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(formData.password)) {
+      newErrors.password = '비밀번호에 한글은 사용할 수 없습니다';
+    } else if (formData.password.length < 8) {
       newErrors.password = '비밀번호는 8자 이상이어야 합니다';
+    } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password = '비밀번호에 영어 소문자를 포함해야 합니다';
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = '비밀번호에 숫자를 포함해야 합니다';
+    } else if (!/[^a-zA-Z0-9]/.test(formData.password)) {
+      newErrors.password = '비밀번호에 특수문자를 포함해야 합니다';
     }
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = '비밀번호가 일치하지 않습니다';
@@ -107,12 +125,62 @@ export default function SignUp() {
         }),
       });
 
-      if (response.ok) {
+      // 백엔드는 성공/실패/검증오류 모두 ApiResponse JSON({success, message}) 형식으로 응답.
+      // - 200 + success:true   → 가입 성공
+      // - 200 + success:false  → 비즈니스 에러(중복 아이디/이메일 등)
+      // - 400 + success:false  → @Valid 검증 실패 (GlobalExceptionHandler가 ApiResponse로 변환)
+      // 따라서 status 무관하게 body의 success/message로 분기.
+      let data: { success?: boolean; message?: string } = {};
+      try {
+        data = await response.json();
+      } catch {
+        setErrors({ submit: '서버 응답을 해석할 수 없습니다.' });
+        return;
+      }
+
+      if (data.success) {
         alert('회원가입이 완료되었습니다!');
         navigate('/login');
+        return;
+      }
+
+      // success === false: 메시지를 해당 필드 인라인 에러로 매핑
+      const message: string = data.message ?? '회원가입에 실패했습니다.';
+      const fieldErrors: Record<string, string> = {};
+      if (message.includes('아이디')) {
+        fieldErrors.username = message;
+      } else if (message.includes('이메일')) {
+        fieldErrors.email = message;
+      } else if (message.includes('비밀번호')) {
+        fieldErrors.password = message;
+      } else if (message.includes('성별')) {
+        fieldErrors.gender = message;
+      } else if (message.includes('생년월일') || message.includes('나이')) {
+        fieldErrors.birthDate = message;
+      } else if (message.includes('키')) {
+        fieldErrors.height = message;
+      } else if (message.includes('몸무게')) {
+        fieldErrors.weight = message;
+      } else if (message.includes('이름')) {
+        fieldErrors.name = message;
+      } else if (message.includes('활동량')) {
+        fieldErrors.activityLevel = message;
+      } else if (message.includes('식단')) {
+        fieldErrors.dietGoal = message;
       } else {
-        const error = await response.text();
-        setErrors({ submit: `회원가입 실패: ${error}` });
+        fieldErrors.submit = message;
+      }
+      setErrors(fieldErrors);
+
+      // 첫 번째 필드로 스크롤 & 포커스
+      const firstField = Object.keys(fieldErrors)[0];
+      if (firstField !== 'submit') {
+        const focusFieldName = firstField === 'birthDate' ? 'birthYear' : firstField;
+        const element = document.querySelector(`[name="${focusFieldName}"]`) as HTMLElement;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+        }
       }
     } catch (error) {
       console.error('회원가입 오류:', error);
@@ -431,6 +499,7 @@ export default function SignUp() {
                   />
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
@@ -456,6 +525,7 @@ export default function SignUp() {
                   />
                   <button
                     type="button"
+                    tabIndex={-1}
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >

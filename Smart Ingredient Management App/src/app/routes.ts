@@ -13,6 +13,8 @@ import SignUp from "./pages/SignUp";
 import MyCustom from "./pages/MyCustom";
 import NutritionAnalysis from "./pages/NutritionAnalysis";
 import NotFound from "./pages/NotFound";
+import OAuthCallback from "./pages/OAuthCallback";
+import ProfileComplete from "./pages/ProfileComplete";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +24,14 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     Component: SignUp,
+  },
+  {
+    path: "/oauth/callback",
+    Component: OAuthCallback,
+  },
+  {
+    path: "/profile/complete",
+    Component: ProfileComplete,
   },
   {
     path: "/",

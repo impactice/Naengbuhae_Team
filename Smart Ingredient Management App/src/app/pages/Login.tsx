@@ -48,10 +48,14 @@ export default function Login() {
     }
   };
 
-  const handleSocialLogin = (provider: string) => {
-    // 소셜 로그인 로직 (추후 구현)
-    console.log(`${provider} 로그인`);
-    alert('소셜 로그인은 추후 구현 예정입니다.');
+  const handleSocialLogin = (provider: 'kakao' | 'naver' | 'google') => {
+    // 백엔드 OAuth 인증 엔드포인트로 이동
+    // 백엔드에서 카카오 → JWT 발급 → /oauth/callback으로 redirect
+    if (provider === 'kakao') {
+      window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
+      return;
+    }
+    alert(`${provider === 'naver' ? '네이버' : '구글'} 로그인은 준비 중입니다.`);
   };
 
   return (
@@ -123,7 +127,7 @@ export default function Login() {
         {/* 소셜 로그인 */}
         <div className="space-y-3">
           <button
-            onClick={() => handleSocialLogin('네이버')}
+            onClick={() => handleSocialLogin('naver')}
             className="w-full py-4 bg-[#03C75A] text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-[#02b351] transition-colors"
           >
             <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
@@ -133,7 +137,7 @@ export default function Login() {
           </button>
 
           <button
-            onClick={() => handleSocialLogin('카카오')}
+            onClick={() => handleSocialLogin('kakao')}
             className="w-full py-4 bg-[#FEE500] text-black rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-[#fdd835] transition-colors"
           >
             <div className="w-5 h-5 bg-[#3C1E1E] rounded-full"></div>
@@ -141,7 +145,7 @@ export default function Login() {
           </button>
 
           <button
-            onClick={() => handleSocialLogin('구글')}
+            onClick={() => handleSocialLogin('google')}
             className="w-full py-4 bg-white border-2 border-gray-200 text-black rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
