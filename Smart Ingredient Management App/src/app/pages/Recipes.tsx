@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
-import { recipes } from '../data/recipes';
+import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
 import { Link } from 'react-router';
 import { ChefHat, Clock, Users, ArrowLeft } from 'lucide-react';
 
 export default function Recipes() {
   const { ingredients } = useIngredients();
+  const { recipes, loading } = useRecipes();
   const [filterMode, setFilterMode] = useState<'all' | 'makeable'>('all');
 
   const matches = useMemo(
@@ -19,6 +20,14 @@ export default function Recipes() {
     : matches;
 
   const makeableCount = matches.filter((m) => m.matchRate >= 100).length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-500">레시피를 불러오는 중...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white pb-4">

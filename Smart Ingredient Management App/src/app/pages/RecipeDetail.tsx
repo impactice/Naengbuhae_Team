@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router';
-import { recipes } from '../data/recipes';
 import { useIngredients, useShoppingList } from '../hooks/useIngredients';
+import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
 import { ArrowLeft, Clock, Users, Plus, Check } from 'lucide-react';
 import { useMemo } from 'react';
@@ -9,6 +9,7 @@ export default function RecipeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { ingredients } = useIngredients();
+  const { recipes, loading } = useRecipes();
   const { shoppingList, addShoppingItem } = useShoppingList();
 
   const recipe = recipes.find((r) => r.id === id);
@@ -18,6 +19,14 @@ export default function RecipeDetail() {
     const matches = matchRecipesWithIngredients([recipe], ingredients);
     return matches[0];
   }, [recipe, ingredients]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-500">레시피를 불러오는 중...</p>
+      </div>
+    );
+  }
 
   if (!recipe || !match) {
     return (
