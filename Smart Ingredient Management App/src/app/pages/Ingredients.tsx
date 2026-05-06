@@ -56,7 +56,7 @@ export default function Ingredients() {
   // 정렬
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === 'expiry') {
-      return calculateDDay(a.expiryDate) - calculateDDay(b.expiryDate);
+      return calculateDDay(a.expirationDate) - calculateDDay(b.expirationDate);
     }
     if (sortBy === 'name') {
       return a.name.localeCompare(b.name);
@@ -195,7 +195,7 @@ export default function Ingredients() {
         ) : (
           <div className="space-y-2">
             {sorted.map((ingredient) => {
-              const daysLeft = calculateDDay(ingredient.expiryDate);
+              const daysLeft = calculateDDay(ingredient.expirationDate);
               const status = getExpiryStatus(daysLeft);
               const statusColor = getStatusColor(status);
 
@@ -236,7 +236,7 @@ export default function Ingredients() {
                         </p>
                         <p className="text-sm text-gray-600">
                           유통기한:{' '}
-                          {ingredient.expiryDate.toLocaleDateString('ko-KR')}
+                          {ingredient.expirationDate.toLocaleDateString('ko-KR')}
                         </p>
                         {/* 영양 정보 추가 */}
                         <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">

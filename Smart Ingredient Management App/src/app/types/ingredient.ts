@@ -8,7 +8,7 @@ export interface Ingredient {
   quantity: number;
   unit: string;
   storage: StorageType;
-  expiryDate: Date;
+  expirationDate: Date;
   purchaseDate: Date;
 }
 

@@ -3,12 +3,13 @@ import { useShoppingList } from '../hooks/useIngredients';
 import { Plus, Trash2, ShoppingCart, Check } from 'lucide-react';
 
 export default function ShoppingList() {
-  const { shoppingList, addShoppingItem, toggleShoppingItem, deleteShoppingItem } =
+  const { shoppingList, addShoppingItem, toggleShoppingItem, deleteShoppingItem, transferShoppingItemToIngredient } =
     useShoppingList();
   const [showAddForm, setShowAddForm] = useState(false);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [unit, setUnit] = useState('개');
+  const [transferringIds, setTransferringIds] = useState<string[]>([]);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +31,21 @@ export default function ShoppingList() {
 
   const uncheckedItems = shoppingList.filter((item) => !item.checked);
   const checkedItems = shoppingList.filter((item) => item.checked);
+
+  const handleTransfer = async (id: string, name: string) => {
+    if (transferringIds.includes(id)) return;
+    setTransferringIds((prev) => [...prev, id]);
+
+    try {
+      await transferShoppingItemToIngredient(id);
+      alert(`${name}을(를) 냉장고로 이관했습니다`);
+    } catch (error) {
+      console.error('이관 실패:', error);
+      alert('냉장고 이관에 실패했습니다. 백엔드 API 경로를 확인해주세요.');
+    } finally {
+      setTransferringIds((prev) => prev.filter((itemId) => itemId !== id));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white pb-4">
@@ -154,6 +170,14 @@ export default function ShoppingList() {
                       className="p-2 hover:bg-red-50 rounded-lg transition-colors"
                     >
                       <Trash2 className="w-5 h-5 text-red-500" />
+                    </button>
+                    <button
+                      onClick={() => handleTransfer(item.id, item.name)}
+                      disabled={transferringIds.includes(item.id)}
+                      className="px-3 py-2 text-xs rounded-lg bg-[#CDFF00] hover:bg-[#b8e600] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      style={{ fontWeight: 600 }}
+                    >
+                      {transferringIds.includes(item.id) ? '이관 중...' : '냉장고 이관'}
                     </button>
                   </div>
                 ))}

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
-import { recipes } from '../data/recipes';
+import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients } from '../utils/recipeMatch';
 import { Link } from 'react-router';
 import { ArrowLeft, Calendar, ChevronRight, Sparkles } from 'lucide-react';
@@ -21,6 +21,7 @@ interface MealPlanItem {
 
 export default function MealPlan() {
   const { ingredients } = useIngredients();
+  const { recipes, loading } = useRecipes();
   const [selectedDays, setSelectedDays] = useState(7);
 
   const matches = useMemo(
@@ -34,6 +35,10 @@ export default function MealPlan() {
     const makeableRecipes = matches.filter((m) => m.matchRate >= 50);
     
     for (let i = 0; i < selectedDays; i++) {
+      if (recipes.length === 0) {
+        break;
+      }
+
       // 각 끼니별로 다양하게 선택
       const breakfast = makeableRecipes.find((m) => 
         m.recipe.category === '간식' || m.recipe.category === '음료'
@@ -74,7 +79,7 @@ export default function MealPlan() {
     }
 
     return plan;
-  }, [matches, selectedDays]);
+  }, [matches, recipes, selectedDays]);
 
   const weeklyTotal = mealPlan.reduce(
     (acc, day) => ({
@@ -94,6 +99,14 @@ export default function MealPlan() {
     탄수화물: Math.round(day.totalCarbs),
     지방: Math.round(day.totalFat),
   }));
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-500">식단 데이터를 불러오는 중...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white pb-4">

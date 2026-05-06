@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
   User,
@@ -7,41 +6,29 @@ import {
   AlertTriangle,
   ChefHat,
   Calendar,
-  Edit2,
   TrendingUp,
   Target,
-  Flame
+  Flame,
+  Sparkles
 } from 'lucide-react';
+import { useUserProfile } from '../hooks/useUserProfile';
 
-interface UserProfile {
-  name: string;
-  gender: string;
-  height: string;
-  weight: string;
-  birthDate: string;
-  email: string;
-  activityLevel: string;
-  dietGoal: string;
-  allergies: string;
-}
+const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
+  '체중 감량': 'weight-loss',
+  '체중 유지': 'maintain',
+  '근육량 증가': 'muscle-gain',
+  '건강 관리': 'health',
+};
 
 export default function MyCustom() {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-
-  useEffect(() => {
-    // localStorage에서 사용자 정보 불러오기
-    const userData = localStorage.getItem('userProfile');
-    if (userData) {
-      setProfile(JSON.parse(userData));
-    }
-  }, []);
+  const { profile, loading } = useUserProfile();
 
   // BMI 계산
   const calculateBMI = () => {
     if (!profile?.height || !profile?.weight) return null;
-    const heightM = parseFloat(profile.height) / 100;
-    const weightKg = parseFloat(profile.weight);
+    const heightM = profile.height / 100;
+    const weightKg = profile.weight;
     const bmi = weightKg / (heightM * heightM);
     return bmi.toFixed(1);
   };
@@ -67,70 +54,29 @@ export default function MyCustom() {
     return age;
   };
 
-  // 일일 권장 칼로리 계산 (해리스-베네딕트 공식)
-  const calculateDailyCalories = () => {
-    if (!profile?.height || !profile?.weight || !profile?.birthDate || !profile?.gender) return null;
-
-    const weight = parseFloat(profile.weight);
-    const height = parseFloat(profile.height);
-    const age = calculateAge() || 0;
-
-    let bmr = 0;
-    if (profile.gender === '남성') {
-      bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
-    } else {
-      bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
-    }
-
-    // 활동량에 따른 계수
-    const activityMultipliers: { [key: string]: number } = {
-      'sedentary': 1.2,
-      'light': 1.375,
-      'moderate': 1.55,
-      'active': 1.725,
-      'very-active': 1.9,
-    };
-
-    const multiplier = activityMultipliers[profile.activityLevel] || 1.5;
-    const tdee = bmr * multiplier;
-
-    // 목표에 따른 칼로리 조정
-    if (profile.dietGoal === 'weight-loss') {
-      return Math.round(tdee - 500); // 체중 감량
-    } else if (profile.dietGoal === 'muscle-gain') {
-      return Math.round(tdee + 300); // 근육 증량
-    }
-    return Math.round(tdee); // 유지
-  };
-
-  // 활동량 텍스트 변환
-  const getActivityLevelText = (level: string) => {
-    const levels: { [key: string]: string } = {
-      'sedentary': '거의 활동 안함',
-      'light': '가벼운 활동',
-      'moderate': '보통 활동',
-      'active': '활발한 활동',
-      'very-active': '매우 활발',
-    };
-    return levels[level] || level;
-  };
-
-  // 식단 목표 텍스트 변환
-  const getDietGoalText = (goal: string) => {
-    const goals: { [key: string]: string } = {
-      'weight-loss': '체중 감량',
-      'maintain': '현재 체중 유지',
-      'muscle-gain': '근육 증량',
-      'health': '건강한 식습관',
-    };
-    return goals[goal] || goal;
-  };
-
   const bmi = calculateBMI();
   const bmiStatus = bmi ? getBMIStatus(parseFloat(bmi)) : null;
-  const dailyCalories = calculateDailyCalories();
   const age = calculateAge();
+  const normalizedDietGoal = profile ? DIET_GOAL_KO_TO_KEY[profile.dietGoal] : undefined;
 
+  // 신체정보가 비어있으면 프로필 미완성 — 카카오 등 소셜 로그인 사용자가 정보 미입력 상태
+  const isProfileIncomplete = !!profile && (
+    !profile.height || !profile.weight || !profile.gender || !profile.birthDate
+  );
+
+  // 로딩 중
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center px-6">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500">프로필 정보를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 프로필 없음
   if (!profile) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-6">
@@ -138,14 +84,13 @@ export default function MyCustom() {
           <User className="w-16 h-16 mx-auto mb-4 text-gray-300" />
           <h2 className="text-xl font-semibold mb-2">프로필 정보가 없습니다</h2>
           <p className="text-gray-500 mb-6">
-            회원가입을 완료하고<br />
-            맞춤형 건강 관리를 시작하세요
+            로그인 후 프로필을 확인할 수 있습니다
           </p>
           <button
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/login')}
             className="px-6 py-3 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors"
           >
-            회원가입 하기
+            로그인하기
           </button>
         </div>
       </div>
@@ -164,6 +109,32 @@ export default function MyCustom() {
         </p>
       </div>
 
+      {/* 프로필 미완성 시 CTA — 카카오 등으로 가입한 사용자 안내 */}
+      {isProfileIncomplete && (
+        <div className="px-5 pt-5">
+          <button
+            onClick={() => navigate('/profile/complete')}
+            className="w-full bg-gradient-to-br from-[#CDFF00] to-[#b8e600] rounded-2xl p-5 text-left hover:shadow-lg transition-all"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-5 h-5 text-[#CDFF00]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold mb-1">정보 입력 마저하기</h3>
+                <p className="text-sm text-gray-800 leading-relaxed">
+                  키, 몸무게, 활동량 등을 입력하면<br />
+                  맞춤 칼로리와 식단 추천을 받을 수 있어요
+                </p>
+                <p className="text-xs text-gray-700 mt-2 font-semibold">
+                  지금 입력하기 →
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+      )}
+
       {/* 기본 정보 카드 */}
       <div className="px-5 py-5">
         <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-5">
@@ -175,86 +146,94 @@ export default function MyCustom() {
               <div>
                 <h2 className="text-lg font-semibold">{profile.name}</h2>
                 <p className="text-sm text-gray-500">
-                  {age}세 · {profile.gender}
+                  {age != null && profile.gender
+                    ? `${age}세 · ${profile.gender === '남' ? '남성' : profile.gender === '여' ? '여성' : profile.gender}`
+                    : '프로필 정보를 완성해주세요'}
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => navigate('/signup')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Edit2 className="w-5 h-5 text-gray-600" />
-            </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl p-3 border border-gray-100">
-              <p className="text-xs text-gray-500 mb-1">키</p>
-              <p className="text-lg font-semibold">{profile.height} cm</p>
-            </div>
-            <div className="bg-white rounded-xl p-3 border border-gray-100">
-              <p className="text-xs text-gray-500 mb-1">몸무게</p>
-              <p className="text-lg font-semibold">{profile.weight} kg</p>
-            </div>
-            {bmi && (
-              <>
+          {(profile.height || profile.weight) && (
+            <div className="grid grid-cols-2 gap-4">
+              {profile.height && (
                 <div className="bg-white rounded-xl p-3 border border-gray-100">
-                  <p className="text-xs text-gray-500 mb-1">BMI</p>
-                  <p className="text-lg font-semibold">{bmi}</p>
+                  <p className="text-xs text-gray-500 mb-1">키</p>
+                  <p className="text-lg font-semibold">{profile.height} cm</p>
                 </div>
+              )}
+              {profile.weight && (
                 <div className="bg-white rounded-xl p-3 border border-gray-100">
-                  <p className="text-xs text-gray-500 mb-1">상태</p>
-                  <p className={`text-lg font-semibold ${bmiStatus?.color}`}>
-                    {bmiStatus?.text}
-                  </p>
+                  <p className="text-xs text-gray-500 mb-1">몸무게</p>
+                  <p className="text-lg font-semibold">{profile.weight} kg</p>
                 </div>
-              </>
-            )}
-          </div>
+              )}
+              {bmi && (
+                <>
+                  <div className="bg-white rounded-xl p-3 border border-gray-100">
+                    <p className="text-xs text-gray-500 mb-1">BMI</p>
+                    <p className="text-lg font-semibold">{bmi}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-3 border border-gray-100">
+                    <p className="text-xs text-gray-500 mb-1">상태</p>
+                    <p className={`text-lg font-semibold ${bmiStatus?.color}`}>
+                      {bmiStatus?.text}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* 일일 권장 칼로리 */}
-      {dailyCalories && (
+      {/* 일일 권장 칼로리 (백엔드에서 계산한 값 사용) */}
+      {profile.recommendedCalories && (
         <div className="px-5 pb-5">
           <div className="bg-black text-white rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <Flame className="w-5 h-5 text-[#CDFF00]" />
               <h3 className="font-semibold">일일 권장 칼로리</h3>
             </div>
-            <p className="text-3xl font-bold mb-2">{dailyCalories.toLocaleString()} kcal</p>
+            <p className="text-3xl font-bold mb-2">{profile.recommendedCalories.toLocaleString()} kcal</p>
             <p className="text-sm text-gray-300">
-              {getDietGoalText(profile.dietGoal)} 목표 기준
+              {profile.dietGoal} 목표 기준
             </p>
           </div>
         </div>
       )}
 
       {/* 건강 목표 */}
-      <div className="px-5 pb-5">
-        <h3 className="font-semibold mb-3">건강 목표</h3>
-        <div className="space-y-3">
-          <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <Target className="w-5 h-5 text-blue-600" />
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-gray-500">식단 목표</p>
-              <p className="font-semibold">{getDietGoalText(profile.dietGoal)}</p>
-            </div>
-          </div>
+      {(profile.dietGoal || profile.activityLevel) && (
+        <div className="px-5 pb-5">
+          <h3 className="font-semibold mb-3">건강 목표</h3>
+          <div className="space-y-3">
+            {profile.dietGoal && (
+              <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                  <Target className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">식단 목표</p>
+                  <p className="font-semibold">{profile.dietGoal}</p>
+                </div>
+              </div>
+            )}
 
-          <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <Activity className="w-5 h-5 text-green-600" />
-            </div>
-            <div className="flex-1">
-              <p className="text-xs text-gray-500">활동량</p>
-              <p className="font-semibold">{getActivityLevelText(profile.activityLevel)}</p>
-            </div>
+            {profile.activityLevel && (
+              <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs text-gray-500">활동량</p>
+                  <p className="font-semibold">{profile.activityLevel}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* 알레르기 정보 */}
       {profile.allergies && (
@@ -324,9 +303,10 @@ export default function MyCustom() {
         </div>
       </div>
 
-      {/* 권장 영양소 비율 */}
-      <div className="px-5 pb-5">
-        <h3 className="font-semibold mb-3">권장 영양소 비율</h3>
+      {/* 권장 영양소 비율 — 식단 목표가 있어야 의미 있음 */}
+      {profile.dietGoal && (
+        <div className="px-5 pb-5">
+          <h3 className="font-semibold mb-3">권장 영양소 비율</h3>
         <div className="bg-gray-50 rounded-2xl p-5">
           <div className="space-y-4">
             <div>
@@ -343,13 +323,13 @@ export default function MyCustom() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">단백질</span>
                 <span className="text-sm text-gray-500">
-                  {profile.dietGoal === 'muscle-gain' ? '25-30%' : '15-20%'}
+                  {normalizedDietGoal === 'muscle-gain' ? '25-30%' : '15-20%'}
                 </span>
               </div>
               <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-red-500"
-                  style={{ width: profile.dietGoal === 'muscle-gain' ? '27%' : '17%' }}
+                  style={{ width: normalizedDietGoal === 'muscle-gain' ? '27%' : '17%' }}
                 ></div>
               </div>
             </div>
@@ -366,10 +346,11 @@ export default function MyCustom() {
           </div>
 
           <p className="text-xs text-gray-500 mt-4">
-            * {getDietGoalText(profile.dietGoal)} 목표에 최적화된 비율입니다
+            * {profile.dietGoal} 목표에 최적화된 비율입니다
           </p>
         </div>
       </div>
+      )}
     </div>
   );
 }

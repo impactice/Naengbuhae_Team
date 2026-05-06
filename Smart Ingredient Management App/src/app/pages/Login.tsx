@@ -16,48 +16,57 @@ export default function Login() {
     try {
       const response = await fetch('http://localhost:8080/user/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           username: formData.username,
           password: formData.password,
         }),
       });
 
-      const data = await response.json();
+      if (response.ok) {
+        const data = await response.json();
 
-      if (data.success) {
-        sessionStorage.setItem('token', data.token);
-        sessionStorage.setItem('isLoggedIn', 'true');
-        alert(data.message);
+        // 로그인 성공 - 토큰 및 사용자 정보 저장
+        localStorage.setItem('isLoggedIn', 'true');
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+        }
+        if (data.user) {
+          localStorage.setItem('userProfile', JSON.stringify(data.user));
+        }
+
         navigate('/');
       } else {
-        alert(data.message);
+        const error = await response.text();
+        alert(`로그인 실패: ${error}`);
       }
     } catch (error) {
-      console.error('로그인 실패:', error);
-      alert('서버 연결 실패');
+      console.error('로그인 오류:', error);
+      alert('로그인 중 오류가 발생했습니다.');
     }
   };
 
-  const handleSocialLogin = (provider: string) => {
-    // 소셜 로그인 로직
-    console.log(`${provider} 로그인`);
-    sessionStorage.setItem('isLoggedIn', 'true');
-    navigate('/');
+  const handleSocialLogin = (provider: 'kakao' | 'naver' | 'google') => {
+    // 백엔드 OAuth 인증 엔드포인트로 이동
+    // 백엔드에서 인증 처리 → JWT 발급 → /oauth/callback으로 redirect
+    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <div className="flex-1 flex flex-col justify-center px-6 py-12">
-        {/* 로고/타이틀 영역 */}
-        <div className="mb-12">
-          <h1 className="text-3xl mb-2" style={{ fontWeight: 700 }}>
-            스마트 냉장고
-          </h1>
-          <p className="text-gray-500">
-            신선한 식재료 관리의 시작
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+      <div className="w-full max-w-md bg-white min-h-screen shadow-xl flex flex-col">
+        <div className="flex-1 flex flex-col justify-center px-6 py-12">
+          {/* 로고/타이틀 영역 */}
+          <div className="mb-12">
+            <h1 className="text-3xl mb-2" style={{ fontWeight: 700 }}>
+              스마트 냉장고
+            </h1>
+            <p className="text-gray-500">
+              신선한 식재료 관리의 시작
+            </p>
+          </div>
 
         {/* 로그인 폼 */}
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -114,7 +123,7 @@ export default function Login() {
         {/* 소셜 로그인 */}
         <div className="space-y-3">
           <button
-            onClick={() => handleSocialLogin('네이버')}
+            onClick={() => handleSocialLogin('naver')}
             className="w-full py-4 bg-[#03C75A] text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-[#02b351] transition-colors"
           >
             <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
@@ -124,7 +133,7 @@ export default function Login() {
           </button>
 
           <button
-            onClick={() => handleSocialLogin('카카오')}
+            onClick={() => handleSocialLogin('kakao')}
             className="w-full py-4 bg-[#FEE500] text-black rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-[#fdd835] transition-colors"
           >
             <div className="w-5 h-5 bg-[#3C1E1E] rounded-full"></div>
@@ -132,7 +141,7 @@ export default function Login() {
           </button>
 
           <button
-            onClick={() => handleSocialLogin('구글')}
+            onClick={() => handleSocialLogin('google')}
             className="w-full py-4 bg-white border-2 border-gray-200 text-black rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -167,6 +176,7 @@ export default function Login() {
           >
             회원가입
           </Link>
+        </div>
         </div>
       </div>
     </div>
