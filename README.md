@@ -1,129 +1,205 @@
-# 냉부해 (Naengbuhae) — Frontend
+# Naengbuhae_Team
 
-스마트 냉장고 / 식재료 관리 앱 **냉부해**의 React 프론트엔드.
-사용자가 보유한 식재료와 신체정보 기반으로 맞춤 레시피·칼로리·식단을 추천합니다.
+스마트 냉장고 관리 앱 — 프론트엔드 코드.
 
-> 백엔드 저장소: <https://github.com/impactice/Naengbuhae_Team_backend>
-
----
-
-## 🛠 기술 스택
-
-| 영역 | 사용 기술 |
-|---|---|
-| 언어 | TypeScript |
-| 프레임워크 | React 18 + Vite |
-| 라우팅 | react-router |
-| 스타일 | Tailwind CSS |
-| 아이콘 | lucide-react |
-| 상태 관리 | 가벼운 직접 구현 store + 구독 패턴 (`userStore`, `ingredientStore`) |
+> 백엔드 repo: [`Naengbuhae_Team_backend`](https://github.com/impactice/Naengbuhae_Team_backend)
 
 ---
 
-## 📁 디렉터리 구조
+## 🆕 이번 작업 정리 (프론트 담당자용)
 
-```
-Smart Ingredient Management App/
-└── src/app/
-    ├── App.tsx                          # RouterProvider
-    ├── routes.ts                        # 라우트 정의
-    ├── pages/
-    │   ├── Login.tsx                    # 일반 + 카카오 로그인
-    │   ├── SignUp.tsx                   # 회원가입 (인라인 검증)
-    │   ├── OAuthCallback.tsx            # 카카오 콜백 (토큰 저장)
-    │   ├── ProfileComplete.tsx          # 카카오 사용자 신체정보 입력
-    │   ├── Home.tsx
-    │   ├── Ingredients.tsx              # 식재료 목록
-    │   ├── AddIngredient.tsx
-    │   ├── Priority.tsx                 # 유통기한 임박 우선순위
-    │   ├── ShoppingList.tsx
-    │   ├── Recipes.tsx + RecipeDetail.tsx
-    │   ├── MealPlan.tsx
-    │   ├── MyCustom.tsx                 # 마이페이지 (프로필 + 맞춤기능)
-    │   ├── NutritionAnalysis.tsx
-    │   └── NotFound.tsx
-    ├── store/
-    │   ├── userStore.ts                 # /user/me 호출 + 캐시
-    │   └── ingredientStore.ts           # 식재료 store + 한↔영 enum 매핑
-    ├── hooks/
-    │   └── useUserProfile.ts            # userStore 구독 훅
-    ├── components/                      # UI 컴포넌트
-    └── data/, types/, utils/
-```
+이번 작업의 큰 줄기 두 가지:
+1. **카카오 OAuth 소셜 로그인 흐름 통합** (콜백/추가 정보 페이지 신규 + 마이페이지 안내 추가)
+2. **회원가입 페이지 검증 강화** (백엔드 응답 처리 통합 + 클라이언트 검증 세분화)
 
 ---
 
-## 🚀 실행
+### 1) 로그인 페이지 — 카카오 버튼 실제 연결
 
-```bash
-cd "Smart Ingredient Management App"
-npm install
-npm run dev
-```
+`Smart Ingredient Management App/src/app/pages/Login.tsx`
 
-기본 포트: **5173** (Vite). 백엔드는 `http://localhost:8080`에서 실행 중이어야 합니다.
+**변경 사항**
+- `handleSocialLogin('카카오')`가 `alert('소셜 로그인은 추후 구현 예정입니다.')`만 띄우던 것 → **백엔드 OAuth 엔드포인트로 실제 redirect**
+- 네이버/구글은 아직 백엔드 미구현이므로 안내 메시지 유지
 
----
+**왜?**
+- 백엔드(`/oauth2/authorization/kakao`)가 카카오 인증 플로우를 시작 → 카카오 → 백엔드 콜백 → JWT 발급 → **프론트 콜백 페이지(`/oauth/callback`)로 redirect** 까지 자동 처리됨
 
-## 🔗 백엔드 연동 포인트
-
-| 화면 | 호출 API | 메서드 |
-|---|---|---|
-| 회원가입 | `/user/signup` | POST |
-| 로그인 | `/user/login` | POST |
-| 카카오 로그인 시작 | `/oauth2/authorization/kakao` | GET (브라우저 redirect) |
-| OAuth 콜백 (토큰 수신) | 백엔드가 `?token=...&needsAdditionalInfo=...`로 redirect | — |
-| 마이페이지 | `/user/me` | GET |
-| 프로필 수정 | `/user/me` | PUT |
-| 식재료 목록 | `/api/ingredients` | GET |
-| 유통기한 임박 | `/api/ingredients/expiring` | GET |
-| 식재료 CRUD | `/api/ingredients`, `/api/ingredients/{id}` | POST/PUT/DELETE |
-| 레시피 추천 | `/api/recipes/recommendations` | GET |
-| 장보기 | `/api/shopping-list` 외 | GET/POST/DELETE |
-
-**인증 헤더**: 로그인 후 `localStorage.authToken`에 저장된 JWT를 `Authorization: Bearer ...`로 전송.
-
----
-
-## ✨ 이번 작업에서 추가/변경된 부분
-
-### 1. 카카오 OAuth 소셜 로그인 흐름 통합
-- **`Login.tsx`**: "카카오로 시작하기" 버튼이 실제 백엔드 OAuth 엔드포인트(`/oauth2/authorization/kakao`)로 이동
-  - 네이버/구글 버튼은 placeholder ("준비 중") 안내
-- **`OAuthCallback.tsx`** (신규, 라우트 `/oauth/callback`)
-  - URL 쿼리 `token` 파싱 → `localStorage`에 저장 → 프로필 fetch → 홈(`/`)으로 이동
-  - 실패 시 로그인 페이지로 회귀
-- **`ProfileComplete.tsx`** (신규, 라우트 `/profile/complete`)
-  - 카카오로 가입한 사용자를 위한 신체정보 입력 전용 페이지
-  - 키·몸무게·성별·생년월일·활동량·식단목표·알레르기 입력 → `PUT /user/me` 저장
-
-### 2. 마이페이지 (`MyCustom.tsx`) — 프로필 미완성 안내
-- 신체정보(키/몸무게/성별/생년월일)가 비어있는지 자동 감지
-- 비어있으면 상단에 **"정보 입력 마저하기"** CTA 카드 표시 → 클릭 시 `/profile/complete`로 이동
-- 비어있는 필드를 가진 섹션(키/몸무게/BMI 카드, 건강 목표, 권장 영양소 비율)은 자동으로 숨김 처리해 깨진 표시 방지
-
-### 3. 회원가입 (`SignUp.tsx`) — 검증 강화
-- **백엔드 응답 처리 통합**: HTTP status에 의존하지 않고 `ApiResponse({success, message})`의 `success` 플래그로 분기
-  - 이전: `response.ok` 체크 → 200 + `success: false`(중복 아이디)도 성공 처리하던 버그
-  - 현재: `success === false`인 경우 `message`의 키워드(아이디/이메일/비밀번호/...)에 따라 해당 필드 인라인 에러로 매핑 + 자동 스크롤 + 포커스
-- **클라이언트 검증 세분화**:
-  - 아이디: 빈 값 / 6자 미만 / 영문·숫자 외 문자 / 영문 없음 / 숫자 없음 → 각각 다른 메시지
-  - 비밀번호: 빈 값 / 한글 포함 / 8자 미만 / 영소문자 없음 / 숫자 없음 / 특수문자 없음 → 각각 다른 메시지
-- **탭 키 UX 개선**: 비밀번호 눈 모양 토글 버튼에 `tabIndex={-1}` — Tab 키로 비밀번호→비밀번호 확인→가입하기로 자연스럽게 이동
-
-### 4. 라우트 추가 (`routes.ts`)
+**핵심 코드**
 ```ts
+const handleSocialLogin = (provider: 'kakao' | 'naver' | 'google') => {
+  if (provider === 'kakao') {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
+    return;
+  }
+  alert(`${provider === 'naver' ? '네이버' : '구글'} 로그인은 준비 중입니다.`);
+};
+```
+
+---
+
+### 2) OAuth 콜백 페이지 (신규)
+
+`Smart Ingredient Management App/src/app/pages/OAuthCallback.tsx` (신규)
+라우트: `/oauth/callback`
+
+**역할**
+- 백엔드가 카카오 인증 완료 후 `?token=xxx&needsAdditionalInfo=true` 형태로 이 페이지에 redirect함
+- 토큰을 `localStorage`에 저장 → 프로필 fetch → 홈(`/`)으로 자동 이동
+- 화면엔 "로그인 처리 중..." 로딩만 잠깐 보였다가 사라짐
+
+**왜?**
+- OAuth는 외부 서비스(카카오) 인증 후 다시 우리 사이트로 돌아올 곳이 필요함
+- 일반 로그인과 동일한 키(`localStorage.authToken`, `isLoggedIn`)에 저장해서 **다른 페이지가 별도 분기 없이 동일하게 작동**하도록
+
+**핵심 코드**
+```ts
+const token = searchParams.get('token');
+if (!token) {
+  navigate('/login', { replace: true });
+  return;
+}
+localStorage.setItem('authToken', token);
+localStorage.setItem('isLoggedIn', 'true');
+userStore.fetchUserProfile().finally(() => {
+  navigate('/', { replace: true });
+});
+```
+
+---
+
+### 3) 프로필 완성 페이지 (신규)
+
+`Smart Ingredient Management App/src/app/pages/ProfileComplete.tsx` (신규)
+라우트: `/profile/complete`
+
+**역할**
+- 카카오로 로그인한 사용자가 **신체정보(키/몸무게/성별/생년월일/활동량/식단목표/알레르기)** 를 나중에 채워넣는 전용 페이지
+- `PUT /user/me`로 저장하면 백엔드가 권장 칼로리도 자동 재계산해서 응답
+
+**왜?**
+- 카카오 로그인의 메리트는 "회원가입 정보 입력 귀찮음 회피"인데, 로그인 직후 강제로 신체정보 입력시키면 사용자 이탈 위험
+- 그래서 OAuth 콜백에선 강제 진입 없이 홈으로 보내고, **마이페이지에서 자발적으로 들어올 때만** 이 페이지를 띄움
+
+**전체 폼은 회원가입 페이지의 신체 정보 부분과 동일 + 사용자가 이미 입력한 값이 있으면 form 초기값으로 prefill**
+
+---
+
+### 4) 마이페이지 — 미완성 프로필 안내 + 빈 데이터 방어
+
+`Smart Ingredient Management App/src/app/pages/MyCustom.tsx`
+
+**변경 사항**
+- 신체정보(`height`/`weight`/`gender`/`birthDate`)가 비어있으면 → 페이지 상단에 **노란 CTA 카드** "정보 입력 마저하기" 노출 → 클릭 시 `/profile/complete`로 이동
+- 비어있는 필드를 가진 섹션(키/몸무게/BMI 카드, 건강 목표, 권장 영양소 비율)은 **자동으로 숨김 처리**해서 `undefined cm` 같은 깨진 표시 방지
+- "○○세 · 남성/여성" 표시는 정보 없을 시 "프로필 정보를 완성해주세요"로 fallback
+
+**왜?**
+- 기존 MyCustom은 신체정보가 다 있다고 가정하고 그렸기 때문에, 카카오로 가입한 사용자가 들어오면 `undefined세 · undefined` 같은 깨진 표시가 나오는 상태였음
+- CTA를 통해 **자연스럽게 정보 입력 유도** (강제 X)
+
+**핵심 코드**
+```tsx
+const isProfileIncomplete = !!profile && (
+  !profile.height || !profile.weight || !profile.gender || !profile.birthDate
+);
+
+{isProfileIncomplete && (
+  <button onClick={() => navigate('/profile/complete')} className="...">
+    정보 입력 마저하기
+    <p>키, 몸무게, 활동량 등을 입력하면 맞춤 칼로리와 식단 추천을 받을 수 있어요</p>
+  </button>
+)}
+```
+
+---
+
+### 5) 회원가입 페이지 — 응답 처리 통합 + 검증 세분화
+
+`Smart Ingredient Management App/src/app/pages/SignUp.tsx`
+
+**변경 사항 A — 백엔드 응답 처리 버그 수정**
+- 기존: `if (response.ok)`만 체크 → HTTP 200이면 무조건 성공 처리
+- 백엔드는 중복 아이디/이메일 같은 비즈니스 에러도 **HTTP 200 + `{success: false, message: ...}`** 로 응답 → 기존 코드는 이걸 성공으로 잘못 처리해서 "회원가입 완료!" alert 후 로그인 페이지로 넘어가던 버그 있었음
+- 또한 검증 실패(`@Valid`)는 HTTP 400이지만, 백엔드 `GlobalExceptionHandler`가 동일한 `{success, message}` JSON 형식으로 변환해서 응답
+- → **HTTP status 무관하게 body의 `success` 플래그로 분기**, `success === false`면 `message` 키워드로 해당 필드에 인라인 매핑
+
+**핵심 코드**
+```ts
+let data = {};
+try { data = await response.json(); } catch { /* ... */ }
+
+if (data.success) {
+  alert('회원가입이 완료되었습니다!');
+  navigate('/login');
+  return;
+}
+
+const fieldErrors: Record<string, string> = {};
+if (data.message.includes('아이디')) fieldErrors.username = data.message;
+else if (data.message.includes('이메일')) fieldErrors.email = data.message;
+else if (data.message.includes('비밀번호')) fieldErrors.password = data.message;
+// ... 성별/생년월일/키/몸무게/이름/활동량/식단도 같은 방식으로 매핑
+else fieldErrors.submit = data.message;
+setErrors(fieldErrors);
+```
+
+**변경 사항 B — 클라이언트 검증 세분화**
+
+기존엔 단순히 "6자 미만" / "8자 미만" 한 가지 메시지로 끝났는데, 무엇이 부족한지 사용자가 모름. 케이스별로 다른 메시지를 띄우도록 확장.
+
+**아이디** (백엔드 정규식 `^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{6,}$` 와 동일한 의도):
+```ts
+if (!formData.username) {
+  newErrors.username = '아이디를 입력해주세요';
+} else if (formData.username.length < 6) {
+  newErrors.username = '아이디는 6자 이상이어야 합니다';
+} else if (!/^[a-zA-Z0-9]+$/.test(formData.username)) {
+  newErrors.username = '아이디는 영문과 숫자만 사용할 수 있습니다';
+} else if (!/[a-zA-Z]/.test(formData.username)) {
+  newErrors.username = '아이디에 영문을 포함해야 합니다';
+} else if (!/\d/.test(formData.username)) {
+  newErrors.username = '아이디에 숫자를 포함해야 합니다';
+}
+```
+
+**비밀번호** (백엔드 정규식 `^(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$` 와 동일한 의도):
+```ts
+if (!formData.password) { /* 입력해주세요 */ }
+else if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(formData.password)) { /* 한글 사용 X */ }
+else if (formData.password.length < 8) { /* 8자 이상 */ }
+else if (!/[a-z]/.test(formData.password)) { /* 영어 소문자 */ }
+else if (!/\d/.test(formData.password)) { /* 숫자 */ }
+else if (!/[^a-zA-Z0-9]/.test(formData.password)) { /* 특수문자 */ }
+```
+
+**변경 사항 C — Tab 키 UX**
+- 비밀번호 / 비밀번호 확인 필드의 **눈 모양 토글 버튼**에 `tabIndex={-1}` 추가
+- 기존: Tab 누르면 비밀번호 → 눈 버튼 → 비밀번호 확인 (불필요한 한 단계)
+- 변경: Tab 누르면 비밀번호 → 비밀번호 확인 → 가입하기 (자연스럽게 진행)
+- 마우스 클릭은 그대로 작동
+
+---
+
+### 6) 라우트 등록
+
+`Smart Ingredient Management App/src/app/routes.ts`
+
+```ts
+import OAuthCallback from "./pages/OAuthCallback";
+import ProfileComplete from "./pages/ProfileComplete";
+
+// 두 라우트 모두 Root 레이아웃(하단 네비) 밖 — 처리/입력 전용 화면이라 깔끔하게 보이도록
 { path: "/oauth/callback", Component: OAuthCallback },
 { path: "/profile/complete", Component: ProfileComplete },
 ```
-둘 다 Root 레이아웃(하단 네비) 밖에 배치 — OAuth 처리 / 입력 폼 전용 화면.
 
 ---
 
 ## 🔄 사용자 흐름 (카카오 로그인 케이스)
 
 ```
-[로그인] "카카오로 시작하기" 클릭
+[로그인 페이지] "카카오로 시작하기" 클릭
    ↓
 [카카오] 인증 + 동의(닉네임 필수)
    ↓
@@ -146,9 +222,23 @@ npm run dev
 
 ---
 
-## ⚠️ 알아두기
+### 7) 백엔드 측 변경 (참고용)
 
-- **인증 토큰 저장소**: `localStorage.authToken`(JWT) + `localStorage.isLoggedIn`
-- **프로필 캐시**: `userStore`가 메모리에 유지 + 구독자에게 브로드캐스트
-- **CORS**: 백엔드가 `http://localhost:*` 와일드카드 패턴으로 허용 (5173/5174 등 어떤 포트도 OK)
-- **enum 매핑**: 프론트는 영문 키(예: `weight-loss`), 백엔드는 한글 라벨(`체중 감량`) 사용 → `ingredientStore` / `SignUp` 내부에서 양방향 변환
+프론트 변경에 맞춰 백엔드도 함께 수정됨 (`Naengbuhae_Team_backend` repo):
+
+- **카카오 OAuth 호환**: 일반 앱은 이메일 권한을 못 받으므로 `account_email` scope 제거 + `OAuth2UserInfo`가 `kakao_{providerId}@kakao.local` placeholder 자동 생성
+- **빈 순환 참조 해결**: `PasswordEncoder` 빈을 `PasswordEncoderConfig`로 분리
+- **회원가입 아이디 정규식 강화**: `^[a-zA-Z0-9]{6,}$` → `^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{6,}$` (영문만/숫자만 통과 차단)
+- **성별 enum 정렬**: 새 프론트가 `'남'`/`'여'`로 보내므로 백엔드 검증/시드/계산 로직도 모두 `(남|여)` 기준으로 정렬
+
+---
+
+## ⚠️ 아직 카카오 외 다른 OAuth는 미구현
+
+| 제공자 | 백엔드 | 프론트 |
+|---|---|---|
+| 카카오 | ✅ 완료 (이번 세션) | ✅ 완료 (이번 세션) |
+| 네이버 | OAuth2UserInfo 파서만 작성 / properties 미설정 | 버튼은 있으나 "준비 중" alert |
+| 구글 | OAuth2UserInfo 파서만 작성 / properties 미설정 | 버튼은 있으나 "준비 중" alert |
+
+네이버/구글 추가 시 작업량은 카카오 대비 적음 (DB 마이그레이션 불필요, properties + 콘솔 등록만).
