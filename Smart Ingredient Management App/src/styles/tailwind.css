@@ -2,3 +2,14 @@
 @source '../**/*.{js,ts,jsx,tsx}';
 
 @import 'tw-animate-css';
+
+/* Tailwind v4는 button 기본 커서를 default로 리셋함 → 클릭 가능 요소에 포인터 복원
+   레이어 밖에 두어 utilities 레이어보다 우선 적용됨 */
+button:not(:disabled),
+[role='button']:not(:disabled),
+a[href],
+label[for],
+summary,
+[onclick] {
+  cursor: pointer;
+}
