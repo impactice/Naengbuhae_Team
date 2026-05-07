@@ -9,9 +9,11 @@ import {
   TrendingUp,
   Target,
   Flame,
-  Sparkles
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { userStore } from '../store/userStore';
 
 const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
   '체중 감량': 'weight-loss',
@@ -23,6 +25,27 @@ const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-g
 export default function MyCustom() {
   const navigate = useNavigate();
   const { profile, loading } = useUserProfile();
+
+  const handleDeleteAccount = async () => {
+    if (!confirm('정말 회원 탈퇴 하시겠습니까?\n\n탈퇴 시 계정과 모든 데이터(식재료, 레시피 기록 등)가 영구 삭제되며 복구할 수 없습니다.')) {
+      return;
+    }
+    if (!confirm('마지막 확인입니다.\n탈퇴를 진행하시겠습니까?')) {
+      return;
+    }
+    try {
+      await userStore.deleteAccount();
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userProfile');
+      userStore.clearCache();
+      alert('회원 탈퇴가 완료되었습니다.');
+      navigate('/login');
+    } catch (error) {
+      console.error('회원 탈퇴 실패:', error);
+      alert('회원 탈퇴 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  };
 
   // BMI 계산
   const calculateBMI = () => {
@@ -138,7 +161,12 @@ export default function MyCustom() {
       {/* 기본 정보 카드 */}
       <div className="px-5 py-5">
         <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-4">
+          <button
+            type="button"
+            onClick={() => navigate('/profile/complete')}
+            className="w-full flex items-center justify-between mb-4 -m-2 p-2 rounded-xl hover:bg-gray-100 transition-colors text-left"
+            title="회원 정보 수정"
+          >
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#CDFF00] rounded-full flex items-center justify-center">
                 <User className="w-6 h-6" />
@@ -152,7 +180,8 @@ export default function MyCustom() {
                 </p>
               </div>
             </div>
-          </div>
+            <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          </button>
 
           {(profile.height || profile.weight) && (
             <div className="grid grid-cols-2 gap-4">
@@ -351,6 +380,17 @@ export default function MyCustom() {
         </div>
       </div>
       )}
+
+      {/* 회원 탈퇴 */}
+      <div className="px-5 pt-4 pb-8 border-t border-gray-100 mt-4">
+        <button
+          type="button"
+          onClick={handleDeleteAccount}
+          className="w-full py-3 text-sm text-gray-500 hover:text-red-600 transition-colors underline underline-offset-4"
+        >
+          회원 탈퇴
+        </button>
+      </div>
     </div>
   );
 }

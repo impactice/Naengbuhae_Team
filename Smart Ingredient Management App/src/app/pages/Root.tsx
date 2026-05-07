@@ -1,6 +1,8 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router';
 import { Home, Package, AlertCircle, ShoppingCart, LogOut, User } from 'lucide-react';
 import { useEffect } from 'react';
+import { userStore } from '../store/userStore';
+import { clearAuth, logoutOnServer } from '../utils/apiClient';
 
 export default function Root() {
   const location = useLocation();
@@ -14,19 +16,20 @@ export default function Root() {
     }
   }, [navigate]);
 
-  const handleLogout = () => {
-    if (confirm('로그아웃 하시겠습니까?')) {
-      localStorage.removeItem('isLoggedIn');
-      navigate('/login');
-    }
+  const handleLogout = async () => {
+    if (!confirm('로그아웃 하시겠습니까?')) return;
+    await logoutOnServer();
+    clearAuth();
+    userStore.clearCache();
+    navigate('/login');
   };
 
   const navItems = [
     { path: '/', icon: Home, label: '홈' },
     { path: '/ingredients', icon: Package, label: '식재료' },
     { path: '/priority', icon: AlertCircle, label: '우선순위' },
-    { path: '/my-custom', icon: User, label: '나의 맞춤' },
     { path: '/shopping-list', icon: ShoppingCart, label: '장보기' },
+    { path: '/my-custom', icon: User, label: '나의 맞춤' },
   ];
 
   const isActive = (path: string) => {
@@ -40,16 +43,18 @@ export default function Root() {
     <div className="min-h-screen bg-gray-100 flex justify-center">
       {/* 앱 컨테이너 - 모바일 뷰 */}
       <div className="w-full max-w-md bg-white min-h-screen flex flex-col relative shadow-xl">
-        {/* 로그아웃 버튼 */}
-        <div className="absolute top-4 right-4 z-50">
-          <button
-            onClick={handleLogout}
-            className="p-2 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
-            title="로그아웃"
-          >
-            <LogOut className="w-5 h-5 text-gray-600" />
-          </button>
-        </div>
+        {/* 로그아웃 버튼 — 나의 맞춤 페이지에서만 노출 */}
+        {location.pathname.startsWith('/my-custom') && (
+          <div className="absolute top-4 right-4 z-50">
+            <button
+              onClick={handleLogout}
+              className="p-2 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+              title="로그아웃"
+            >
+              <LogOut className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        )}
 
         {/* 메인 콘텐츠 */}
         <main className="flex-1 pb-20 overflow-y-auto">

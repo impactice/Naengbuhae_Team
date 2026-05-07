@@ -8,6 +8,7 @@ export default function OAuthCallback() {
 
   useEffect(() => {
     const token = searchParams.get('token');
+    const refreshToken = searchParams.get('refreshToken');
     const error = searchParams.get('error');
 
     if (error || !token) {
@@ -18,6 +19,9 @@ export default function OAuthCallback() {
 
     // 토큰 저장 — 일반 로그인과 동일한 키 사용
     localStorage.setItem('authToken', token);
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
+    }
     localStorage.setItem('isLoggedIn', 'true');
 
     // 프로필 정보 받아오고 홈으로 이동

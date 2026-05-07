@@ -1,15 +1,6 @@
 import { Recipe } from '../types/recipe';
 import { recipes as fallbackRecipes } from '../data/recipes';
-
-const API_BASE_URL = 'http://localhost:8080/api';
-
-function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem('authToken');
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-  };
-}
+import { apiFetch } from '../utils/apiClient';
 
 function normalizeRecipe(raw: any): Recipe {
   return {
@@ -45,9 +36,7 @@ class RecipeStore {
 
   async fetchRecipes(): Promise<Recipe[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/recipes`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await apiFetch('/api/recipes');
 
       if (response.ok) {
         const data = await response.json();

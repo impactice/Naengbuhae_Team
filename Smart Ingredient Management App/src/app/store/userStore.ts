@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080';
+import { apiFetch } from '../utils/apiClient';
 
 export interface UserProfile {
   username: string;
@@ -14,15 +14,6 @@ export interface UserProfile {
   recommendedCalories?: number;
 }
 
-// 인증 헤더 가져오기
-function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem('authToken');
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-  };
-}
-
 class UserStore {
   private listeners: Set<() => void> = new Set();
   private userProfileCache: UserProfile | null = null;
@@ -30,9 +21,7 @@ class UserStore {
   // 사용자 프로필 가져오기
   async fetchUserProfile(): Promise<UserProfile | null> {
     try {
-      const response = await fetch(`${API_BASE_URL}/user/me`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await apiFetch('/user/me');
 
       if (response.ok) {
         const data = await response.json();
@@ -56,9 +45,8 @@ class UserStore {
   // 사용자 프로필 업데이트
   async updateUserProfile(updates: Partial<UserProfile>): Promise<void> {
     try {
-      const response = await fetch(`${API_BASE_URL}/user/me`, {
+      const response = await apiFetch('/user/me', {
         method: 'PUT',
-        headers: getAuthHeaders(),
         body: JSON.stringify(updates),
       });
 
@@ -85,6 +73,16 @@ class UserStore {
   // 리스너 알림
   private notifyListeners(): void {
     this.listeners.forEach((listener) => listener());
+  }
+
+  // 회원 탈퇴 — DELETE /user/me
+  async deleteAccount(): Promise<void> {
+    const response = await apiFetch('/user/me', { method: 'DELETE' });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `회원 탈퇴 실패 (${response.status})`);
+    }
   }
 
   // 캐시 초기화

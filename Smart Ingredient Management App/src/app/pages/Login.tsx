@@ -28,10 +28,19 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
 
-        // 로그인 성공 - 토큰 및 사용자 정보 저장
+        // 백엔드 LoginResponse: { success, message, token, refreshToken }
+        // success=false여도 HTTP 200으로 오므로 별도 분기
+        if (data.success === false) {
+          alert(`로그인 실패: ${data.message || '아이디 또는 비밀번호를 확인해주세요.'}`);
+          return;
+        }
+
         localStorage.setItem('isLoggedIn', 'true');
         if (data.token) {
           localStorage.setItem('authToken', data.token);
+        }
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
         }
         if (data.user) {
           localStorage.setItem('userProfile', JSON.stringify(data.user));
