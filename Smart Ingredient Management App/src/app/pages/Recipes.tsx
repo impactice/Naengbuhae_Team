@@ -15,11 +15,13 @@ export default function Recipes() {
     [recipes, ingredients]
   );
 
+  // "만들 수 있는 요리" = 보유 재료가 1개라도 들어가는 레시피 (필수 재료가 다 있을 필요 없음)
+  // 의도: 냉장고 재료를 활용하려는 사용자 — "이거 사면 만들 수 있겠다" 까지 포함해서 보여줌
   const filteredMatches = filterMode === 'makeable'
-    ? matches.filter((m) => m.matchRate >= 100)
+    ? matches.filter((m) => m.hasIngredients.length > 0)
     : matches;
 
-  const makeableCount = matches.filter((m) => m.matchRate >= 100).length;
+  const makeableCount = matches.filter((m) => m.hasIngredients.length > 0).length;
 
   if (loading) {
     return (
