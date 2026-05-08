@@ -11,7 +11,8 @@
 이번 세션의 큰 줄기:
 1. **세션 저장소 정책 정리** — `localStorage` 일변도 → "로그인 상태 유지" 체크박스로 사용자가 직접 선택
 2. **저장소 추상화** — `apiClient`에 `saveAuth/clearAuth/readAuth` 헬퍼를 두고 storage 분기를 한 곳에 가둠
-3. **백엔드 사이드 변경에 따른 영향** — 알레르기 경고 응답 / `POST /api/ingredients` 응답 형태 변경 / refresh token 만료 365일 등
+3. **프로필 페이지 입력/수정 모드 분기** — 같은 페이지가 신규 정보 입력과 기존 정보 수정 둘 다 처리하도록 텍스트 동적 변경
+4. **백엔드 사이드 변경에 따른 영향** — 알레르기 경고 응답 / `POST /api/ingredients` 응답 형태 변경 / refresh token 만료 365일 등
 
 ---
 
@@ -76,7 +77,28 @@ apiClient의 `refreshAccessToken`은 새로 받은 토큰을 **기존 토큰이 
 
 ---
 
-### 2) 백엔드 사이드 변경에 따른 영향 (참고)
+### 2) 프로필 페이지 — 입력 / 수정 모드 동적 분기
+
+**무엇을 바꿨나**: `ProfileComplete.tsx` 한 페이지가 사용자 상태에 따라 두 가지 모드로 동작하도록.
+
+| 상태 | 헤더 제목 | 본문 헤딩 | 제출 버튼 | 성공 알림 |
+|---|---|---|---|---|
+| 입력 모드 (소셜 로그인 신규 등) | 프로필 정보 입력 | 맞춤 추천을 위해 | 저장하기 | 저장됐습니다 |
+| 수정 모드 (기존 사용자) | 프로필 수정 | 정보를 수정해주세요 | 수정하기 | 수정됐습니다 |
+
+판정 기준은 `MyCustom.tsx`의 `isProfileIncomplete`와 동일: `height/weight/gender/birthDate` 중 하나라도 비어있으면 "입력" 모드.
+
+**부수 수정 — 옛 더러운 데이터 방어**:
+- 옛 버전이나 직접 DB 삽입으로 들어간 잘못된 값(`gender="남성"`, `activityLevel="sedentary"` 등)이 폼 prefill 시 그대로 들어가 form-level 검증을 통과하고 백엔드에서 400 터지는 버그가 있었음
+- 이제 prefill 시 폼이 허용하는 값 화이트리스트(`VALID_GENDERS`, `VALID_ACTIVITY`, `VALID_DIET_GOAL`)와 비교해 매칭 안 되면 빈 값으로 처리 → 사용자가 다시 선택하도록 강제
+- 생년월일 연도도 현재년 ~ 100년 전 범위 외면 빈 값으로
+
+**부수 수정 — 연도 옵션 동적화**:
+- `SignUp.tsx` / `ProfileComplete.tsx` 둘 다 `2024`로 하드코딩되어 있던 연도 상한선을 `new Date().getFullYear()`로 변경 — 현재 연도가 2026이라 `2025`/`2026`이 옵션에 없는 문제 해결
+
+---
+
+### 3) 백엔드 사이드 변경에 따른 영향 (참고)
 
 **알레르기 경고 응답** (비파괴, opt-in)
 - `GET /api/recipes`, `GET /api/recipes/recommendations`, `GET /api/ingredients`, `POST /api/ingredients` 응답에 `allergyWarnings: string[]` 필드 추가
