@@ -10,6 +10,8 @@ export interface Ingredient {
   storage: StorageType;
   expirationDate: Date;
   purchaseDate: Date;
+  // 사용자 알레르기와 매칭된 키워드. 백엔드가 채워줌. 비어있으면 안전.
+  allergyWarnings?: string[];
 }
 
 export interface ShoppingItem {

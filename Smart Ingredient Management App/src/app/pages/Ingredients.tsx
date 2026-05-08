@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
 import { Link } from 'react-router';
-import { Plus, Trash2, Package, ChevronDown, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Package, ChevronDown, Sparkles, AlertTriangle } from 'lucide-react';
 import { CategoryType, StorageType } from '../types/ingredient';
 
 export default function Ingredients() {
@@ -210,7 +210,7 @@ export default function Ingredients() {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-base" style={{ fontWeight: 600 }}>
                           {ingredient.name}
                         </h3>
@@ -224,6 +224,16 @@ export default function Ingredients() {
                         >
                           {formatDDay(daysLeft)}
                         </span>
+                        {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
+                          <span
+                            className="px-2 py-0.5 rounded text-xs flex items-center gap-1 bg-red-100 text-red-700"
+                            style={{ fontWeight: 600 }}
+                            title={`알레르기: ${ingredient.allergyWarnings.join(', ')}`}
+                          >
+                            <AlertTriangle className="w-3 h-3" />
+                            알레르기 {ingredient.allergyWarnings.join(', ')}
+                          </span>
+                        )}
                       </div>
                       <div className="mt-2 space-y-1">
                         <p className="text-sm text-gray-600">
