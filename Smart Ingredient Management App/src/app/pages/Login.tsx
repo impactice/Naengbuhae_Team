@@ -35,15 +35,15 @@ export default function Login() {
           return;
         }
 
-        localStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('isLoggedIn', 'true');
         if (data.token) {
-          localStorage.setItem('authToken', data.token);
+          sessionStorage.setItem('authToken', data.token);
         }
         if (data.refreshToken) {
-          localStorage.setItem('refreshToken', data.refreshToken);
+          sessionStorage.setItem('refreshToken', data.refreshToken);
         }
         if (data.user) {
-          localStorage.setItem('userProfile', JSON.stringify(data.user));
+          sessionStorage.setItem('userProfile', JSON.stringify(data.user));
         }
 
         navigate('/');

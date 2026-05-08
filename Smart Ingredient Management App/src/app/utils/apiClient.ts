@@ -1,7 +1,7 @@
 // 모든 인증 필요한 API 호출은 이 wrapper를 통과시킨다.
 // - Authorization 헤더 자동 부착
 // - 401/403 응답 시 refresh token으로 access token 재발급 후 1회 재시도
-// - 재발급 실패 시 localStorage 정리 + /login 이동
+// - 재발급 실패 시 sessionStorage 정리 + /login 이동
 
 const API_BASE_URL = 'http://localhost:8080';
 
@@ -9,7 +9,7 @@ const API_BASE_URL = 'http://localhost:8080';
 let inflightRefresh: Promise<boolean> | null = null;
 
 async function refreshAccessToken(): Promise<boolean> {
-  const refreshToken = localStorage.getItem('refreshToken');
+  const refreshToken = sessionStorage.getItem('refreshToken');
   if (!refreshToken) return false;
 
   if (inflightRefresh) return inflightRefresh;
@@ -24,8 +24,8 @@ async function refreshAccessToken(): Promise<boolean> {
       if (!res.ok) return false;
       const data = (await res.json()) as { token?: string; refreshToken?: string };
       if (!data.token || !data.refreshToken) return false;
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('refreshToken', data.refreshToken);
+      sessionStorage.setItem('authToken', data.token);
+      sessionStorage.setItem('refreshToken', data.refreshToken);
       return true;
     } catch {
       return false;
@@ -38,14 +38,14 @@ async function refreshAccessToken(): Promise<boolean> {
 
 // 로그아웃/탈퇴/refresh 실패 시 클라이언트 측 흔적 일괄 제거
 export function clearAuth(): void {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('userProfile');
+  sessionStorage.removeItem('isLoggedIn');
+  sessionStorage.removeItem('authToken');
+  sessionStorage.removeItem('refreshToken');
+  sessionStorage.removeItem('userProfile');
 }
 
 function buildHeaders(extra?: HeadersInit): HeadersInit {
-  const token = localStorage.getItem('authToken');
+  const token = sessionStorage.getItem('authToken');
   return {
     'Content-Type': 'application/json',
     ...extra,
@@ -75,7 +75,7 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
 
 // 서버에 refresh token 폐기 요청까지 보내는 로그아웃 헬퍼
 export async function logoutOnServer(): Promise<void> {
-  const refreshToken = localStorage.getItem('refreshToken');
+  const refreshToken = sessionStorage.getItem('refreshToken');
   if (!refreshToken) return;
   try {
     await fetch(`${API_BASE_URL}/user/logout`, {

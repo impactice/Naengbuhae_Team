@@ -71,7 +71,7 @@ export default function NutritionAnalysis() {
   }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
 
   // 사용자 프로필 불러오기
-  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+  const userProfile = JSON.parse(sessionStorage.getItem('userProfile') || '{}');
   const allergies = userProfile.allergies?.toLowerCase().split(',').map((a: string) => a.trim()) || [];
 
   // 영양소 비율 데이터

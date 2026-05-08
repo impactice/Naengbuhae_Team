@@ -35,9 +35,9 @@ export default function MyCustom() {
     }
     try {
       await userStore.deleteAccount();
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userProfile');
+      sessionStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('userProfile');
       userStore.clearCache();
       alert('회원 탈퇴가 완료되었습니다.');
       navigate('/login');

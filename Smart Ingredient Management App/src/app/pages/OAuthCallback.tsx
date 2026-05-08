@@ -18,11 +18,11 @@ export default function OAuthCallback() {
     }
 
     // 토큰 저장 — 일반 로그인과 동일한 키 사용
-    localStorage.setItem('authToken', token);
+    sessionStorage.setItem('authToken', token);
     if (refreshToken) {
-      localStorage.setItem('refreshToken', refreshToken);
+      sessionStorage.setItem('refreshToken', refreshToken);
     }
-    localStorage.setItem('isLoggedIn', 'true');
+    sessionStorage.setItem('isLoggedIn', 'true');
 
     // 프로필 정보 받아오고 홈으로 이동
     // (카카오 사용자는 신체정보가 비어있을 수 있는데, MyCustom 페이지에서 CTA로 안내)

@@ -10,7 +10,7 @@ export default function Root() {
 
   // 로그인 여부 확인
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     if (!isLoggedIn) {
       navigate('/login');
     }
