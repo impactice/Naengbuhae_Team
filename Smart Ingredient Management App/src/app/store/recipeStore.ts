@@ -36,11 +36,16 @@ class RecipeStore {
 
   async fetchRecipes(): Promise<Recipe[]> {
     try {
-      const response = await apiFetch('/api/recipes');
+      // /api/recipes는 본인이 등록한 레시피만 반환 → 시드 8개는 system 계정 소유라 안 보임.
+      // /api/recipes/recommendations는 모든 시드 + 매칭률 + 알레르기 필터까지 적용해서 반환.
+      // 응답 형태: [{ recipe, matchRate, hasIngredients, missingIngredients, ... }, ...]
+      // 프론트는 자체 matchRecipesWithIngredients로 매칭을 다시 계산하므로 recipe만 추출해서 사용.
+      const response = await apiFetch('/api/recipes/recommendations');
 
       if (response.ok) {
         const data = await response.json();
-        this.recipesCache = Array.isArray(data) ? data.map(normalizeRecipe) : [];
+        const recipes = Array.isArray(data) ? data.map((m: any) => m.recipe ?? m) : [];
+        this.recipesCache = recipes.map(normalizeRecipe);
       } else {
         console.warn('레시피 조회 실패:', response.status);
         this.recipesCache = fallbackRecipes;
