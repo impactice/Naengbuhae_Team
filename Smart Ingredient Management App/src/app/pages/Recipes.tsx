@@ -12,7 +12,7 @@ export default function Recipes() {
 
   const matches = useMemo(
     () => matchRecipesWithIngredients(recipes, ingredients),
-    [ingredients]
+    [recipes, ingredients]
   );
 
   const filteredMatches = filterMode === 'makeable'
