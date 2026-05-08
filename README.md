@@ -9,30 +9,70 @@
 ## 🆕 이번 작업 정리 (2026-05-08)
 
 이번 세션의 큰 줄기:
-1. **세션 저장소 전환** — `localStorage` → `sessionStorage`로 바꿔서 브라우저/컴퓨터 종료 = 자동 로그아웃
-2. **백엔드 사이드 변경에 따른 영향** — 알레르기 경고 응답 / `POST /api/ingredients` 응답 형태 변경 등
+1. **세션 저장소 정책 정리** — `localStorage` 일변도 → "로그인 상태 유지" 체크박스로 사용자가 직접 선택
+2. **저장소 추상화** — `apiClient`에 `saveAuth/clearAuth/readAuth` 헬퍼를 두고 storage 분기를 한 곳에 가둠
+3. **백엔드 사이드 변경에 따른 영향** — 알레르기 경고 응답 / `POST /api/ingredients` 응답 형태 변경 / refresh token 만료 365일 등
 
 ---
 
-### 1) `localStorage` → `sessionStorage` 일괄 전환
+### 1) "로그인 상태 유지" 체크박스 + 양쪽 storage 추상화
 
-**무엇을 바꿨나**: auth/session 관련 키(`authToken`, `refreshToken`, `isLoggedIn`, `userProfile`)를 모두 `sessionStorage`로 이동.
+**무엇을 바꿨나**: Login 화면에 체크박스를 두고, 체크 시 `localStorage`(영구), 미체크 시 `sessionStorage`(세션 종료 시 휘발)에 인증 정보를 저장. OAuth 로그인은 "간편 로그인" 의도라 항상 영구로 간주.
 
 **왜?**
-- 기존: 컴퓨터 껐다 켜도 로그인 상태가 유지됨 (localStorage는 디스크에 저장돼 영구 보존)
-- 사용자 경험상 "컴퓨터 재부팅 = 로그아웃"이 표준. 매번 재로그인을 강제하는 게 아니라 **세션 단위(브라우저 프로세스 살아있는 동안)** 로그인 유지하는 모델로 전환
-- sessionStorage는 브라우저 탭/창 닫히면 자동 정리됨
+- 이전 단계의 sessionStorage 일변도는 "재부팅 = 로그아웃"을 보장했지만, "기억해줘"라는 정상적 UX 요구를 못 받음
+- 표준 패턴: 체크박스 분기. 사용자가 직접 선택
+- 양쪽 storage 모두 보고 / 한쪽에만 쓰는 추상화로 application 코드는 storage를 신경 쓰지 않게 함
+
+**핵심 코드 (apiClient.ts)**
+
+```ts
+function readAuth(key: string): string | null {
+  return localStorage.getItem(key) ?? sessionStorage.getItem(key);
+}
+
+function writeAuth(key: string, value: string, persistent: boolean): void {
+  if (persistent) {
+    localStorage.setItem(key, value);
+    sessionStorage.removeItem(key);  // 반대쪽 잔재 방지
+  } else {
+    sessionStorage.setItem(key, value);
+    localStorage.removeItem(key);
+  }
+}
+
+export function saveAuth(data: { token?, refreshToken?, user? }, persistent: boolean) {
+  writeAuth('isLoggedIn', 'true', persistent);
+  if (data.token) writeAuth('authToken', data.token, persistent);
+  // ... 나머지 키도 동일
+}
+
+export function clearAuth() {
+  // 양쪽 storage 다 정리 — 영구/세션 어느 쪽이든 흔적 제거
+  for (const key of AUTH_KEYS) {
+    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
+  }
+}
+```
+
+**refresh 시 토큰 위치 유지 로직**
+
+apiClient의 `refreshAccessToken`은 새로 받은 토큰을 **기존 토큰이 있던 storage 위치 그대로** 저장 (`isPersistent()`로 판단). 사용자가 한 번 정한 영구/세션 모드를 자동 갱신 후에도 유지.
 
 **영향 범위**
-- `apiClient.ts` (refresh/clearAuth/buildHeaders/logoutOnServer)
-- `Login.tsx`, `OAuthCallback.tsx` (로그인 후 토큰 저장)
-- `MyCustom.tsx` (회원 탈퇴 시 정리)
-- `NutritionAnalysis.tsx` (userProfile 읽기)
-- `Root.tsx` (로그인 가드)
+- 신규 export: `saveAuth(data, persistent)` — Login/OAuth 콜백에서 사용
+- `apiClient.ts` — 양쪽 storage 추상화 + persistent 감지 + refresh 시 위치 유지
+- `Login.tsx` — `rememberMe` state + 체크박스 UI + `saveAuth` 호출
+- `OAuthCallback.tsx` — `saveAuth(data, true)` (OAuth는 항상 영구)
+- `MyCustom.tsx` — 회원 탈퇴 시 `clearAuth()`로 양쪽 storage 정리
+- `Root.tsx` — `isLoggedIn` 체크 시 양쪽 storage 모두 봄
+- `NutritionAnalysis.tsx` — `userProfile` 읽기 시 양쪽 storage 모두 봄
 
 **알아둘 점**
-- sessionStorage는 **탭 단위**라 같은 사이트를 새 탭으로 열면 새 탭은 미로그인 상태. 사용자에겐 "탭 두 개 열어놓고 한 쪽만 로그인됨" 현상이 보일 수 있음 — 이는 v1 한계로 받아들이고, 필요하면 추후 BroadcastChannel 같은 걸로 탭 동기화 가능
-- "자동 로그인" 체크박스가 필요해지면 → 체크 시 localStorage, 미체크 시 sessionStorage 식의 분기로 확장 가능
+- 백엔드 refresh token 만료가 14일 → **365일**로 늘어남 (`Naengbuhae_Team_backend` repo). rotation과 합쳐 활성 사용자는 사실상 영구 로그인
+- 미체크 시 sessionStorage라 **탭 단위 세션** — 새 탭에선 미로그인 (필요 시 BroadcastChannel로 탭 동기화 가능)
+- 체크 + 영구 모드: 디스크에 토큰이 남으므로 공용 PC에선 권장 X. 프론트에서 추후 안내 문구 필요할 수도
 
 ---
 
