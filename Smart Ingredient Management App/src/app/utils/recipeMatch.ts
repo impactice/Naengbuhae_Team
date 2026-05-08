@@ -1,4 +1,4 @@
-import { Recipe } from '../data/recipes';
+import { Recipe } from '../types/recipe';
 import { Ingredient } from '../types/ingredient';
 
 export interface RecipeMatch {

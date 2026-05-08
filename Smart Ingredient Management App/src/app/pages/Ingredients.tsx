@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
 import { Link } from 'react-router';
-import { Plus, Trash2, Package, ChevronDown, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Package, Sparkles, AlertTriangle } from 'lucide-react';
 import { CategoryType, StorageType } from '../types/ingredient';
 
 export default function Ingredients() {
@@ -56,7 +56,7 @@ export default function Ingredients() {
   // 정렬
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === 'expiry') {
-      return calculateDDay(a.expiryDate) - calculateDDay(b.expiryDate);
+      return calculateDDay(a.expirationDate) - calculateDDay(b.expirationDate);
     }
     if (sortBy === 'name') {
       return a.name.localeCompare(b.name);
@@ -195,7 +195,7 @@ export default function Ingredients() {
         ) : (
           <div className="space-y-2">
             {sorted.map((ingredient) => {
-              const daysLeft = calculateDDay(ingredient.expiryDate);
+              const daysLeft = calculateDDay(ingredient.expirationDate);
               const status = getExpiryStatus(daysLeft);
               const statusColor = getStatusColor(status);
 
@@ -224,6 +224,12 @@ export default function Ingredients() {
                         >
                           {formatDDay(daysLeft)}
                         </span>
+                        {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-red-100 text-red-700">
+                            <AlertTriangle className="w-3 h-3" />
+                            알레르기 {ingredient.allergyWarnings.join(', ')}
+                          </span>
+                        )}
                       </div>
                       <div className="mt-2 space-y-1">
                         <p className="text-sm text-gray-600">
@@ -236,7 +242,7 @@ export default function Ingredients() {
                         </p>
                         <p className="text-sm text-gray-600">
                           유통기한:{' '}
-                          {ingredient.expiryDate.toLocaleDateString('ko-KR')}
+                          {ingredient.expirationDate.toLocaleDateString('ko-KR')}
                         </p>
                         {/* 영양 정보 추가 */}
                         <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">

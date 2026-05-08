@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Eye, EyeOff } from 'lucide-react';
+import { saveAuth } from '../utils/apiClient';
 
 export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -16,48 +18,62 @@ export default function Login() {
     try {
       const response = await fetch('http://localhost:8080/user/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           username: formData.username,
           password: formData.password,
         }),
       });
 
-      const data = await response.json();
+      if (response.ok) {
+        const data = await response.json();
 
-      if (data.success) {
-        sessionStorage.setItem('token', data.token);
-        sessionStorage.setItem('isLoggedIn', 'true');
-        alert(data.message);
+        if (data.success === false) {
+          alert(`로그인 실패: ${data.message || '아이디 또는 비밀번호를 확인해주세요.'}`);
+          return;
+        }
+
+        saveAuth(
+          {
+            token: data.token,
+            refreshToken: data.refreshToken,
+            user: data.user,
+          },
+          rememberMe
+        );
+
         navigate('/');
       } else {
-        alert(data.message);
+        const error = await response.text();
+        alert(`로그인 실패: ${error}`);
       }
     } catch (error) {
-      console.error('로그인 실패:', error);
-      alert('서버 연결 실패');
+      console.error('로그인 오류:', error);
+      alert('로그인 중 오류가 발생했습니다.');
     }
   };
 
   const handleSocialLogin = (provider: string) => {
-    // 소셜 로그인 로직
+    // 소셜 로그인 로직 (추후 구현)
     console.log(`${provider} 로그인`);
-    sessionStorage.setItem('isLoggedIn', 'true');
-    navigate('/');
+    alert('소셜 로그인은 추후 구현 예정입니다.');
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <div className="flex-1 flex flex-col justify-center px-6 py-12">
-        {/* 로고/타이틀 영역 */}
-        <div className="mb-12">
-          <h1 className="text-3xl mb-2" style={{ fontWeight: 700 }}>
-            스마트 냉장고
-          </h1>
-          <p className="text-gray-500">
-            신선한 식재료 관리의 시작
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+      <div className="w-full max-w-md bg-white min-h-screen shadow-xl flex flex-col">
+        <div className="flex-1 flex flex-col justify-center px-6 py-12">
+          {/* 로고/타이틀 영역 */}
+          <div className="mb-12">
+            <h1 className="text-3xl mb-2" style={{ fontWeight: 700 }}>
+              스마트 냉장고
+            </h1>
+            <p className="text-gray-500">
+              신선한 식재료 관리의 시작
+            </p>
+          </div>
 
         {/* 로그인 폼 */}
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,6 +118,16 @@ export default function Login() {
           >
             로그인
           </button>
+
+          <label className="flex items-center gap-2 text-sm text-gray-600">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="accent-black"
+            />
+            로그인 상태 유지
+          </label>
         </form>
 
         {/* 구분선 */}
@@ -167,6 +193,7 @@ export default function Login() {
           >
             회원가입
           </Link>
+        </div>
         </div>
       </div>
     </div>

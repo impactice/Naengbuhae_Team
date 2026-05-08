@@ -17,7 +17,7 @@ export default function AddIngredient() {
   const [purchaseDate, setPurchaseDate] = useState(
     new Date().toISOString().split('T')[0]
   );
-  const [expiryDate, setExpiryDate] = useState('');
+  const [expirationDate, setExpirationDate] = useState('');
   const [useAutoExpiry, setUseAutoExpiry] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,11 +40,11 @@ export default function AddIngredient() {
     if (useAutoExpiry) {
       expiry = getDefaultExpiryDate(name, purchase);
     } else {
-      if (!expiryDate) {
+      if (!expirationDate) {
         alert('유통기한을 입력해주세요');
         return;
       }
-      expiry = new Date(expiryDate);
+      expiry = new Date(expirationDate);
       if (expiry < purchase) {
         alert('유통기한은 구매일 이후여야 합니다');
         return;
@@ -58,7 +58,7 @@ export default function AddIngredient() {
       unit,
       storage,
       purchaseDate: purchase,
-      expiryDate: expiry,
+      expirationDate: expiry,
     });
 
     navigate('/ingredients');
@@ -221,8 +221,8 @@ export default function AddIngredient() {
             </label>
             <input
               type="date"
-              value={expiryDate}
-              onChange={(e) => setExpiryDate(e.target.value)}
+              value={expirationDate}
+              onChange={(e) => setExpirationDate(e.target.value)}
               className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:border-black"
               required
             />

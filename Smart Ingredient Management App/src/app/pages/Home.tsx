@@ -9,20 +9,20 @@ export default function Home() {
 
   // 유통기한 임박 순으로 정렬
   const sortedByExpiry = [...ingredients].sort((a, b) => {
-    const daysA = calculateDDay(a.expiryDate);
-    const daysB = calculateDDay(b.expiryDate);
+    const daysA = calculateDDay(a.expirationDate);
+    const daysB = calculateDDay(b.expirationDate);
     return daysA - daysB;
   });
 
   // 위험 상태별로 분류
   const dangerItems = sortedByExpiry.filter(
-    (item) => getExpiryStatus(calculateDDay(item.expiryDate)) === 'danger'
+    (item) => getExpiryStatus(calculateDDay(item.expirationDate)) === 'danger'
   );
   const warningItems = sortedByExpiry.filter(
-    (item) => getExpiryStatus(calculateDDay(item.expiryDate)) === 'warning'
+    (item) => getExpiryStatus(calculateDDay(item.expirationDate)) === 'warning'
   );
   const safeItems = sortedByExpiry.filter(
-    (item) => getExpiryStatus(calculateDDay(item.expiryDate)) === 'safe'
+    (item) => getExpiryStatus(calculateDDay(item.expirationDate)) === 'safe'
   );
 
   const totalItems = ingredients.length;
@@ -212,7 +212,7 @@ export default function Home() {
         ) : (
           <div className="space-y-2">
             {sortedByExpiry.slice(0, 10).map((ingredient) => {
-              const daysLeft = calculateDDay(ingredient.expiryDate);
+              const daysLeft = calculateDDay(ingredient.expirationDate);
               const status = getExpiryStatus(daysLeft);
               const statusColor = getStatusColor(status);
 

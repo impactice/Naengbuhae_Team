@@ -8,20 +8,20 @@ export default function Priority() {
 
   // 유통기한 순으로 정렬 (임박한 순)
   const sortedByPriority = [...ingredients].sort((a, b) => {
-    const daysA = calculateDDay(a.expiryDate);
-    const daysB = calculateDDay(b.expiryDate);
+    const daysA = calculateDDay(a.expirationDate);
+    const daysB = calculateDDay(b.expirationDate);
     return daysA - daysB;
   });
 
   // 위험도별 분류
   const dangerItems = sortedByPriority.filter(
-    (item) => getExpiryStatus(calculateDDay(item.expiryDate)) === 'danger'
+    (item) => getExpiryStatus(calculateDDay(item.expirationDate)) === 'danger'
   );
   const warningItems = sortedByPriority.filter(
-    (item) => getExpiryStatus(calculateDDay(item.expiryDate)) === 'warning'
+    (item) => getExpiryStatus(calculateDDay(item.expirationDate)) === 'warning'
   );
   const safeItems = sortedByPriority.filter(
-    (item) => getExpiryStatus(calculateDDay(item.expiryDate)) === 'safe'
+    (item) => getExpiryStatus(calculateDDay(item.expirationDate)) === 'safe'
   );
 
   const handleDelete = (id: string, name: string) => {
@@ -151,7 +151,7 @@ export default function Priority() {
               </div>
               <div className="space-y-2">
                 {dangerItems.map((ingredient) => {
-                  const daysLeft = calculateDDay(ingredient.expiryDate);
+                  const daysLeft = calculateDDay(ingredient.expirationDate);
                   return (
                     <PriorityCard
                       key={ingredient.id}
@@ -179,7 +179,7 @@ export default function Priority() {
               </div>
               <div className="space-y-2">
                 {warningItems.map((ingredient) => {
-                  const daysLeft = calculateDDay(ingredient.expiryDate);
+                  const daysLeft = calculateDDay(ingredient.expirationDate);
                   return (
                     <PriorityCard
                       key={ingredient.id}
@@ -207,7 +207,7 @@ export default function Priority() {
               </div>
               <div className="space-y-2">
                 {safeItems.slice(0, 5).map((ingredient) => {
-                  const daysLeft = calculateDDay(ingredient.expiryDate);
+                  const daysLeft = calculateDDay(ingredient.expirationDate);
                   return (
                     <PriorityCard
                       key={ingredient.id}
@@ -268,7 +268,7 @@ function PriorityCard({
               {ingredient.unit}
             </p>
             <p className="text-sm text-gray-600">
-              유통기한: {ingredient.expiryDate.toLocaleDateString('ko-KR')}
+              유통기한: {ingredient.expirationDate.toLocaleDateString('ko-KR')}
             </p>
             {daysLeft <= 0 && (
               <p className="text-xs text-red-600" style={{ fontWeight: 600 }}>

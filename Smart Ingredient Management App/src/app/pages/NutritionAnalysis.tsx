@@ -3,6 +3,7 @@ import { useIngredients } from '../hooks/useIngredients';
 import { Link } from 'react-router';
 import { ChevronLeft, Sparkles, TrendingUp, AlertCircle } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { getAuthValue } from '../utils/apiClient';
 
 // 식재료별 영양 정보 데이터베이스 (100g 기준)
 const nutritionDatabase: Record<string, {
@@ -71,7 +72,7 @@ export default function NutritionAnalysis() {
   }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
 
   // 사용자 프로필 불러오기
-  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+  const userProfile = JSON.parse(getAuthValue('userProfile') || '{}');
   const allergies = userProfile.allergies?.toLowerCase().split(',').map((a: string) => a.trim()) || [];
 
   // 영양소 비율 데이터

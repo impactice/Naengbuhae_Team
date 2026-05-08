@@ -4,22 +4,28 @@ import { Ingredient, ShoppingItem } from '../types/ingredient';
 
 export function useIngredients() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const syncFromCache = () => {
+    const loadIngredients = async () => {
+      setLoading(true);
+      await ingredientStore.fetchIngredients();
       setIngredients(ingredientStore.getIngredients());
+      setLoading(false);
     };
 
-    // 처음 한 번 백엔드에서 받아오기
-    ingredientStore.fetchIngredients();
+    loadIngredients();
 
-    // 캐시 변경 시 자동 동기화
-    const unsubscribe = ingredientStore.subscribe(syncFromCache);
+    const unsubscribe = ingredientStore.subscribe(() => {
+      setIngredients(ingredientStore.getIngredients());
+    });
+
     return unsubscribe;
   }, []);
 
   return {
     ingredients,
+    loading,
     addIngredient: (ingredient: Omit<Ingredient, 'id'>) =>
       ingredientStore.addIngredient(ingredient),
     updateIngredient: (id: string, updates: Partial<Ingredient>) =>
@@ -30,22 +36,33 @@ export function useIngredients() {
 
 export function useShoppingList() {
   const [shoppingList, setShoppingList] = useState<ShoppingItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadShoppingList = () => {
+    const loadShoppingList = async () => {
+      setLoading(true);
+      await ingredientStore.fetchShoppingList();
       setShoppingList(ingredientStore.getShoppingList());
+      setLoading(false);
     };
 
     loadShoppingList();
-    const unsubscribe = ingredientStore.subscribe(loadShoppingList);
+
+    const unsubscribe = ingredientStore.subscribe(() => {
+      setShoppingList(ingredientStore.getShoppingList());
+    });
+
     return unsubscribe;
   }, []);
 
   return {
     shoppingList,
+    loading,
     addShoppingItem: (name: string, quantity: number, unit: string) =>
       ingredientStore.addShoppingItem(name, quantity, unit),
     toggleShoppingItem: (id: string) => ingredientStore.toggleShoppingItem(id),
     deleteShoppingItem: (id: string) => ingredientStore.deleteShoppingItem(id),
+    transferShoppingItemToIngredient: (id: string) =>
+      ingredientStore.transferShoppingItemToIngredient(id),
   };
 }
