@@ -120,6 +120,34 @@ apiClient의 `refreshAccessToken`은 새로 받은 토큰을 **기존 토큰이 
 
 ---
 
+### 4) 식재료 카드에 알레르기 경고 배지
+
+**무엇을 바꿨나**: `Ingredients.tsx`의 식재료 카드 이름 옆에 D-day 배지와 함께 빨간 알레르기 배지(`AlertTriangle` 아이콘 + 매칭 키워드) 표시.
+
+- `Ingredient` 타입에 `allergyWarnings?: string[]` 필드 추가
+- 백엔드는 이미 응답에 채워주고 있었지만 화면 표시 코드가 없어 안 보였음
+- 비어있으면 표시 안 됨, 있으면 "알레르기 땅콩" 형태로 빨간 배지
+
+---
+
+### 5) 레시피 추천 흐름 수정 — 시드 8개가 안 보이던 버그
+
+**문제**: `recipeStore.fetchRecipes()`가 `/api/recipes`(본인 등록한 레시피만)를 호출해서 system 계정 소유의 시드 8개가 결과에 0개로 떴음. "레시피 추천" 화면이 항상 비어있는 상태.
+
+**해결 1**: 호출 엔드포인트를 `/api/recipes/recommendations`로 변경. 응답이 `RecipeMatchResponseDto[]`로 래핑돼있어 `.recipe`만 추출. 프론트는 자체 `matchRecipesWithIngredients`로 매칭 재계산하므로 백엔드의 matchRate는 일단 무시. 알레르기 매칭 레시피는 백엔드에서 자동 필터링됨.
+
+**해결 2**: `Recipes.tsx`의 `useMemo` 의존성 배열에 `recipes`가 빠져있어서, 비동기로 로드된 레시피가 `matches`에 반영 안 되던 React 버그. `[ingredients]` → `[recipes, ingredients]`로 수정. 이전엔 `/api/recipes`가 0개라 마스킹돼있었던 것.
+
+---
+
+### 6) "만들 수 있는 요리" 필터 완화
+
+**문제**: `matchRate >= 100` (필수+선택 재료 모두 보유) 조건이 너무 빡빡해서 대부분의 레시피가 안 보였음.
+
+**해결**: `m.hasIngredients.length > 0` (보유 재료가 1개라도 들어가는 레시피)로 완화. 사용자가 냉장고 재료를 활용할 의도 — "이거 몇 개만 더 사면 만들 수 있겠다" 까지 보여줌.
+
+---
+
 ## 이전 작업 정리 (2026-05-07)
 
 이번 세션의 큰 줄기:
