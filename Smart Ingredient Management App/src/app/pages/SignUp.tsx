@@ -199,8 +199,8 @@ export default function SignUp() {
     }
   };
 
-  // 년도 옵션 (1924 ~ 2024)
-  const years = Array.from({ length: 101 }, (_, i) => 2024 - i);
+  // 년도 옵션 (현재년~100년 전)
+  const years = Array.from({ length: 101 }, (_, i) => new Date().getFullYear() - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 

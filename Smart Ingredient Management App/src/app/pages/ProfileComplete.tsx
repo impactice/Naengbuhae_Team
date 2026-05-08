@@ -4,12 +4,19 @@ import { ChevronLeft } from 'lucide-react';
 import { userStore } from '../store/userStore';
 import { useUserProfile } from '../hooks/useUserProfile';
 
-// 카카오/네이버/구글로 로그인한 사용자(신체정보 비어있음)가
-// 나중에 마이페이지에서 직접 들어와 정보를 입력하는 페이지.
+// 같은 페이지가 두 가지 모드로 동작:
+//  - 입력 모드 (isProfileIncomplete=true): 카카오/네이버/구글로 가입 후 신체정보 미입력 사용자
+//  - 수정 모드 (isProfileIncomplete=false): 기존에 정보 입력 마친 사용자가 값 변경하러 옴
+// 차이는 헤더 제목, 본문 헤딩, 서브텍스트, 제출 버튼, 성공 알림 텍스트뿐. 검증/저장 로직은 동일.
 // PUT /user/me로 저장.
 export default function ProfileComplete() {
   const navigate = useNavigate();
   const { profile, loading } = useUserProfile();
+
+  // 신체정보가 다 채워졌으면 "수정" 모드, 하나라도 비어있으면 "입력" 모드.
+  // MyCustom.tsx의 isProfileIncomplete 판정과 동일 기준.
+  const isEditMode = !!profile && !!profile.height && !!profile.weight
+      && !!profile.gender && !!profile.birthDate;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -26,6 +33,12 @@ export default function ProfileComplete() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
+  // 폼이 허용하는 값 화이트리스트. 옛 더러운 데이터(gender="남성", activityLevel="sedentary" 등)가
+  // 폼에 그대로 들어와서 form-level 검증을 통과해버리고 백엔드에서 터지는 걸 방지.
+  const VALID_GENDERS = ['남', '여'];
+  const VALID_ACTIVITY = ['거의 움직임 없음', '가벼운 활동', '보통 활동', '많은 활동', '매우 많은 활동'];
+  const VALID_DIET_GOAL = ['체중 감량', '체중 유지', '근육량 증가', '건강 관리'];
+
   // 기존 프로필이 있으면 폼 초기값으로 채워넣기 (이름 등)
   useEffect(() => {
     if (!profile) return;
@@ -33,17 +46,24 @@ export default function ProfileComplete() {
     // select 옵션은 0 패딩 없는 값("5")이라 그대로 넣으면 매칭 안 돼서 빈 값으로 표시됨.
     // → parseInt로 0 제거 후 문자열화.
     const [year, month, day] = (profile.birthDate ?? '').split('-');
+    // 미래 날짜나 너무 오래된 연도는 select 옵션 범위(현재년~100년 전) 밖이라 매칭 안 되어 빈 값.
+    const currentYear = new Date().getFullYear();
+    const yearNum = year ? parseInt(year, 10) : NaN;
+    const validYear = !isNaN(yearNum) && yearNum >= currentYear - 100 && yearNum <= currentYear
+        ? String(yearNum) : '';
+
     setFormData((prev) => ({
       ...prev,
       name: profile.name ?? prev.name,
-      gender: profile.gender ?? '',
+      gender: profile.gender && VALID_GENDERS.includes(profile.gender) ? profile.gender : '',
       height: profile.height ? String(profile.height) : '',
       weight: profile.weight ? String(profile.weight) : '',
-      birthYear: year ?? '',
+      birthYear: validYear,
       birthMonth: month ? String(parseInt(month, 10)) : '',
       birthDay: day ? String(parseInt(day, 10)) : '',
-      activityLevel: profile.activityLevel ?? '',
-      dietGoal: profile.dietGoal ?? '',
+      activityLevel: profile.activityLevel && VALID_ACTIVITY.includes(profile.activityLevel)
+          ? profile.activityLevel : '',
+      dietGoal: profile.dietGoal && VALID_DIET_GOAL.includes(profile.dietGoal) ? profile.dietGoal : '',
       allergies: profile.allergies ?? '',
     }));
   }, [profile]);
@@ -99,7 +119,7 @@ export default function ProfileComplete() {
         dietGoal: formData.dietGoal,
         allergies: formData.allergies,
       });
-      alert('프로필이 저장되었습니다!');
+      alert(isEditMode ? '프로필이 수정되었습니다!' : '프로필이 저장되었습니다!');
       navigate('/my-custom');
     } catch {
       // userStore.updateUserProfile 내부에서 alert 처리됨
@@ -108,7 +128,7 @@ export default function ProfileComplete() {
     }
   };
 
-  const years = Array.from({ length: 101 }, (_, i) => 2024 - i);
+  const years = Array.from({ length: 101 }, (_, i) => new Date().getFullYear() - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
@@ -131,18 +151,27 @@ export default function ProfileComplete() {
             <ChevronLeft className="w-6 h-6" />
           </button>
           <h1 className="ml-2 text-xl" style={{ fontWeight: 700 }}>
-            프로필 정보 입력
+            {isEditMode ? '프로필 수정' : '프로필 정보 입력'}
           </h1>
         </div>
 
         <div className="px-6 py-8 pb-12">
           <div className="mb-8">
             <h2 className="text-2xl mb-2" style={{ fontWeight: 700 }}>
-              맞춤 추천을 위해
+              {isEditMode ? '정보를 수정해주세요' : '맞춤 추천을 위해'}
             </h2>
             <p className="text-gray-500">
-              키, 몸무게, 활동량 등을 입력하시면<br />
-              개인 맞춤 식단과 권장 칼로리를 받아보실 수 있어요
+              {isEditMode ? (
+                <>
+                  변경할 항목을 입력하시면<br />
+                  권장 칼로리도 자동으로 다시 계산됩니다
+                </>
+              ) : (
+                <>
+                  키, 몸무게, 활동량 등을 입력하시면<br />
+                  개인 맞춤 식단과 권장 칼로리를 받아보실 수 있어요
+                </>
+              )}
             </p>
           </div>
 
@@ -352,7 +381,7 @@ export default function ProfileComplete() {
               disabled={submitting}
               className="w-full py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors mt-8 disabled:opacity-50"
             >
-              {submitting ? '저장 중...' : '저장하기'}
+              {submitting ? (isEditMode ? '수정 중...' : '저장 중...') : (isEditMode ? '수정하기' : '저장하기')}
             </button>
           </form>
         </div>
