@@ -6,7 +6,59 @@
 
 ---
 
-## 🆕 이번 작업 정리 (2026-05-07)
+## 🆕 이번 작업 정리 (2026-05-08)
+
+이번 세션의 큰 줄기:
+1. **세션 저장소 전환** — `localStorage` → `sessionStorage`로 바꿔서 브라우저/컴퓨터 종료 = 자동 로그아웃
+2. **백엔드 사이드 변경에 따른 영향** — 알레르기 경고 응답 / `POST /api/ingredients` 응답 형태 변경 등
+
+---
+
+### 1) `localStorage` → `sessionStorage` 일괄 전환
+
+**무엇을 바꿨나**: auth/session 관련 키(`authToken`, `refreshToken`, `isLoggedIn`, `userProfile`)를 모두 `sessionStorage`로 이동.
+
+**왜?**
+- 기존: 컴퓨터 껐다 켜도 로그인 상태가 유지됨 (localStorage는 디스크에 저장돼 영구 보존)
+- 사용자 경험상 "컴퓨터 재부팅 = 로그아웃"이 표준. 매번 재로그인을 강제하는 게 아니라 **세션 단위(브라우저 프로세스 살아있는 동안)** 로그인 유지하는 모델로 전환
+- sessionStorage는 브라우저 탭/창 닫히면 자동 정리됨
+
+**영향 범위**
+- `apiClient.ts` (refresh/clearAuth/buildHeaders/logoutOnServer)
+- `Login.tsx`, `OAuthCallback.tsx` (로그인 후 토큰 저장)
+- `MyCustom.tsx` (회원 탈퇴 시 정리)
+- `NutritionAnalysis.tsx` (userProfile 읽기)
+- `Root.tsx` (로그인 가드)
+
+**알아둘 점**
+- sessionStorage는 **탭 단위**라 같은 사이트를 새 탭으로 열면 새 탭은 미로그인 상태. 사용자에겐 "탭 두 개 열어놓고 한 쪽만 로그인됨" 현상이 보일 수 있음 — 이는 v1 한계로 받아들이고, 필요하면 추후 BroadcastChannel 같은 걸로 탭 동기화 가능
+- "자동 로그인" 체크박스가 필요해지면 → 체크 시 localStorage, 미체크 시 sessionStorage 식의 분기로 확장 가능
+
+---
+
+### 2) 백엔드 사이드 변경에 따른 영향 (참고)
+
+**알레르기 경고 응답** (비파괴, opt-in)
+- `GET /api/recipes`, `GET /api/recipes/recommendations`, `GET /api/ingredients`, `POST /api/ingredients` 응답에 `allergyWarnings: string[]` 필드 추가
+- 비어있으면 안전, 비어있지 않으면 사용자 알레르기와 매칭된 키워드들 (예: `["땅콩"]`)
+- 프론트는 이 배열이 있을 때 경고 배지/문구 표시하면 됨. 무시해도 동작은 그대로
+- 추천(`/api/recipes/recommendations`)에선 알레르기 매칭된 레시피가 결과에서 자동으로 빠짐
+
+**`POST /api/ingredients` 응답 형태 변경** (⚠️ breaking)
+- 이전: `123` (생성된 ID, 숫자)
+- 이후: `{id: 123, name: "...", allergyWarnings: [...], ...}` (전체 IngredientResponseDto)
+- 영향: 프론트에서 `data`를 ID로 직접 쓰던 코드가 있으면 `data.id`로 변경 필요
+- 이점: 등록 직후 알레르기 경고를 즉시 표시 가능
+
+**그 외 백엔드 변경 (프론트 영향 없음)**
+- 인증 엔드포인트 Rate Limiting (5회/분, 5회/분, 10회/분) — 정상 사용 시 체감 없음
+- 전역 예외 처리 보강 — 에러 응답이 더 일관된 형태(`{success: false, message: ...}`)로 옴
+- 입력값 검증 강화 — 잘못된 입력 시 400 응답에 한 번에 모든 field 에러가 합쳐져서 옴 (`'; '` 구분)
+- prod 설정 분리, refresh token 자동 정리, 카카오 OAuth unlink — 운영 측면
+
+---
+
+## 이전 작업 정리 (2026-05-07)
 
 이번 세션의 큰 줄기:
 1. **인증 흐름 보강** — 로그아웃 버그 수정, 회원 탈퇴, refresh token 자동 갱신
