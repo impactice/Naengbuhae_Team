@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { userStore } from '../store/userStore';
+import { clearAuth } from '../utils/apiClient';
 
 const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
   '체중 감량': 'weight-loss',
@@ -35,9 +36,8 @@ export default function MyCustom() {
     }
     try {
       await userStore.deleteAccount();
-      sessionStorage.removeItem('isLoggedIn');
-      sessionStorage.removeItem('authToken');
-      sessionStorage.removeItem('userProfile');
+      // 양쪽 storage(session/local) 모두 정리. 로그인 유지 체크 여부와 무관하게 흔적 제거.
+      clearAuth();
       userStore.clearCache();
       alert('회원 탈퇴가 완료되었습니다.');
       navigate('/login');

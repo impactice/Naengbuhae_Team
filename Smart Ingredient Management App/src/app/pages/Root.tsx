@@ -8,9 +8,10 @@ export default function Root() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 로그인 여부 확인
+  // 로그인 여부 확인 — sessionStorage(세션 로그인) / localStorage(로그인 유지) 양쪽 다 봄
   useEffect(() => {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    const isLoggedIn =
+      sessionStorage.getItem('isLoggedIn') ?? localStorage.getItem('isLoggedIn');
     if (!isLoggedIn) {
       navigate('/login');
     }

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { userStore } from '../store/userStore';
+import { saveAuth } from '../utils/apiClient';
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
@@ -17,12 +18,8 @@ export default function OAuthCallback() {
       return;
     }
 
-    // 토큰 저장 — 일반 로그인과 동일한 키 사용
-    sessionStorage.setItem('authToken', token);
-    if (refreshToken) {
-      sessionStorage.setItem('refreshToken', refreshToken);
-    }
-    sessionStorage.setItem('isLoggedIn', 'true');
+    // OAuth는 "간편 로그인" 의도라 항상 로그인 유지(localStorage)로 간주.
+    saveAuth({ token, refreshToken: refreshToken ?? undefined }, true);
 
     // 프로필 정보 받아오고 홈으로 이동
     // (카카오 사용자는 신체정보가 비어있을 수 있는데, MyCustom 페이지에서 CTA로 안내)

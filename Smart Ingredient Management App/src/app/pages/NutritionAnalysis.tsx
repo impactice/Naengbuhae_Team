@@ -70,8 +70,10 @@ export default function NutritionAnalysis() {
     };
   }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
 
-  // 사용자 프로필 불러오기
-  const userProfile = JSON.parse(sessionStorage.getItem('userProfile') || '{}');
+  // 사용자 프로필 불러오기 — sessionStorage(세션 로그인) / localStorage(로그인 유지) 양쪽 다 봄
+  const userProfile = JSON.parse(
+    sessionStorage.getItem('userProfile') ?? localStorage.getItem('userProfile') ?? '{}',
+  );
   const allergies = userProfile.allergies?.toLowerCase().split(',').map((a: string) => a.trim()) || [];
 
   // 영양소 비율 데이터

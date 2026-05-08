@@ -1,18 +1,63 @@
 // 모든 인증 필요한 API 호출은 이 wrapper를 통과시킨다.
 // - Authorization 헤더 자동 부착
 // - 401/403 응답 시 refresh token으로 access token 재발급 후 1회 재시도
-// - 재발급 실패 시 sessionStorage 정리 + /login 이동
+// - 재발급 실패 시 auth 정리 + /login 이동
+//
+// === 저장소 정책 ===
+// localStorage: "로그인 상태 유지" 체크 시 (브라우저/컴퓨터 종료해도 살아남음)
+// sessionStorage: 미체크 시 (브라우저 닫으면 휘발)
+//
+// 읽기는 양쪽 모두 보고(localStorage 우선), 쓰기는 기존 토큰이 있던 쪽에 그대로 둠.
+// 처음 저장은 saveAuth(persistent)로 한 번에 위치 결정.
 
 const API_BASE_URL = 'http://localhost:8080';
+
+const AUTH_KEYS = ['authToken', 'refreshToken', 'isLoggedIn', 'userProfile'] as const;
+
+// 토큰이 어느 storage에 있는지 — 로그인 상태 유지 여부 판단.
+// localStorage에 authToken이 있으면 영구(remember-me), 아니면 세션 단위.
+function isPersistent(): boolean {
+  return localStorage.getItem('authToken') !== null;
+}
+
+// 양쪽 storage 모두에서 키를 찾는다. localStorage 우선 (영구 모드를 우선시).
+function readAuth(key: string): string | null {
+  return localStorage.getItem(key) ?? sessionStorage.getItem(key);
+}
+
+// 한쪽에만 두기 위해 반대쪽은 비우고 저장. 영구 ↔ 세션 전환 시 잔재 방지.
+function writeAuth(key: string, value: string, persistent: boolean): void {
+  if (persistent) {
+    localStorage.setItem(key, value);
+    sessionStorage.removeItem(key);
+  } else {
+    sessionStorage.setItem(key, value);
+    localStorage.removeItem(key);
+  }
+}
+
+// 로그인 직후 / OAuth 콜백 직후 사용. 4개 키를 한 번에 적절한 위치에 저장.
+export function saveAuth(
+  data: { token?: string; refreshToken?: string; user?: unknown },
+  persistent: boolean,
+): void {
+  writeAuth('isLoggedIn', 'true', persistent);
+  if (data.token) writeAuth('authToken', data.token, persistent);
+  if (data.refreshToken) writeAuth('refreshToken', data.refreshToken, persistent);
+  if (data.user) writeAuth('userProfile', JSON.stringify(data.user), persistent);
+}
 
 // 동시에 여러 요청이 401 받았을 때 refresh 호출이 중복되지 않도록 한 번만 실행하고 promise 공유
 let inflightRefresh: Promise<boolean> | null = null;
 
 async function refreshAccessToken(): Promise<boolean> {
-  const refreshToken = sessionStorage.getItem('refreshToken');
+  const refreshToken = readAuth('refreshToken');
   if (!refreshToken) return false;
 
   if (inflightRefresh) return inflightRefresh;
+
+  // 기존 토큰이 있던 위치 그대로 새 토큰을 저장 (영구 모드는 영구로, 세션 모드는 세션으로)
+  const persistent = isPersistent();
 
   inflightRefresh = (async () => {
     try {
@@ -24,8 +69,8 @@ async function refreshAccessToken(): Promise<boolean> {
       if (!res.ok) return false;
       const data = (await res.json()) as { token?: string; refreshToken?: string };
       if (!data.token || !data.refreshToken) return false;
-      sessionStorage.setItem('authToken', data.token);
-      sessionStorage.setItem('refreshToken', data.refreshToken);
+      writeAuth('authToken', data.token, persistent);
+      writeAuth('refreshToken', data.refreshToken, persistent);
       return true;
     } catch {
       return false;
@@ -36,16 +81,16 @@ async function refreshAccessToken(): Promise<boolean> {
   return inflightRefresh;
 }
 
-// 로그아웃/탈퇴/refresh 실패 시 클라이언트 측 흔적 일괄 제거
+// 로그아웃/탈퇴/refresh 실패 시 클라이언트 측 흔적 일괄 제거. 양쪽 storage 모두 정리.
 export function clearAuth(): void {
-  sessionStorage.removeItem('isLoggedIn');
-  sessionStorage.removeItem('authToken');
-  sessionStorage.removeItem('refreshToken');
-  sessionStorage.removeItem('userProfile');
+  for (const key of AUTH_KEYS) {
+    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
+  }
 }
 
 function buildHeaders(extra?: HeadersInit): HeadersInit {
-  const token = sessionStorage.getItem('authToken');
+  const token = readAuth('authToken');
   return {
     'Content-Type': 'application/json',
     ...extra,
@@ -75,7 +120,7 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
 
 // 서버에 refresh token 폐기 요청까지 보내는 로그아웃 헬퍼
 export async function logoutOnServer(): Promise<void> {
-  const refreshToken = sessionStorage.getItem('refreshToken');
+  const refreshToken = readAuth('refreshToken');
   if (!refreshToken) return;
   try {
     await fetch(`${API_BASE_URL}/user/logout`, {

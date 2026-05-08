@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Eye, EyeOff } from 'lucide-react';
+import { saveAuth } from '../utils/apiClient';
 
 export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -35,16 +37,11 @@ export default function Login() {
           return;
         }
 
-        sessionStorage.setItem('isLoggedIn', 'true');
-        if (data.token) {
-          sessionStorage.setItem('authToken', data.token);
-        }
-        if (data.refreshToken) {
-          sessionStorage.setItem('refreshToken', data.refreshToken);
-        }
-        if (data.user) {
-          sessionStorage.setItem('userProfile', JSON.stringify(data.user));
-        }
+        // rememberMe=true → localStorage (영구), false → sessionStorage (세션 종료 시 로그아웃)
+        saveAuth(
+          { token: data.token, refreshToken: data.refreshToken, user: data.user },
+          rememberMe,
+        );
 
         navigate('/');
       } else {
@@ -113,6 +110,17 @@ export default function Login() {
               )}
             </button>
           </div>
+
+          {/* 로그인 상태 유지 체크박스 — 체크 시 브라우저 종료해도 로그인 유지 (localStorage 사용) */}
+          <label className="flex items-center gap-2 px-1 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 accent-black cursor-pointer"
+            />
+            <span className="text-sm text-gray-600">로그인 상태 유지</span>
+          </label>
 
           <button
             type="submit"
