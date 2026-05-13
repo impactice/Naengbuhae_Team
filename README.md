@@ -6,7 +6,205 @@
 
 ---
 
-## 🆕 이번 작업 정리 (2026-05-08)
+## 🆕 이번 작업 정리 (2026-05-13)
+
+이번 세션의 큰 줄기:
+1. **다중 냉장고 + 가족 공유** — 한 계정이 여러 냉장고를 가지고, 6자리 초대 코드로 다른 사용자를 끌어들임
+2. **AI 사진 인식 (Gemini Vision)** — 식재료 단건 인식 + 영수증 OCR. 결과로 폼 자동 채움
+3. **카테고리 4개 추가** — 가공식품/음료/조미료/간식. 기존 7개 → 11개
+4. **비밀번호 찾기 + 이메일 인증 화면** — 이메일로 받은 링크 기반 reset / verify 흐름
+
+---
+
+### 1) 다중 냉장고 + 초대 코드 — `fridgeStore` / `FridgeSelector` / `FridgeManagement`
+
+**무엇을 바꿨나**: 식재료가 단일 "내 냉장고"에 종속되던 구조 → 한 사용자가 여러 냉장고에 속할 수 있게. 헤더에 냉장고 선택 칩을 두고, 별도 관리 페이지에서 생성/이름변경/멤버초대/나가기 가능.
+
+**왜?**
+- 가족이 한 냉장고를 공유하는 시나리오 — 부모/자식이 같은 식재료 목록을 보고 같이 관리
+- 회사 탕비실, 자취방 셰어 등도 같은 메커니즘으로 커버
+- "오너" 개념 없음 — 멤버는 모두 동등. 누구나 초대 가능, 누구나 떠날 수 있음 (사용자 결정)
+
+**핵심 코드 (fridgeStore)**
+```ts
+class FridgeStore {
+  private listeners: Set<() => void> = new Set();
+  private fridgesCache: Fridge[] = [];
+  private selectedId: number | null = null;
+
+  // 첫 로그인/리프레시 후 호출. 멤버인 모든 냉장고 가져오기.
+  async fetchFridges(): Promise<Fridge[]> { /* GET /api/fridges */ }
+
+  // 헤더 칩에서 선택. localStorage에 저장해 페이지 이동 후에도 유지.
+  setSelected(id: number): void {
+    this.selectedId = id;
+    localStorage.setItem('selectedFridgeId', String(id));
+    this.notifyListeners();
+  }
+
+  getSelectedId(): number | null { return this.selectedId; }
+
+  async createFridge(name: string): Promise<void> { /* POST /api/fridges */ }
+  async rename(id: number, name: string): Promise<void> { /* PATCH */ }
+  async deleteFridge(id: number): Promise<void> { /* DELETE */ }
+  async issueInvite(id: number): Promise<string> { /* POST /api/fridges/:id/invites */ }
+  async joinByCode(code: string): Promise<void> { /* POST /api/fridges/join */ }
+  async leave(id: number): Promise<void> { /* POST /api/fridges/:id/leave */ }
+  async removeMember(fridgeId: number, userId: number): Promise<void> { /* DELETE */ }
+}
+```
+
+**초대 코드 정책**
+- 한 냉장고당 활성 코드 1개. 24시간 안에 재발급 요청해도 기존 코드를 재사용 (revoke되지 않음 = 안전)
+- 24시간 지나면 자동 만료 → 다음 발급 요청 시 새 코드 생성
+- 다회용 — 코드 하나로 여러 명이 들어올 수 있음
+
+**관리 페이지 UX**
+- 카드 그리드로 냉장고 나열 → 카드 클릭 시 상세 모달
+- 상세에서 멤버 목록 + 초대 코드 + 이름변경/삭제/나가기 액션
+- `window.prompt` 대신 `TextPromptModal` 컴포넌트 사용 (브라우저 기본 다이얼로그가 못생겨서)
+
+**영향 범위**
+- 신규: `store/fridgeStore.ts`, `hooks/useFridges.ts`, `components/FridgeSelector.tsx`, `pages/FridgeManagement.tsx`, `components/TextPromptModal.tsx`
+- `Root.tsx` — 로그아웃 시 `fridgeStore.clear()` 추가
+- `ingredientStore.ts` — `fetchIngredients`/`addIngredient`가 `fridgeStore.getSelectedId()`를 읽어 쿼리/바디에 `fridgeId` 부착 (동적 import로 순환 의존 회피)
+
+**알아둘 점**
+- 백엔드는 OAuth 가입자/일반 가입자 모두 가입 직후 "<이름>의 냉장고"가 자동 생성됨. 프론트는 빈 상태를 따로 처리할 필요 없음
+- 멤버 제거 시 본인이 본인을 제거해도 동작 (= "나가기"의 별칭). 별도 분기 안 함
+- 단일 냉장고 시절 데이터는 백엔드의 `FridgeMigrationRunner`가 자동 이관 — 프론트는 신경 X
+
+---
+
+### 2) AI 사진 인식 — 단건 / 영수증
+
+**무엇을 바꿨나**: 식재료 추가 화면에 카메라 버튼 추가. 사진 한 장 → Gemini가 보고 `{name, category, storage, quantity, unit, expiryDaysByStorage}` 반환 → 폼 자동 채움. 영수증은 별도 페이지 `AddByReceipt`에서 여러 항목 일괄 인식 → 편집 가능한 리스트 → 일괄 저장.
+
+**왜?**
+- 식재료 추가가 가장 자주 일어나는 작업인데 매번 이름/카테고리/유통기한을 손으로 치는 게 마찰
+- 보관 방법(냉장/냉동/실온)은 사용자가 모를 수 있음 → AI가 추천하는 게 더 정확. 표시 유통기한을 모델이 알고 있어 폼이 합리적인 기본값으로 prefill됨
+- 영수증 한 번에 5~10개씩 사서 일일이 입력하던 흐름을 한 번의 OCR로 단축
+
+**핵심 코드 — multipart 업로드 wrapper**
+```ts
+// apiUpload — 사진 같은 파일 업로드용. Content-Type은 브라우저가 boundary와 함께
+// 자동으로 붙이므로 직접 부착하면 안 됨 (붙이면 boundary 누락으로 400)
+export async function apiUpload(path: string, formData: FormData): Promise<Response> {
+  const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+  const buildAuthOnlyHeaders = (): HeadersInit => {
+    const token = readAuth('authToken');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  let res = await fetch(url, { method: 'POST', body: formData, headers: buildAuthOnlyHeaders() });
+
+  if (res.status === 401 || res.status === 403) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      res = await fetch(url, { method: 'POST', body: formData, headers: buildAuthOnlyHeaders() });
+    } else {
+      clearAuth();
+      window.location.href = '/login';
+    }
+  }
+  return res;
+}
+```
+
+**호출 흐름 (단건)**
+- 사용자가 사진 선택 → `FormData`에 `image` 키로 첨부
+- `apiUpload('/api/ingredients/recognize', formData)` → 백엔드가 Gemini Vision (`gemini-2.5-flash`)에 structured output schema와 함께 요청
+- 응답으로 폼 필드 자동 prefill. 사용자가 검토 후 수정 가능
+
+**알아둘 점**
+- 사진은 인식용으로만 백엔드에 전달 — 저장은 안 함. `imageUrl` 필드 자체가 없음 (서버 디스크 부담 + 프라이버시 양쪽 고려)
+- 단건 응답 구조는 추가 폼과 1:1 매칭 → 매핑 코드 거의 없음
+- 영수증 응답은 배열 → 각 항목을 carded list로 렌더, 사용자가 체크박스로 빼거나 수량/카테고리 즉시 수정
+
+**저장 버튼 위치 버그**
+- 영수증 페이지의 저장 버튼이 처음엔 `bottom-0`이라 하단 네비게이션과 겹쳤음 — `bottom-16`(네비 위) + `pb-40`(body 패딩)으로 수정
+
+---
+
+### 3) 카테고리 확장 — 7개 → 11개
+
+**무엇을 바꿨나**: 기존 `vegetable/meat/dairy/grain/seafood/fruit/etc`에 `processed/beverage/condiment/snack` 추가. 가공식품(라면/즉석밥/통조림), 음료(우유/주스/물), 조미료(간장/된장/소금), 간식(쿠키/초콜릿).
+
+**왜?**
+- AI 인식 결과가 "기타"로 자주 떨어지던 것들이 가공식품/음료/조미료/간식 — 사용자 입장에서 "기타"가 너무 막연
+- 카테고리별 색상 배지로 식별 가능해야 한눈에 들어옴
+
+**핵심 코드 (types/ingredient.ts)**
+```ts
+export type CategoryType =
+  | 'vegetable' | 'meat' | 'dairy' | 'grain' | 'seafood' | 'fruit'
+  | 'processed' | 'beverage' | 'condiment' | 'snack' | 'etc';
+```
+
+**한↔영 매핑 (ingredientStore.ts)**
+```ts
+const CATEGORY_TO_KO: Record<CategoryType, string> = {
+  vegetable: '채소', meat: '육류', dairy: '유제품', grain: '곡물',
+  seafood: '해산물', fruit: '과일',
+  processed: '가공식품', beverage: '음료', condiment: '조미료', snack: '간식',
+  etc: '기타',
+};
+```
+
+**영향 범위**
+- `types/ingredient.ts` — `CategoryType` union 확장
+- `ingredientStore.ts` — `CATEGORY_TO_KO` / `CATEGORY_FROM_KO` 양방향 매핑
+- 카테고리 셀렉터 / 필터 UI 4개 옵션 추가
+- 색상 배지 정의에도 4개 추가 필요 — 카드 컴포넌트 측에서 처리
+
+---
+
+### 4) 비밀번호 재설정 + 이메일 인증 화면
+
+**무엇을 바꿨나**: 로그인 페이지에 "비밀번호를 잊으셨나요?" 링크 추가 → `ForgotPassword.tsx`. 이메일 입력 → 백엔드가 reset 링크 발송 → 사용자가 메일의 링크 클릭 → `ResetPassword.tsx`에서 새 비밀번호 입력. 회원가입 후 자동 발송되는 verification 메일은 `VerifyEmail.tsx`로 처리.
+
+**왜?**
+- 실배포 시 필수 기능 — 비밀번호 잊으면 계정 복구 불가능하면 사용자 이탈
+- 이메일 인증은 일단 옵트인 (가입 자체는 인증 없이도 가능, 안 한 사용자는 비밀번호 찾기를 못 쓰는 식으로 자연스럽게 유도). 강제 여부는 결정 보류
+
+**화면 흐름**
+```
+[Login]
+  → "비밀번호를 잊으셨나요?" 클릭
+  → /forgot-password (이메일 입력)
+  → 백엔드: POST /user/password/forgot → 메일 발송
+  → 사용자가 메일에서 링크 클릭
+  → /reset-password?token=xxx (새 비밀번호 입력)
+  → 백엔드: POST /user/password/reset → 완료
+  → /login으로
+
+[SignUp]
+  → 가입 직후 백엔드가 인증 메일 자동 발송
+  → 사용자가 메일에서 링크 클릭
+  → /verify-email?token=xxx
+  → 백엔드: POST /user/verify-email → emailVerified=true
+```
+
+**프로필 페이지에 인증 상태 배너**
+- `userStore.UserProfile`에 `emailVerified?: boolean` 추가
+- 미인증 사용자에게는 프로필 페이지 상단에 노란 배너 + "다시 보내기" 버튼
+
+**알아둘 점**
+- 토큰은 백엔드의 `UserToken` 엔티티에서 `Type.EMAIL_VERIFY` / `Type.PASSWORD_RESET` 두 종류로 관리
+- `POST /user/password/forgot`은 존재하지 않는 이메일에도 동일한 응답을 반환 (user enumeration 방지) — 프론트는 "메일을 보냈습니다" 메시지만 표시
+- 앱(Flutter) 쪽에서 reset 링크 클릭 시 일단 웹으로 빠짐 — 딥링크는 추후 작업
+
+---
+
+### 5) Git 정리 — feat 브랜치 통합 후 잔재 삭제
+
+- 작업 중이던 `feat/backend-integration`, `feat/kakao-oauth-integration` 두 브랜치의 핵심 코드를 모두 `main`으로 통합
+- 로컬 + `monbruno` 원격 + `origin` 원격에서 feat 브랜치 일괄 삭제
+- 이후 작업은 `main` 단일 브랜치에서 진행
+
+---
+
+## 이전 작업 정리 (2026-05-08)
 
 이번 세션의 큰 줄기:
 1. **세션 저장소 정책 정리** — `localStorage` 일변도 → "로그인 상태 유지" 체크박스로 사용자가 직접 선택
