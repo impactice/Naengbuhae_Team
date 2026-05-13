@@ -26,7 +26,7 @@ export default function MealPlan() {
 
   const matches = useMemo(
     () => matchRecipesWithIngredients(recipes, ingredients),
-    [ingredients]
+    [recipes, ingredients]
   );
 
   // 자동 식단 생성
