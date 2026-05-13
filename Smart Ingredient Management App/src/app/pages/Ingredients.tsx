@@ -4,6 +4,7 @@ import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../u
 import { Link } from 'react-router';
 import { Plus, Trash2, Package, ChevronDown, Sparkles, AlertTriangle } from 'lucide-react';
 import { CategoryType, StorageType } from '../types/ingredient';
+import FridgeSelector from '../components/FridgeSelector';
 
 export default function Ingredients() {
   const { ingredients, deleteIngredient } = useIngredients();
@@ -74,9 +75,12 @@ export default function Ingredients() {
     <div className="min-h-screen bg-white pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
-        <h1 className="text-2xl" style={{ fontWeight: 700 }}>
-          식재료 관리
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl" style={{ fontWeight: 700 }}>
+            식재료 관리
+          </h1>
+          <FridgeSelector />
+        </div>
         <p className="text-sm text-gray-500 mt-1">총 {ingredients.length}개</p>
       </div>
 
@@ -106,54 +110,28 @@ export default function Ingredients() {
       {/* 필터 */}
       <div className="px-5 pb-4">
         <div className="flex gap-2 overflow-x-auto pb-2">
-          <FilterButton
-            active={selectedCategory === 'all'}
-            onClick={() => setSelectedCategory('all')}
-          >
-            전체
-          </FilterButton>
-          <FilterButton
-            active={selectedCategory === 'vegetable'}
-            onClick={() => setSelectedCategory('vegetable')}
-          >
-            채소
-          </FilterButton>
-          <FilterButton
-            active={selectedCategory === 'meat'}
-            onClick={() => setSelectedCategory('meat')}
-          >
-            육류
-          </FilterButton>
-          <FilterButton
-            active={selectedCategory === 'dairy'}
-            onClick={() => setSelectedCategory('dairy')}
-          >
-            유제품
-          </FilterButton>
-          <FilterButton
-            active={selectedCategory === 'seafood'}
-            onClick={() => setSelectedCategory('seafood')}
-          >
-            해산물
-          </FilterButton>
-          <FilterButton
-            active={selectedCategory === 'fruit'}
-            onClick={() => setSelectedCategory('fruit')}
-          >
-            과일
-          </FilterButton>
-          <FilterButton
-            active={selectedCategory === 'grain'}
-            onClick={() => setSelectedCategory('grain')}
-          >
-            곡물
-          </FilterButton>
-          <FilterButton
-            active={selectedCategory === 'etc'}
-            onClick={() => setSelectedCategory('etc')}
-          >
-            기타
-          </FilterButton>
+          {([
+            ['all', '전체'],
+            ['vegetable', '채소'],
+            ['meat', '육류'],
+            ['dairy', '유제품'],
+            ['grain', '곡물'],
+            ['seafood', '해산물'],
+            ['fruit', '과일'],
+            ['processed', '가공식품'],
+            ['beverage', '음료'],
+            ['condiment', '조미료'],
+            ['snack', '간식'],
+            ['etc', '기타'],
+          ] as const).map(([key, label]) => (
+            <FilterButton
+              key={key}
+              active={selectedCategory === key}
+              onClick={() => setSelectedCategory(key as CategoryType | 'all')}
+            >
+              {label}
+            </FilterButton>
+          ))}
         </div>
 
         <div className="flex gap-2 mt-2">
@@ -312,6 +290,10 @@ function getCategoryLabel(category: string): string {
     grain: '곡물',
     seafood: '해산물',
     fruit: '과일',
+    processed: '가공식품',
+    beverage: '음료',
+    condiment: '조미료',
+    snack: '간식',
     etc: '기타',
   };
   return labels[category] || category;

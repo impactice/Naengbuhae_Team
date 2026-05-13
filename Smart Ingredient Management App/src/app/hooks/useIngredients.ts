@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ingredientStore } from '../store/ingredientStore';
+import { fridgeStore } from '../store/fridgeStore';
 import { Ingredient, ShoppingItem } from '../types/ingredient';
 
 export function useIngredients() {
@@ -7,6 +8,7 @@ export function useIngredients() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let lastFridgeId = fridgeStore.getSelectedId();
     const loadIngredients = async () => {
       setLoading(true);
       await ingredientStore.fetchIngredients();
@@ -16,11 +18,22 @@ export function useIngredients() {
 
     loadIngredients();
 
-    const unsubscribe = ingredientStore.subscribe(() => {
+    const unsubIngredient = ingredientStore.subscribe(() => {
       setIngredients(ingredientStore.getIngredients());
     });
+    // 냉장고가 바뀌었을 때만 식재료 다시 가져옴 (단순 list 변경엔 반응 X)
+    const unsubFridge = fridgeStore.subscribe(() => {
+      const id = fridgeStore.getSelectedId();
+      if (id !== lastFridgeId) {
+        lastFridgeId = id;
+        loadIngredients();
+      }
+    });
 
-    return unsubscribe;
+    return () => {
+      unsubIngredient();
+      unsubFridge();
+    };
   }, []);
 
   return {

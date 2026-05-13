@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
   User,
@@ -10,10 +11,12 @@ import {
   Target,
   Flame,
   Sparkles,
-  ChevronRight
+  ChevronRight,
+  Refrigerator,
 } from 'lucide-react';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { userStore } from '../store/userStore';
+import { fridgeStore } from '../store/fridgeStore';
 import { clearAuth } from '../utils/apiClient';
 
 const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
@@ -39,6 +42,7 @@ export default function MyCustom() {
       // 양쪽 storage(session/local) 모두 정리. 로그인 유지 체크 여부와 무관하게 흔적 제거.
       clearAuth();
       userStore.clearCache();
+      fridgeStore.clear();
       alert('회원 탈퇴가 완료되었습니다.');
       navigate('/login');
     } catch (error) {
@@ -131,6 +135,11 @@ export default function MyCustom() {
           {profile.name}님을 위한 건강 관리
         </p>
       </div>
+
+      {/* 이메일 미인증 배너 */}
+      {profile.emailVerified === false && (
+        <EmailVerificationBanner email={profile.email} />
+      )}
 
       {/* 프로필 미완성 시 CTA — 카카오 등으로 가입한 사용자 안내 */}
       {isProfileIncomplete && (
@@ -264,6 +273,23 @@ export default function MyCustom() {
         </div>
       )}
 
+      {/* 냉장고 관리 진입 */}
+      <div className="px-5 pb-5">
+        <Link
+          to="/fridges"
+          className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors"
+        >
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+            <Refrigerator className="w-5 h-5" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold">냉장고 관리</p>
+            <p className="text-xs text-gray-500">가족 공유, 초대 코드, 김치냉장고 추가 등</p>
+          </div>
+          <ChevronRight className="w-5 h-5 text-gray-400" />
+        </Link>
+      </div>
+
       {/* 알레르기 정보 */}
       {profile.allergies && (
         <div className="px-5 pb-5">
@@ -390,6 +416,61 @@ export default function MyCustom() {
         >
           회원 탈퇴
         </button>
+      </div>
+    </div>
+  );
+}
+
+// 이메일 인증 배너 — 미인증 사용자에게 표시. "재발송" 버튼으로 메일 다시 받기.
+function EmailVerificationBanner({ email }: { email: string }) {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const handleResend = async () => {
+    setSending(true);
+    try {
+      const { apiFetch } = await import('../utils/apiClient');
+      const res = await apiFetch('/user/resend-verification', { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (data?.success) {
+        setSent(true);
+      } else {
+        alert(data?.message ?? '재발송 실패');
+      }
+    } catch {
+      alert('서버 연결 실패');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="px-5 pt-5">
+      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0">
+            <AlertTriangle className="w-5 h-5 text-yellow-900" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold mb-1 text-yellow-900">이메일 인증을 완료해주세요</h3>
+            <p className="text-sm text-yellow-900 leading-relaxed">
+              <span className="font-semibold">{email}</span>로 보낸 인증 메일을 확인해주세요.
+            </p>
+            {sent ? (
+              <p className="text-xs text-green-700 mt-2 font-semibold">
+                ✓ 인증 메일을 다시 보냈어요. 메일함을 확인해주세요.
+              </p>
+            ) : (
+              <button
+                onClick={handleResend}
+                disabled={sending}
+                className="text-xs mt-2 font-semibold underline underline-offset-2 disabled:opacity-60"
+              >
+                {sending ? '전송 중...' : '메일 다시 받기'}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

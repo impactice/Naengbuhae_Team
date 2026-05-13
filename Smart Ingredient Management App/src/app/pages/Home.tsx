@@ -3,6 +3,7 @@ import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../u
 import { Link } from 'react-router';
 import { Plus, AlertCircle, Package, ChefHat, Calendar, TrendingUp } from 'lucide-react';
 import { PieChart, Pie, Cell } from 'recharts';
+import FridgeSelector from '../components/FridgeSelector';
 
 export default function Home() {
   const { ingredients } = useIngredients();
@@ -38,9 +39,12 @@ export default function Home() {
     <div className="min-h-screen bg-white pb-20">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
-        <h1 className="text-2xl" style={{ fontWeight: 700 }}>
-          냉장고
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl" style={{ fontWeight: 700 }}>
+            냉장고
+          </h1>
+          <FridgeSelector />
+        </div>
         <p className="text-sm text-gray-500 mt-1">
           총 {totalItems}개 식재료 보관 중
         </p>
@@ -265,6 +269,10 @@ function getCategoryLabel(category: string): string {
     grain: '곡물',
     seafood: '해산물',
     fruit: '과일',
+    processed: '가공식품',
+    beverage: '음료',
+    condiment: '조미료',
+    snack: '간식',
     etc: '기타',
   };
   return labels[category] || category;

@@ -12,6 +12,7 @@ export interface UserProfile {
   dietGoal: string;
   allergies?: string;
   recommendedCalories?: number;
+  emailVerified?: boolean;
 }
 
 class UserStore {

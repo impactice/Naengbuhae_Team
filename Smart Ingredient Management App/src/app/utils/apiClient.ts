@@ -118,6 +118,32 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
   return res;
 }
 
+// 파일 업로드용. Content-Type은 브라우저가 multipart boundary와 함께 자동 설정 — 직접 부착하면 안 됨.
+// 401 시 refresh 후 1회 재시도까지만 처리하고, FormData 재구성은 호출자 책임.
+export async function apiUpload(path: string, formData: FormData): Promise<Response> {
+  const url = path.startsWith('http') ? path : `${API_BASE_URL}${path}`;
+
+  const buildAuthOnlyHeaders = (): HeadersInit => {
+    const token = readAuth('authToken');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  let res = await fetch(url, { method: 'POST', body: formData, headers: buildAuthOnlyHeaders() });
+
+  if (res.status === 401 || res.status === 403) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      res = await fetch(url, { method: 'POST', body: formData, headers: buildAuthOnlyHeaders() });
+    } else {
+      clearAuth();
+      if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login';
+      }
+    }
+  }
+  return res;
+}
+
 // 서버에 refresh token 폐기 요청까지 보내는 로그아웃 헬퍼
 export async function logoutOnServer(): Promise<void> {
   const refreshToken = readAuth('refreshToken');

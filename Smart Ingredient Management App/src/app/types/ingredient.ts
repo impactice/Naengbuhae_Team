@@ -1,5 +1,7 @@
 export type StorageType = 'refrigerated' | 'frozen' | 'room';
-export type CategoryType = 'vegetable' | 'meat' | 'dairy' | 'grain' | 'seafood' | 'fruit' | 'etc';
+export type CategoryType =
+  | 'vegetable' | 'meat' | 'dairy' | 'grain' | 'seafood' | 'fruit'
+  | 'processed' | 'beverage' | 'condiment' | 'snack' | 'etc';
 
 export interface Ingredient {
   id: string;

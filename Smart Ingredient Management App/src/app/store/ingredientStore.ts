@@ -15,6 +15,10 @@ const CATEGORY_TO_KO: Record<CategoryType, string> = {
   'grain': '곡물',
   'seafood': '해산물',
   'fruit': '과일',
+  'processed': '가공식품',
+  'beverage': '음료',
+  'condiment': '조미료',
+  'snack': '간식',
   'etc': '기타',
 };
 
@@ -32,6 +36,10 @@ const CATEGORY_FROM_KO: Record<string, CategoryType> = {
   '곡물': 'grain',
   '해산물': 'seafood',
   '과일': 'fruit',
+  '가공식품': 'processed',
+  '음료': 'beverage',
+  '조미료': 'condiment',
+  '간식': 'snack',
   '기타': 'etc',
 };
 
@@ -47,8 +55,8 @@ function mapFromBackend(item: any): Ingredient {
 }
 
 // 프론트 → 백엔드 변환
-function mapToBackend(ingredient: Omit<Ingredient, 'id'>) {
-  return {
+function mapToBackend(ingredient: Omit<Ingredient, 'id'>, fridgeId?: number | null) {
+  const body: Record<string, unknown> = {
     name: ingredient.name,
     category: CATEGORY_TO_KO[ingredient.category] || ingredient.category,
     quantity: ingredient.quantity,
@@ -57,6 +65,8 @@ function mapToBackend(ingredient: Omit<Ingredient, 'id'>) {
     purchaseDate: ingredient.purchaseDate.toISOString().split('T')[0],
     expirationDate: ingredient.expirationDate.toISOString().split('T')[0],
   };
+  if (fridgeId != null) body.fridgeId = fridgeId;
+  return body;
 }
 
 class IngredientStore {
@@ -64,10 +74,16 @@ class IngredientStore {
   private ingredientsCache: Ingredient[] = [];
   private shoppingListCache: ShoppingItem[] = [];
 
-  // 식재료 가져오기
+  // 식재료 가져오기. fridgeStore에서 현재 선택된 냉장고의 id를 가져와 쿼리에 부착.
   async fetchIngredients(): Promise<Ingredient[]> {
     try {
-      const response = await apiFetch('/api/ingredients');
+      // 동적 import로 순환 의존 방지
+      const { fridgeStore } = await import('./fridgeStore');
+      const fridgeId = fridgeStore.getSelectedId();
+      const path = fridgeId != null
+        ? `/api/ingredients?fridgeId=${fridgeId}`
+        : '/api/ingredients';
+      const response = await apiFetch(path);
 
       if (response.ok) {
         const data = await response.json();
@@ -89,12 +105,14 @@ class IngredientStore {
     return this.ingredientsCache;
   }
 
-  // 식재료 추가
+  // 식재료 추가. fridgeStore의 현재 선택 냉장고에 자동 저장.
   async addIngredient(ingredient: Omit<Ingredient, 'id'>): Promise<void> {
     try {
+      const { fridgeStore } = await import('./fridgeStore');
+      const fridgeId = fridgeStore.getSelectedId();
       const response = await apiFetch('/api/ingredients', {
         method: 'POST',
-        body: JSON.stringify(mapToBackend(ingredient)),
+        body: JSON.stringify(mapToBackend(ingredient, fridgeId)),
       });
 
       if (response.ok) {

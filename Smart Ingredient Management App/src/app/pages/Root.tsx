@@ -2,6 +2,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router';
 import { Home, Package, AlertCircle, ShoppingCart, LogOut, User } from 'lucide-react';
 import { useEffect } from 'react';
 import { userStore } from '../store/userStore';
+import { fridgeStore } from '../store/fridgeStore';
 import { clearAuth, logoutOnServer } from '../utils/apiClient';
 
 export default function Root() {
@@ -22,6 +23,7 @@ export default function Root() {
     await logoutOnServer();
     clearAuth();
     userStore.clearCache();
+    fridgeStore.clear();
     navigate('/login');
   };
 

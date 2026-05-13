@@ -2,6 +2,7 @@ import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
 import { AlertCircle, Package, Trash2, TrendingUp } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Cell, ResponsiveContainer } from 'recharts';
+import FridgeSelector from '../components/FridgeSelector';
 
 export default function Priority() {
   const { ingredients, deleteIngredient } = useIngredients();
@@ -41,9 +42,12 @@ export default function Priority() {
     <div className="min-h-screen bg-white pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
-        <h1 className="text-2xl" style={{ fontWeight: 700 }}>
-          소비 우선순위
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl" style={{ fontWeight: 700 }}>
+            소비 우선순위
+          </h1>
+          <FridgeSelector />
+        </div>
         <p className="text-sm text-gray-500 mt-1">
           유통기한 기준으로 우선 소비해야 할 식재료
         </p>

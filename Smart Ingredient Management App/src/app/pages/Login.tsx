@@ -111,16 +111,21 @@ export default function Login() {
             </button>
           </div>
 
-          {/* 로그인 상태 유지 체크박스 — 체크 시 브라우저 종료해도 로그인 유지 (localStorage 사용) */}
-          <label className="flex items-center gap-2 px-1 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 accent-black cursor-pointer"
-            />
-            <span className="text-sm text-gray-600">로그인 상태 유지</span>
-          </label>
+          <div className="flex items-center justify-between px-1">
+            {/* 로그인 상태 유지 체크박스 — 체크 시 브라우저 종료해도 로그인 유지 (localStorage 사용) */}
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 accent-black cursor-pointer"
+              />
+              <span className="text-sm text-gray-600">로그인 상태 유지</span>
+            </label>
+            <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-black underline-offset-2 hover:underline">
+              비밀번호 잊으셨나요?
+            </Link>
+          </div>
 
           <button
             type="submit"
