@@ -6,9 +6,25 @@
 
 ---
 
-## 🆕 이번 작업 정리 (2026-05-13)
+## 🆕 이번 작업 정리 (2026-05-14)
 
-이번 세션의 큰 줄기:
+**식재료 검색 + 만료된 것만 보기 토글.**
+
+`Smart Ingredient Management App/src/app/pages/Ingredients.tsx`에 다음 두 가지 추가:
+
+1. **이름 검색창** — 카테고리/보관/정렬 필터 윗쪽에 `<input type="text">` + `Search` 아이콘 + clear `X` 버튼. 대소문자 무관 부분 일치 (`name.toLowerCase().includes(query)`)
+2. **만료된 것만 보기 토글** — 필터 row 바로 아래 체크 chip. on 시 `calculateDDay(item.expirationDate) < 0` 항목만 노출
+
+`filtered` 파이프라인에 두 조건을 카테고리/보관 다음 단계로 끼워 넣었음. 모든 필터가 OR이 아닌 AND이므로 좁히는 방향만 가능.
+
+빈 상태 메시지도 분기 갱신: 검색어/토글이 있을 때는 "조건에 맞는 식재료가 없습니다", 아예 비어있으면 "등록된 식재료가 없습니다".
+
+> 앱(Flutter)에도 동일하게 추가됨 — [Naengbuhae_App README](https://github.com/MONBRUNO/Naengbuhae_App) 참고.
+
+---
+
+## 이전 작업 정리 (2026-05-13)
+
 1. **다중 냉장고 + 가족 공유** — 한 계정이 여러 냉장고를 가지고, 6자리 초대 코드로 다른 사용자를 끌어들임
 2. **AI 사진 인식 (Gemini Vision)** — 식재료 단건 인식 + 영수증 OCR. 결과로 폼 자동 채움
 3. **카테고리 4개 추가** — 가공식품/음료/조미료/간식. 기존 7개 → 11개

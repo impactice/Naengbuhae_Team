@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
 import { Link } from 'react-router';
-import { Plus, Trash2, Package, Sparkles, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Package, Sparkles, AlertTriangle, Search, X } from 'lucide-react';
 
 import { CategoryType, StorageType } from '../types/ingredient';
 import FridgeSelector from '../components/FridgeSelector';
@@ -12,6 +12,8 @@ export default function Ingredients() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | 'all'>('all');
   const [selectedStorage, setSelectedStorage] = useState<StorageType | 'all'>('all');
   const [sortBy, setSortBy] = useState<'expiry' | 'name' | 'category'>('expiry');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showExpiredOnly, setShowExpiredOnly] = useState(false);
 
   // 영양 정보 데이터베이스 (100g 기준)
   const nutritionDatabase: Record<string, {
@@ -53,6 +55,14 @@ export default function Ingredients() {
   }
   if (selectedStorage !== 'all') {
     filtered = filtered.filter((item) => item.storage === selectedStorage);
+  }
+  const trimmedQuery = searchQuery.trim().toLowerCase();
+  if (trimmedQuery !== '') {
+    filtered = filtered.filter((item) => item.name.toLowerCase().includes(trimmedQuery));
+  }
+  if (showExpiredOnly) {
+    // D-day < 0 = 이미 만료 (오늘 만료는 통상 "만료된 것"에서 제외)
+    filtered = filtered.filter((item) => calculateDDay(item.expirationDate) < 0);
   }
 
   // 정렬
@@ -108,8 +118,32 @@ export default function Ingredients() {
         </div>
       </div>
 
+      {/* 이름 검색 */}
+      <div className="px-5 pb-3">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="이름으로 검색"
+            className="w-full pl-9 pr-9 py-2 bg-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+              aria-label="검색어 지우기"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* 필터 — 카테고리/보관/정렬 모두 드롭다운으로 통일 (모바일 친화적) */}
-      <div className="px-5 pb-4">
+      <div className="px-5 pb-3">
         <div className="flex gap-2">
           {/* 카테고리 선택 — 기존 가로 스크롤 방식에서 드롭다운으로 변경 */}
           <select
@@ -159,13 +193,36 @@ export default function Ingredients() {
         </div>
       </div>
 
+      {/* 만료된 것만 보기 */}
+      <div className="px-5 pb-4">
+        <button
+          type="button"
+          onClick={() => setShowExpiredOnly((v) => !v)}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors ${
+            showExpiredOnly
+              ? 'bg-red-50 border-red-200 text-red-600'
+              : 'bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200'
+          }`}
+          style={{ fontWeight: showExpiredOnly ? 600 : 500 }}
+        >
+          <span
+            className={`w-4 h-4 inline-flex items-center justify-center rounded-sm border ${
+              showExpiredOnly ? 'border-red-500 bg-red-500 text-white' : 'border-gray-400'
+            }`}
+          >
+            {showExpiredOnly && <span className="text-[10px] leading-none">✓</span>}
+          </span>
+          만료된 것만 보기
+        </button>
+      </div>
+
       {/* 식재료 목록 */}
       <div className="px-5">
         {sorted.length === 0 ? (
           <div className="text-center py-12">
             <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-400">
-              {selectedCategory !== 'all' || selectedStorage !== 'all'
+              {selectedCategory !== 'all' || selectedStorage !== 'all' || trimmedQuery !== '' || showExpiredOnly
                 ? '조건에 맞는 식재료가 없습니다'
                 : '등록된 식재료가 없습니다'}
             </p>
