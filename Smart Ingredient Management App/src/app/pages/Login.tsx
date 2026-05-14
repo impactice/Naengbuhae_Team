@@ -12,10 +12,19 @@ export default function Login() {
     password: '',
   });
 
+  // ──────────────────────────────────────────────────────────────
+  // [MSW 모킹 중] 이 handleSubmit 함수는 MSW가 가로채서 가짜 응답을 줍니다.
+  // 실제 fetch 코드('http://localhost:8080/user/login')는 그대로지만,
+  // MSW가 중간에서 가상 계정(id: d23 / pwd: d3d3)을 확인하고 응답합니다.
+  //
+  // TODO: 백엔드 연동 완료 후 → 이 함수 내부 로직은 변경 불필요.
+  //       MSW를 제거(src/mocks/ 삭제 + main.tsx 정리)하면 실제 백엔드로 요청이 전달됩니다.
+  // ──────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
+      // 이 fetch 요청은 MSW(개발 중) 또는 실제 백엔드(연동 후) 중 하나가 처리합니다.
       const response = await fetch('http://localhost:8080/user/login', {
         method: 'POST',
         headers: {
@@ -54,6 +63,14 @@ export default function Login() {
     }
   };
 
+  // ──────────────────────────────────────────────────────────────
+  // [MSW 모킹 중] 소셜 로그인은 MSW로 모킹이 불가능합니다.
+  // (외부 OAuth 서버 리다이렉트이기 때문)
+  // 개발 중에는 소셜 로그인 버튼을 클릭하지 마세요 → 오류 페이지로 이동합니다.
+  //
+  // TODO: 백엔드 서버가 실행 중일 때 소셜 로그인이 정상 동작합니다.
+  //       소셜 로그인 핸들러 자체는 수정 불필요 — 변경 없이 그대로 사용.
+  // ──────────────────────────────────────────────────────────────
   const handleSocialLogin = (provider: 'kakao' | 'naver' | 'google') => {
     // 백엔드 OAuth 인증 엔드포인트로 이동
     // 백엔드에서 인증 처리 → JWT 발급 → /oauth/callback으로 redirect

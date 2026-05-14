@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
 import { Link } from 'react-router';
-import { Plus, Trash2, Package, ChevronDown, Sparkles, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Package, Sparkles, AlertTriangle } from 'lucide-react';
+
 import { CategoryType, StorageType } from '../types/ingredient';
 import FridgeSelector from '../components/FridgeSelector';
 
@@ -107,34 +108,31 @@ export default function Ingredients() {
         </div>
       </div>
 
-      {/* 필터 */}
+      {/* 필터 — 카테고리/보관/정렬 모두 드롭다운으로 통일 (모바일 친화적) */}
       <div className="px-5 pb-4">
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {([
-            ['all', '전체'],
-            ['vegetable', '채소'],
-            ['meat', '육류'],
-            ['dairy', '유제품'],
-            ['grain', '곡물'],
-            ['seafood', '해산물'],
-            ['fruit', '과일'],
-            ['processed', '가공식품'],
-            ['beverage', '음료'],
-            ['condiment', '조미료'],
-            ['snack', '간식'],
-            ['etc', '기타'],
-          ] as const).map(([key, label]) => (
-            <FilterButton
-              key={key}
-              active={selectedCategory === key}
-              onClick={() => setSelectedCategory(key as CategoryType | 'all')}
-            >
-              {label}
-            </FilterButton>
-          ))}
-        </div>
+        <div className="flex gap-2">
+          {/* 카테고리 선택 — 기존 가로 스크롤 방식에서 드롭다운으로 변경 */}
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value as CategoryType | 'all')}
+            className="px-3 py-2 bg-gray-100 rounded-lg text-sm flex-1"
+            style={{ fontWeight: 500 }}
+          >
+            <option value="all">전체 카테고리</option>
+            <option value="vegetable">🥦 채소</option>
+            <option value="meat">🥩 육류</option>
+            <option value="seafood">🐟 해산물</option>
+            <option value="dairy">🥛 유제품</option>
+            <option value="grain">🌾 곡물</option>
+            <option value="fruit">🍎 과일</option>
+            <option value="processed">🥫 가공식품</option>
+            <option value="beverage">🧃 음료</option>
+            <option value="condiment">🧂 조미료</option>
+            <option value="snack">🍿 간식</option>
+            <option value="etc">📦 기타</option>
+          </select>
 
-        <div className="flex gap-2 mt-2">
+          {/* 보관 방법 */}
           <select
             value={selectedStorage}
             onChange={(e) => setSelectedStorage(e.target.value as StorageType | 'all')}
@@ -142,10 +140,12 @@ export default function Ingredients() {
             style={{ fontWeight: 500 }}
           >
             <option value="all">전체 보관</option>
-            <option value="refrigerated">냉장</option>
-            <option value="frozen">냉동</option>
-            <option value="room">실온</option>
+            <option value="refrigerated">❄️ 냉장</option>
+            <option value="frozen">🧊 냉동</option>
+            <option value="room">🌡️ 실온</option>
           </select>
+
+          {/* 정렬 */}
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'expiry' | 'name' | 'category')}
@@ -257,30 +257,7 @@ export default function Ingredients() {
   );
 }
 
-function FilterButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap ${
-        active ? 'text-black' : 'bg-gray-100 text-gray-600'
-      }`}
-      style={{
-        backgroundColor: active ? '#CDFF00' : undefined,
-        fontWeight: active ? 600 : 500,
-      }}
-    >
-      {children}
-    </button>
-  );
-}
+
 
 function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
