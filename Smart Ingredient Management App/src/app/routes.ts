@@ -20,6 +20,8 @@ import ProfileComplete from "./pages/ProfileComplete";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
+import NotificationCenter from "./pages/NotificationCenter";
+import FamilyActivity from "./pages/FamilyActivity";
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +55,8 @@ export const router = createBrowserRouter([
       { path: "shopping-list", Component: ShoppingList },
       { path: "my-custom", Component: MyCustom },
       { path: "fridges", Component: FridgeManagement },
+      { path: "notifications", Component: NotificationCenter },
+      { path: "family-activity", Component: FamilyActivity },
       { path: "nutrition", Component: NutritionAnalysis },
       { path: "recipes", Component: Recipes },
       { path: "recipe/:id", Component: RecipeDetail },

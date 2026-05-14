@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
   User,
@@ -13,11 +13,13 @@ import {
   Sparkles,
   ChevronRight,
   Refrigerator,
+  Bell,
+  Users,
 } from 'lucide-react';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { userStore } from '../store/userStore';
 import { fridgeStore } from '../store/fridgeStore';
-import { clearAuth } from '../utils/apiClient';
+import { apiFetch, clearAuth } from '../utils/apiClient';
 
 const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
   '체중 감량': 'weight-loss',
@@ -29,6 +31,22 @@ const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-g
 export default function MyCustom() {
   const navigate = useNavigate();
   const { profile, loading } = useUserProfile();
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await apiFetch('/api/notifications/unread-count');
+        if (!res.ok) return;
+        const data = (await res.json()) as { count?: number };
+        if (!cancelled) setUnread(data.count ?? 0);
+      } catch {
+        // 무시 — 진입 시 다시 시도
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleDeleteAccount = async () => {
     if (!confirm('정말 회원 탈퇴 하시겠습니까?\n\n탈퇴 시 계정과 모든 데이터(식재료, 레시피 기록 등)가 영구 삭제되며 복구할 수 없습니다.')) {
@@ -273,8 +291,34 @@ export default function MyCustom() {
         </div>
       )}
 
+      {/* 알림 센터 진입 */}
+      <div className="px-5 pb-3">
+        <Link
+          to="/notifications"
+          onClick={() => setUnread(0)}
+          className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors"
+        >
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+            <Bell className="w-5 h-5" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold">알림</p>
+            <p className="text-xs text-gray-500">받은 알림 내역 (가족 활동 / 멤버 변경)</p>
+          </div>
+          {unread > 0 && (
+            <span
+              className="px-2 py-0.5 rounded-full text-xs text-white"
+              style={{ backgroundColor: '#DC2626', fontWeight: 700 }}
+            >
+              {unread > 99 ? '99+' : unread}
+            </span>
+          )}
+          <ChevronRight className="w-5 h-5 text-gray-400" />
+        </Link>
+      </div>
+
       {/* 냉장고 관리 진입 */}
-      <div className="px-5 pb-5">
+      <div className="px-5 pb-3">
         <Link
           to="/fridges"
           className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors"
@@ -285,6 +329,23 @@ export default function MyCustom() {
           <div className="flex-1">
             <p className="font-semibold">냉장고 관리</p>
             <p className="text-xs text-gray-500">가족 공유, 초대 코드, 김치냉장고 추가 등</p>
+          </div>
+          <ChevronRight className="w-5 h-5 text-gray-400" />
+        </Link>
+      </div>
+
+      {/* 가족 활동 통계 진입 */}
+      <div className="px-5 pb-5">
+        <Link
+          to="/family-activity"
+          className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors"
+        >
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+            <Users className="w-5 h-5" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold">가족 활동</p>
+            <p className="text-xs text-gray-500">멤버별 추가/소비 + 자주 사는 식재료 TOP</p>
           </div>
           <ChevronRight className="w-5 h-5 text-gray-400" />
         </Link>

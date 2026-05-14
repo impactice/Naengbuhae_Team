@@ -8,18 +8,51 @@
 
 ## 🆕 이번 작업 정리 (2026-05-14)
 
-**식재료 검색 + 만료된 것만 보기 토글.**
+**식재료 검색 + 인앱 알림 센터 + 가족 활동 통계.**
+
+1. **이름 검색 + 만료된 것만 보기 토글** — `Ingredients.tsx`
+2. **인앱 알림 센터** — `/notifications` 신규 페이지
+3. **가족 활동 통계** — `/family-activity` 신규 페이지
+
+> 앱(Flutter)에도 동일하게 들어감 — [Naengbuhae_App README](https://github.com/MONBRUNO/Naengbuhae_App)
+
+---
+
+### 1) 식재료 검색 + 만료 토글
 
 `Smart Ingredient Management App/src/app/pages/Ingredients.tsx`에 다음 두 가지 추가:
 
-1. **이름 검색창** — 카테고리/보관/정렬 필터 윗쪽에 `<input type="text">` + `Search` 아이콘 + clear `X` 버튼. 대소문자 무관 부분 일치 (`name.toLowerCase().includes(query)`)
-2. **만료된 것만 보기 토글** — 필터 row 바로 아래 체크 chip. on 시 `calculateDDay(item.expirationDate) < 0` 항목만 노출
+- **이름 검색창** — 카테고리/보관/정렬 필터 윗쪽에 `<input type="text">` + `Search` 아이콘 + clear `X` 버튼. 대소문자 무관 부분 일치 (`name.toLowerCase().includes(query)`)
+- **만료된 것만 보기 토글** — 필터 row 바로 아래 체크 chip. on 시 `calculateDDay(item.expirationDate) < 0` 항목만 노출
 
-`filtered` 파이프라인에 두 조건을 카테고리/보관 다음 단계로 끼워 넣었음. 모든 필터가 OR이 아닌 AND이므로 좁히는 방향만 가능.
+`filtered` 파이프라인에 두 조건을 카테고리/보관 다음 단계로 끼워 넣었음. 빈 상태 메시지도 분기 갱신.
 
-빈 상태 메시지도 분기 갱신: 검색어/토글이 있을 때는 "조건에 맞는 식재료가 없습니다", 아예 비어있으면 "등록된 식재료가 없습니다".
+---
 
-> 앱(Flutter)에도 동일하게 추가됨 — [Naengbuhae_App README](https://github.com/MONBRUNO/Naengbuhae_App) 참고.
+### 2) 인앱 알림 센터 — `/notifications`
+
+`NotificationCenter.tsx` 신규. `GET /api/notifications`로 최신 50개 가져오고, 진입 시 `POST /api/notifications/read-all` 자동 호출(본 시점에 읽음 처리).
+
+- 안읽은 항목: lime-50 배경 + 좌측 dot
+- 항목 클릭 시 `route` 키로 분기 → `/fridges` / `/ingredients` / `/meal-plan`
+- 시간 표시: 분/시간/일 단위, 7일 넘으면 날짜
+
+**진입점**: `/my-custom` 상단 카드. `GET /api/notifications/unread-count`로 빨간 뱃지(99+ 처리).
+
+---
+
+### 3) 가족 활동 통계 — `/family-activity`
+
+`FamilyActivity.tsx` 신규. 현재 선택된 냉장고 기준(`fridgeStore.getSelected()`)으로 `GET /api/fridges/{id}/activity-stats?days=N`.
+
+- 헤더 카드 — lime-yellow 그라데이션 + 전체 추가/비움 카운트
+- 기간 chips (7/30/90일) — 변경 시 즉시 refetch
+- 멤버별 row — `+N -N` 컬러 뱃지
+- 자주 추가/비운 식재료 TOP 5 — 1~5 순위 + 비율 막대바
+
+**진입점**: `/my-custom`의 "가족 활동" 카드.
+
+`useSyncExternalStore`로 `fridgeStore` 구독 — 다른 페이지에서 냉장고 전환하면 이 페이지도 자동 반응.
 
 ---
 
