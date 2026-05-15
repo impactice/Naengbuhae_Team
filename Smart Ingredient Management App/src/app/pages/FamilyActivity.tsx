@@ -275,12 +275,12 @@ function RankedSection({
             const ratio = max === 0 ? 0 : item.count / max;
             return (
               <div key={item.name} className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2.5 flex items-center gap-3">
-                <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs" style={{ fontWeight: 700 }}>
+                <span className="w-6 h-6 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-xs" style={{ fontWeight: 700 }}>
                   {i + 1}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm" style={{ fontWeight: 600 }}>{item.name}</p>
-                  <div className="h-1.5 bg-gray-200 rounded mt-1.5 overflow-hidden">
+                  <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded mt-1.5 overflow-hidden">
                     <div className="h-full" style={{ width: `${ratio * 100}%`, backgroundColor: color }} />
                   </div>
                 </div>
