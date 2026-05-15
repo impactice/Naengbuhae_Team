@@ -9,9 +9,9 @@ interface Props {
 
 export default function GuestBlocked({ feature }: Props) {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-6">
+    <div className="min-h-screen bg-white dark:bg-gray-900 dark:text-gray-100 flex items-center justify-center px-6">
       <div className="text-center max-w-sm">
-        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
           <Lock className="w-7 h-7 text-gray-400" />
         </div>
         <h2 className="text-lg font-semibold mb-2">{feature}은 로그인 후 사용할 수 있어요</h2>
@@ -28,7 +28,7 @@ export default function GuestBlocked({ feature }: Props) {
           </Link>
           <Link
             to="/login"
-            className="px-6 py-3 bg-gray-100 text-black rounded-xl font-semibold text-sm"
+            className="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-black dark:text-gray-100 rounded-xl font-semibold text-sm"
           >
             로그인하기
           </Link>

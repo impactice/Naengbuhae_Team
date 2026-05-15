@@ -143,10 +143,10 @@ export default function ProfileComplete() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center">
       <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl">
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-4 flex items-center z-10">
+        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center z-10">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 hover:bg-gray-50 rounded-lg transition-colors"
+            className="p-2 -ml-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -188,7 +188,7 @@ export default function ProfileComplete() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="홍길동"
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                     errors.name ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                   }`}
                 />
@@ -208,8 +208,8 @@ export default function ProfileComplete() {
                       formData.gender === '남'
                         ? 'bg-black text-white'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 text-gray-600'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
                     남성
@@ -224,8 +224,8 @@ export default function ProfileComplete() {
                       formData.gender === '여'
                         ? 'bg-black text-white'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 text-gray-600'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
                     여성
@@ -241,7 +241,7 @@ export default function ProfileComplete() {
                     name="birthYear"
                     value={formData.birthYear}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   >
@@ -256,7 +256,7 @@ export default function ProfileComplete() {
                     name="birthMonth"
                     value={formData.birthMonth}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   >
@@ -271,7 +271,7 @@ export default function ProfileComplete() {
                     name="birthDay"
                     value={formData.birthDay}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   >
@@ -295,7 +295,7 @@ export default function ProfileComplete() {
                     value={formData.height}
                     onChange={handleChange}
                     placeholder="170"
-                    className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.height ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   />
@@ -309,7 +309,7 @@ export default function ProfileComplete() {
                     value={formData.weight}
                     onChange={handleChange}
                     placeholder="65"
-                    className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.weight ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   />
@@ -319,7 +319,7 @@ export default function ProfileComplete() {
             </div>
 
             {/* 건강 정보 */}
-            <div className="space-y-4 pt-4 border-t border-gray-100">
+            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
               <h3 className="text-lg font-semibold">건강 정보</h3>
 
               <div>
@@ -328,7 +328,7 @@ export default function ProfileComplete() {
                   name="activityLevel"
                   value={formData.activityLevel}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                     errors.activityLevel ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                   }`}
                 >
@@ -348,7 +348,7 @@ export default function ProfileComplete() {
                   name="dietGoal"
                   value={formData.dietGoal}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                     errors.dietGoal ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                   }`}
                 >
@@ -371,7 +371,7 @@ export default function ProfileComplete() {
                   onChange={handleChange}
                   placeholder="예: 땅콩, 해산물, 유제품"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] transition-all resize-none"
                 />
               </div>
             </div>

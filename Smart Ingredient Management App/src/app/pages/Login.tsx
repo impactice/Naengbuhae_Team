@@ -206,7 +206,7 @@ export default function Login() {
 
           <button
             onClick={() => handleSocialLogin('google')}
-            className="w-full py-4 bg-white border-2 border-gray-200 text-black rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
+            className="w-full py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-black dark:text-gray-100 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
