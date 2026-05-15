@@ -66,18 +66,18 @@ export default function Root() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center">
+    <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center">
       {/* 앱 컨테이너 - 모바일 뷰 */}
-      <div className="w-full max-w-md bg-white min-h-screen flex flex-col relative shadow-xl">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col relative shadow-xl">
         {/* 로그아웃 버튼 — 나의 맞춤 페이지에서만 노출 */}
         {location.pathname.startsWith('/my-custom') && (
           <div className="absolute top-4 right-4 z-50">
             <button
               onClick={handleLogout}
-              className="p-2 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+              className="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               title="로그아웃"
             >
-              <LogOut className="w-5 h-5 text-gray-600" />
+              <LogOut className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>
           </div>
         )}
@@ -88,7 +88,7 @@ export default function Root() {
         </main>
 
         {/* 하단 네비게이션 */}
-        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200">
+        <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
           <div className="flex justify-around items-center h-16">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -101,13 +101,13 @@ export default function Root() {
                 >
                   <Icon
                     className={`w-6 h-6 ${
-                      active ? 'text-black' : 'text-gray-400'
+                      active ? 'text-black dark:text-white' : 'text-gray-400 dark:text-gray-500'
                     }`}
                     strokeWidth={active ? 2.5 : 2}
                   />
                   <span
                     className={`text-xs ${
-                      active ? 'text-black' : 'text-gray-400'
+                      active ? 'text-black dark:text-white' : 'text-gray-400 dark:text-gray-500'
                     }`}
                     style={{ fontWeight: active ? 600 : 400 }}
                   >

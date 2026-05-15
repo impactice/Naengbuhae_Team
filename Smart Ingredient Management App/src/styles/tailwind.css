@@ -3,6 +3,10 @@
 
 @import 'tw-animate-css';
 
+/* Tailwind v4 dark mode — `<html class="dark">` 일 때 dark: variant 적용.
+   사용자 설정(light/dark/system)을 themeMode store가 관리하고 root 클래스를 토글한다. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Tailwind v4는 button 기본 커서를 default로 리셋함 → 클릭 가능 요소에 포인터 복원
    레이어 밖에 두어 utilities 레이어보다 우선 적용됨 */
 button:not(:disabled),

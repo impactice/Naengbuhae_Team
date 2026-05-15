@@ -22,6 +22,7 @@ import { fridgeStore } from '../store/fridgeStore';
 import { notificationStore } from '../store/notificationStore';
 import { clearAuth } from '../utils/apiClient';
 import { isGuest, clearGuest } from '../utils/guestMode';
+import { themeModeStore, ThemeMode } from '../utils/themeMode';
 
 const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
   '체중 감량': 'weight-loss',
@@ -41,6 +42,12 @@ export default function MyCustom() {
     notificationStore.subscribe,
     notificationStore.getSnapshot,
     notificationStore.getSnapshot,
+  );
+
+  const themeMode = useSyncExternalStore(
+    themeModeStore.subscribe,
+    themeModeStore.getSnapshot,
+    themeModeStore.getSnapshot,
   );
 
   const handleDeleteAccount = async () => {
@@ -533,6 +540,34 @@ export default function MyCustom() {
         </div>
       </div>
       )}
+
+      {/* 테마 모드 — 시스템/라이트/다크 */}
+      <div className="px-5 pt-4 pb-2">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-sm" style={{ fontWeight: 600 }}>테마</span>
+        </div>
+        <div className="flex gap-2">
+          {(['system', 'light', 'dark'] as ThemeMode[]).map((m) => {
+            const label = m === 'system' ? '시스템' : m === 'light' ? '라이트' : '다크';
+            const selected = themeMode === m;
+            return (
+              <button
+                key={m}
+                type="button"
+                onClick={() => themeModeStore.set(m)}
+                className={`flex-1 py-2 rounded-lg text-sm transition-colors ${
+                  selected
+                    ? 'bg-black text-white dark:bg-white dark:text-black'
+                    : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                }`}
+                style={{ fontWeight: selected ? 700 : 500 }}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* 계정 관리: LOCAL 가입자만 비밀번호 변경 가능 (소셜 계정은 비번이 없음) + 회원 탈퇴 */}
       <div className="px-5 pt-4 pb-8 border-t border-gray-100 mt-4 space-y-1">
