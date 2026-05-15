@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
   User,
@@ -19,7 +19,8 @@ import {
 import { useUserProfile } from '../hooks/useUserProfile';
 import { userStore } from '../store/userStore';
 import { fridgeStore } from '../store/fridgeStore';
-import { apiFetch, clearAuth } from '../utils/apiClient';
+import { notificationStore } from '../store/notificationStore';
+import { clearAuth } from '../utils/apiClient';
 import { isGuest, clearGuest } from '../utils/guestMode';
 
 const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
@@ -32,25 +33,15 @@ const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-g
 export default function MyCustom() {
   const navigate = useNavigate();
   const { profile, loading } = useUserProfile();
-  const [unread, setUnread] = useState(0);
 
   const guest = isGuest();
 
-  useEffect(() => {
-    if (guest) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await apiFetch('/api/notifications/unread-count');
-        if (!res.ok) return;
-        const data = (await res.json()) as { count?: number };
-        if (!cancelled) setUnread(data.count ?? 0);
-      } catch {
-        // 무시 — 진입 시 다시 시도
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [guest]);
+  // 전역 store 구독 — Root가 polling/visibility로 자동 갱신
+  const unread = useSyncExternalStore(
+    notificationStore.subscribe,
+    notificationStore.getSnapshot,
+    notificationStore.getSnapshot,
+  );
 
   const handleDeleteAccount = async () => {
     if (!confirm('정말 회원 탈퇴 하시겠습니까?\n\n탈퇴 시 계정과 모든 데이터(식재료, 레시피 기록 등)가 영구 삭제되며 복구할 수 없습니다.')) {

@@ -3,6 +3,7 @@ import { Home, Package, AlertCircle, ShoppingCart, LogOut, User } from 'lucide-r
 import { useEffect } from 'react';
 import { userStore } from '../store/userStore';
 import { fridgeStore } from '../store/fridgeStore';
+import { notificationStore } from '../store/notificationStore';
 import { clearAuth, logoutOnServer } from '../utils/apiClient';
 import { isGuest, clearGuest } from '../utils/guestMode';
 
@@ -20,6 +21,16 @@ export default function Root() {
     }
   }, [navigate]);
 
+  // 로그인 사용자 한정 — unread 알림 카운트 polling 시작 (게스트는 알림 없음).
+  // 탭이 visible일 때만 갱신하므로 부담 적음.
+  useEffect(() => {
+    const isLoggedIn =
+      sessionStorage.getItem('isLoggedIn') ?? localStorage.getItem('isLoggedIn');
+    if (!isLoggedIn || isGuest()) return;
+    notificationStore.start();
+    return () => notificationStore.stop();
+  }, []);
+
   const handleLogout = async () => {
     if (isGuest()) {
       // 게스트 모드 종료. 로컬 식재료도 같이 정리하면 데이터 손실 위험 → 로그인 화면으로만 이동.
@@ -34,6 +45,8 @@ export default function Root() {
     clearAuth();
     userStore.clearCache();
     fridgeStore.clear();
+    notificationStore.stop();
+    notificationStore.reset();
     navigate('/login');
   };
 

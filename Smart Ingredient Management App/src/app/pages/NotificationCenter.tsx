@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { ArrowLeft, Bell } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
 import { isGuest } from '../utils/guestMode';
+import { notificationStore } from '../store/notificationStore';
 import GuestBlocked from '../components/GuestBlocked';
 
 interface NotificationItem {
@@ -35,8 +36,9 @@ export default function NotificationCenter() {
         }
         const data = (await res.json()) as NotificationItem[];
         setItems(data);
-        // 본 시점에 읽음 처리 (실패해도 무시)
+        // 본 시점에 읽음 처리 (실패해도 무시) + 전역 배지 즉시 0
         apiFetch('/api/notifications/read-all', { method: 'POST' }).catch(() => {});
+        notificationStore.reset();
       } catch {
         setError('서버 연결 실패');
       } finally {
