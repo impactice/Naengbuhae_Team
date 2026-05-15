@@ -1,11 +1,20 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Eye, EyeOff, ChevronLeft } from 'lucide-react';
+import { Eye, EyeOff, ChevronLeft, Check } from 'lucide-react';
 
 export default function SignUp() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // 이메일 인증번호 흐름: 코드 발송 → 입력 → 검증 → 가입 가능
+  const [verification, setVerification] = useState<{
+    sending: boolean;     // "인증번호 받기" 요청 중
+    sentTo: string | null; // 코드를 보낸 이메일 (이걸로 잠금 — 이메일 바꾸면 다시 요청해야 함)
+    code: string;          // 사용자가 입력 중인 6자리
+    verifying: boolean;    // "확인" 요청 중
+    verifiedEmail: string | null; // 검증 성공한 이메일 — 가입 시 이게 formData.email과 같아야 통과
+    error: string | null;
+  }>({ sending: false, sentTo: null, code: '', verifying: false, verifiedEmail: null, error: null });
   const [formData, setFormData] = useState({
     name: '',
     gender: '',
@@ -57,6 +66,8 @@ export default function SignUp() {
     }
     if (!formData.email || !formData.email.includes('@')) {
       newErrors.email = '올바른 이메일을 입력해주세요';
+    } else if (verification.verifiedEmail !== formData.email.trim()) {
+      newErrors.email = '이메일 인증을 완료해주세요';
     }
     if (!formData.username) {
       newErrors.username = '아이디를 입력해주세요';
@@ -196,6 +207,54 @@ export default function SignUp() {
     // 입력 시 해당 필드 에러 제거
     if (errors[name]) {
       setErrors({ ...errors, [name]: '' });
+    }
+    // 이메일을 바꾸면 기존 인증 상태 무효화 — 새 이메일은 다시 인증해야 함.
+    if (name === 'email' && verification.verifiedEmail && verification.verifiedEmail !== value.trim()) {
+      setVerification({ sending: false, sentTo: null, code: '', verifying: false, verifiedEmail: null, error: null });
+    }
+  };
+
+  const handleSendCode = async () => {
+    const email = formData.email.trim();
+    if (!email || !email.includes('@')) {
+      setVerification(v => ({ ...v, error: '올바른 이메일을 입력해주세요.' }));
+      return;
+    }
+    setVerification(v => ({ ...v, sending: true, error: null }));
+    try {
+      const res = await fetch('http://localhost:8080/user/email/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setVerification({ sending: false, sentTo: email, code: '', verifying: false, verifiedEmail: null, error: null });
+      } else {
+        setVerification(v => ({ ...v, sending: false, error: data.message ?? '발송에 실패했습니다.' }));
+      }
+    } catch {
+      setVerification(v => ({ ...v, sending: false, error: '서버 연결에 실패했습니다.' }));
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verification.sentTo) return;
+    setVerification(v => ({ ...v, verifying: true, error: null }));
+    try {
+      const res = await fetch('http://localhost:8080/user/email/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: verification.sentTo, code: verification.code.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setVerification(v => ({ ...v, verifying: false, verifiedEmail: verification.sentTo, error: null }));
+      } else {
+        setVerification(v => ({ ...v, verifying: false, error: data.message ?? '인증에 실패했습니다.' }));
+      }
+    } catch {
+      setVerification(v => ({ ...v, verifying: false, error: '서버 연결에 실패했습니다.' }));
     }
   };
 
@@ -451,20 +510,64 @@ export default function SignUp() {
             <div className="space-y-4 pt-4 border-t border-gray-100">
               <h3 className="text-lg font-semibold">계정 정보</h3>
 
-              {/* 이메일 */}
+              {/* 이메일 + 인증번호 */}
               <div>
                 <label className="block text-sm text-gray-600 mb-2">이메일</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="example@email.com"
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
-                    errors.email ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
-                  }`}
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="example@email.com"
+                    disabled={verification.verifiedEmail === formData.email.trim() && !!verification.verifiedEmail}
+                    className={`flex-1 px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all disabled:opacity-60 ${
+                      errors.email ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                    }`}
+                  />
+                  {verification.verifiedEmail === formData.email.trim() && verification.verifiedEmail ? (
+                    <span className="px-4 py-3 bg-green-50 text-green-700 rounded-xl text-sm font-semibold flex items-center gap-1">
+                      <Check className="w-4 h-4" /> 인증완료
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSendCode}
+                      disabled={verification.sending}
+                      className="px-4 py-3 bg-black text-white rounded-xl text-sm font-semibold whitespace-nowrap disabled:opacity-50"
+                    >
+                      {verification.sending ? '전송 중...' : verification.sentTo ? '재발송' : '인증번호 받기'}
+                    </button>
+                  )}
+                </div>
                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+
+                {/* 코드 입력 — 발송 직후 노출, 검증 완료되면 숨김 */}
+                {verification.sentTo && verification.verifiedEmail !== verification.sentTo && (
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={verification.code}
+                      onChange={(e) => setVerification(v => ({ ...v, code: e.target.value.replace(/\D/g, '') }))}
+                      placeholder="6자리 인증번호"
+                      className="flex-1 px-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] tracking-widest"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleVerifyCode}
+                      disabled={verification.verifying || verification.code.length !== 6}
+                      className="px-4 py-3 bg-[#CDFF00] text-black rounded-xl text-sm font-semibold disabled:opacity-50"
+                    >
+                      {verification.verifying ? '확인 중...' : '확인'}
+                    </button>
+                  </div>
+                )}
+                {verification.error && <p className="mt-1 text-sm text-red-600">{verification.error}</p>}
+                {verification.sentTo && !verification.verifiedEmail && !verification.error && (
+                  <p className="mt-1 text-xs text-gray-500">{verification.sentTo}로 보낸 6자리 코드를 입력해주세요 (10분 유효).</p>
+                )}
               </div>
 
               {/* 아이디 */}
