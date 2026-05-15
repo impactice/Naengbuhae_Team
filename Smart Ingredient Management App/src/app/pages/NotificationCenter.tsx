@@ -129,7 +129,7 @@ export default function NotificationCenter() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm" style={{ fontWeight: 700 }}>{item.title}</p>
-                    <p className="text-sm text-gray-700 mt-1 leading-relaxed">{item.body}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 leading-relaxed">{item.body}</p>
                     <p className="text-xs text-gray-400 mt-1.5">{formatTime(item.createdAt)}</p>
                   </div>
                 </div>

@@ -286,7 +286,7 @@ export default function RecipeDetail() {
               >
                 {index + 1}
               </div>
-              <p className="flex-1 text-sm text-gray-700 pt-0.5">{step}</p>
+              <p className="flex-1 text-sm text-gray-700 dark:text-gray-300 pt-0.5">{step}</p>
             </div>
           ))}
         </div>
