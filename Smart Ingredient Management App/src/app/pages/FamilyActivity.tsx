@@ -1,6 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowLeft, User as UserIcon } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { apiFetch } from '../utils/apiClient';
 import { fridgeStore } from '../store/fridgeStore';
 import { isGuest } from '../utils/guestMode';
@@ -28,6 +29,10 @@ interface Stats {
 }
 
 const PERIOD_OPTIONS = [7, 30, 90];
+
+// 도넛 차트 슬라이스 색깔. TOP5 식재료 항목에 순서대로 할당.
+const PIE_COLORS = ['#16A34A', '#22C55E', '#4ADE80', '#86EFAC', '#BBF7D0'];
+const PIE_COLORS_ORANGE = ['#EA580C', '#F97316', '#FB923C', '#FDBA74', '#FED7AA'];
 
 // 가족 활동 통계 — 현재 선택된 냉장고 기준.
 // 멤버별 추가/소비 카운트 + 자주 추가/비운 식재료 TOP 5.
@@ -135,7 +140,28 @@ export default function FamilyActivity() {
               {stats.members.length === 0 ? (
                 <EmptyCard text="아직 활동 기록이 없어요" />
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-3">
+                  {/* 그룹형 막대 차트 — 멤버 한 명당 추가/비움 두 막대 */}
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <ResponsiveContainer width="100%" height={180}>
+                      <BarChart
+                        data={stats.members.map((m) => ({
+                          name: m.name || m.username,
+                          추가: m.added,
+                          비움: m.removed,
+                        }))}
+                        margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                      >
+                        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                        <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                        <Tooltip cursor={{ fill: 'rgba(0,0,0,0.04)' }} />
+                        <Legend wrapperStyle={{ fontSize: 12 }} />
+                        <Bar dataKey="추가" fill="#16A34A" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="비움" fill="#EA580C" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {/* 상세 멤버 리스트 */}
                   {stats.members.map((m) => (
                     <div
                       key={m.username}
@@ -154,10 +180,10 @@ export default function FamilyActivity() {
             </section>
 
             {/* 자주 추가한 식재료 */}
-            <RankedSection title="자주 추가한 식재료" items={stats.topAdded} max={maxAdded} color="#16A34A" />
+            <RankedSection title="자주 추가한 식재료" items={stats.topAdded} max={maxAdded} color="#16A34A" pieColors={PIE_COLORS} />
 
             {/* 자주 비운 식재료 */}
-            <RankedSection title="자주 비운 식재료" items={stats.topRemoved} max={maxRemoved} color="#EA580C" />
+            <RankedSection title="자주 비운 식재료" items={stats.topRemoved} max={maxRemoved} color="#EA580C" pieColors={PIE_COLORS_ORANGE} />
           </div>
         )}
       </div>
@@ -191,11 +217,13 @@ function RankedSection({
   items,
   max,
   color,
+  pieColors,
 }: {
   title: string;
   items: NameCount[];
   max: number;
   color: string;
+  pieColors: string[];
 }) {
   if (items.length === 0) {
     return (
@@ -208,24 +236,59 @@ function RankedSection({
   return (
     <section>
       <h2 className="text-sm mb-2" style={{ fontWeight: 600 }}>{title}</h2>
-      <div className="space-y-1.5">
-        {items.map((item, i) => {
-          const ratio = max === 0 ? 0 : item.count / max;
-          return (
-            <div key={item.name} className="bg-gray-50 rounded-lg px-3 py-2.5 flex items-center gap-3">
-              <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs" style={{ fontWeight: 700 }}>
-                {i + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm" style={{ fontWeight: 600 }}>{item.name}</p>
-                <div className="h-1.5 bg-gray-200 rounded mt-1.5 overflow-hidden">
-                  <div className="h-full" style={{ width: `${ratio * 100}%`, backgroundColor: color }} />
-                </div>
+      <div className="space-y-2">
+        {/* 도넛 차트 — TOP 항목 비율 */}
+        <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-3">
+          <ResponsiveContainer width={120} height={120}>
+            <PieChart>
+              <Pie
+                data={items}
+                dataKey="count"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={28}
+                outerRadius={50}
+                paddingAngle={2}
+                stroke="none"
+              >
+                {items.map((_, i) => (
+                  <Cell key={i} fill={pieColors[i % pieColors.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="flex-1 grid grid-cols-1 gap-1.5">
+            {items.map((item, i) => (
+              <div key={item.name} className="flex items-center gap-2 text-xs">
+                <span className="w-3 h-3 rounded" style={{ backgroundColor: pieColors[i % pieColors.length] }} />
+                <span className="flex-1 truncate" style={{ fontWeight: 500 }}>{item.name}</span>
+                <span className="text-gray-500">{item.count}회</span>
               </div>
-              <span className="text-xs text-gray-500">{item.count}회</span>
-            </div>
-          );
-        })}
+            ))}
+          </div>
+        </div>
+        {/* 상세 랭크 리스트 */}
+        <div className="space-y-1.5">
+          {items.map((item, i) => {
+            const ratio = max === 0 ? 0 : item.count / max;
+            return (
+              <div key={item.name} className="bg-gray-50 rounded-lg px-3 py-2.5 flex items-center gap-3">
+                <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs" style={{ fontWeight: 700 }}>
+                  {i + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm" style={{ fontWeight: 600 }}>{item.name}</p>
+                  <div className="h-1.5 bg-gray-200 rounded mt-1.5 overflow-hidden">
+                    <div className="h-full" style={{ width: `${ratio * 100}%`, backgroundColor: color }} />
+                  </div>
+                </div>
+                <span className="text-xs text-gray-500">{item.count}회</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
