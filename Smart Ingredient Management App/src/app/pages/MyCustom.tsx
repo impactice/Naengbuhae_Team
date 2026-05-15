@@ -260,11 +260,11 @@ export default function MyCustom() {
 
       {/* 기본 정보 카드 */}
       <div className="px-5 py-5">
-        <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-5">
+        <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
           <button
             type="button"
             onClick={() => navigate('/profile/complete')}
-            className="w-full flex items-center justify-between mb-4 -m-2 p-2 rounded-xl hover:bg-gray-100 transition-colors text-left"
+            className="w-full flex items-center justify-between mb-4 -m-2 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left"
             title="회원 정보 수정"
           >
             <div className="flex items-center gap-3">
@@ -286,24 +286,24 @@ export default function MyCustom() {
           {(profile.height || profile.weight) && (
             <div className="grid grid-cols-2 gap-4">
               {profile.height && (
-                <div className="bg-white rounded-xl p-3 border border-gray-100">
+                <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
                   <p className="text-xs text-gray-500 mb-1">키</p>
                   <p className="text-lg font-semibold">{profile.height} cm</p>
                 </div>
               )}
               {profile.weight && (
-                <div className="bg-white rounded-xl p-3 border border-gray-100">
+                <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
                   <p className="text-xs text-gray-500 mb-1">몸무게</p>
                   <p className="text-lg font-semibold">{profile.weight} kg</p>
                 </div>
               )}
               {bmi && (
                 <>
-                  <div className="bg-white rounded-xl p-3 border border-gray-100">
+                  <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
                     <p className="text-xs text-gray-500 mb-1">BMI</p>
                     <p className="text-lg font-semibold">{bmi}</p>
                   </div>
-                  <div className="bg-white rounded-xl p-3 border border-gray-100">
+                  <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
                     <p className="text-xs text-gray-500 mb-1">상태</p>
                     <p className={`text-lg font-semibold ${bmiStatus?.color}`}>
                       {bmiStatus?.text}
@@ -338,8 +338,8 @@ export default function MyCustom() {
           <h3 className="font-semibold mb-3">건강 목표</h3>
           <div className="space-y-3">
             {profile.dietGoal && (
-              <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
                   <Target className="w-5 h-5 text-blue-600" />
                 </div>
                 <div className="flex-1">
@@ -350,8 +350,8 @@ export default function MyCustom() {
             )}
 
             {profile.activityLevel && (
-              <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
                   <Activity className="w-5 h-5 text-green-600" />
                 </div>
                 <div className="flex-1">
@@ -369,7 +369,7 @@ export default function MyCustom() {
         <Link
           to="/notifications"
           onClick={() => setUnread(0)}
-          className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors"
+          className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
             <Bell className="w-5 h-5" />
@@ -394,7 +394,7 @@ export default function MyCustom() {
       <div className="px-5 pb-3">
         <Link
           to="/fridges"
-          className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors"
+          className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
             <Refrigerator className="w-5 h-5" />
@@ -411,7 +411,7 @@ export default function MyCustom() {
       <div className="px-5 pb-5">
         <Link
           to="/family-activity"
-          className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors"
+          className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
             <Users className="w-5 h-5" />
@@ -496,14 +496,14 @@ export default function MyCustom() {
       {profile.dietGoal && (
         <div className="px-5 pb-5">
           <h3 className="font-semibold mb-3">권장 영양소 비율</h3>
-        <div className="bg-gray-50 rounded-2xl p-5">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5">
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">탄수화물</span>
                 <span className="text-sm text-gray-500">50-60%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div className="h-full bg-blue-500" style={{ width: '55%' }}></div>
               </div>
             </div>
@@ -515,7 +515,7 @@ export default function MyCustom() {
                   {normalizedDietGoal === 'muscle-gain' ? '25-30%' : '15-20%'}
                 </span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-red-500"
                   style={{ width: normalizedDietGoal === 'muscle-gain' ? '27%' : '17%' }}
@@ -528,7 +528,7 @@ export default function MyCustom() {
                 <span className="text-sm font-medium">지방</span>
                 <span className="text-sm text-gray-500">20-25%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div className="h-full bg-yellow-500" style={{ width: '22%' }}></div>
               </div>
             </div>

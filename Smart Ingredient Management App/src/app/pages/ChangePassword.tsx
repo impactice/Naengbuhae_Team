@@ -44,7 +44,7 @@ export default function ChangePassword() {
   if (done) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center items-center px-4">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl shadow-xl p-8 text-center">
           <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
           <h1 className="text-xl mb-2" style={{ fontWeight: 700 }}>비밀번호가 변경되었어요</h1>
           <p className="text-sm text-gray-500 mb-6">다음 로그인부터 새 비밀번호로 입장해주세요.</p>
@@ -77,7 +77,7 @@ export default function ChangePassword() {
               type={showPw ? 'text' : 'password'}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00]"
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00]"
               required
             />
           </div>
@@ -89,7 +89,7 @@ export default function ChangePassword() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="영소문자 + 숫자 + 특수문자 포함 8자 이상"
-              className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00]"
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00]"
               required
             />
           </div>
@@ -101,7 +101,7 @@ export default function ChangePassword() {
                 type={showPw ? 'text' : 'password'}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] pr-12"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] pr-12"
                 required
               />
               <button

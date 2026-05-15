@@ -125,7 +125,7 @@ export default function FamilyActivity() {
                   className={`px-4 py-2 rounded-lg text-sm transition-colors ${
                     days === d
                       ? 'bg-lime-300 text-black'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                   style={{ fontWeight: days === d ? 600 : 500 }}
                 >

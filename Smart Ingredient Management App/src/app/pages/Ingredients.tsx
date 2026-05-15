@@ -189,7 +189,7 @@ export default function Ingredients() {
               type="button"
               onClick={enterSelectionMode}
               disabled={ingredients.length === 0}
-              className="rounded-xl py-4 px-4 flex items-center justify-center bg-gray-100 border-2 border-gray-200 hover:shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="rounded-xl py-4 px-4 flex items-center justify-center bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               title="선택"
             >
               <CheckSquare className="w-5 h-5 text-gray-700" />
@@ -204,7 +204,7 @@ export default function Ingredients() {
           <button
             type="button"
             onClick={selectAll}
-            className="flex-1 py-3 rounded-xl bg-gray-100 text-sm"
+            className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm"
             style={{ fontWeight: 600 }}
           >
             전체 선택 ({sorted.length})
@@ -304,7 +304,7 @@ export default function Ingredients() {
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors ${
             showExpiredOnly
               ? 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-300'
-              : 'bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200'
+              : 'bg-gray-100 dark:bg-gray-800 border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
           }`}
           style={{ fontWeight: showExpiredOnly ? 600 : 500 }}
         >
@@ -352,10 +352,10 @@ export default function Ingredients() {
                     selectionMode
                       ? isSelected
                         ? 'bg-green-50 dark:bg-green-900/30 border-2 border-[#CDFF00] cursor-pointer'
-                        : 'bg-gray-50 border-2 border-transparent cursor-pointer'
+                        : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer'
                       : isHighlighted
                       ? 'bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-300 dark:border-yellow-700 ring-2 ring-yellow-200 dark:ring-yellow-800/50'
-                      : 'bg-gray-50'
+                      : 'bg-gray-50 dark:bg-gray-800'
                   }`}
                 >
                   <div className="flex items-start justify-between">

@@ -106,8 +106,8 @@ export default function NutritionAnalysis() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* 헤더 */}
-      <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-4 flex items-center z-10">
-        <Link to="/my-custom" className="p-2 -ml-2 hover:bg-gray-50 rounded-lg transition-colors">
+      <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center z-10">
+        <Link to="/my-custom" className="p-2 -ml-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <h1 className="ml-2 text-xl" style={{ fontWeight: 700 }}>
@@ -163,7 +163,7 @@ export default function NutritionAnalysis() {
           {/* 영양소 비율 차트 */}
           <div className="px-5 pb-5">
             <h3 className="font-semibold mb-3">영양소 구성 비율</h3>
-            <div className="bg-gray-50 rounded-2xl p-5">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5">
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
@@ -199,7 +199,7 @@ export default function NutritionAnalysis() {
           {/* 식재료별 칼로리 비교 */}
           <div className="px-5 pb-5">
             <h3 className="font-semibold mb-3">식재료별 칼로리</h3>
-            <div className="bg-gray-50 rounded-2xl p-5">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={ingredientCalories}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -228,8 +228,8 @@ export default function NutritionAnalysis() {
                     key={ing.id}
                     className={`rounded-xl p-4 border-2 ${
                       isAllergic
-                        ? 'bg-red-50 border-red-200'
-                        : 'bg-white border-gray-200'
+                        ? 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50'
+                        : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -237,7 +237,7 @@ export default function NutritionAnalysis() {
                         <div className="flex items-center gap-2">
                           <h4 className="font-semibold text-lg">{ing.name}</h4>
                           {isAllergic && (
-                            <span className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-semibold">
+                            <span className="flex items-center gap-1 px-2 py-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-lg text-xs font-semibold">
                               <AlertCircle className="w-3 h-3" />
                               알레르기 주의
                             </span>
@@ -250,28 +250,28 @@ export default function NutritionAnalysis() {
                     </div>
 
                     <div className="grid grid-cols-4 gap-2">
-                      <div className="bg-gray-50 rounded-lg p-2 text-center">
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
                         <p className="text-xs text-gray-600">칼로리</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.calories * factor)}
                         </p>
                         <p className="text-xs text-gray-400">kcal</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-2 text-center">
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
                         <p className="text-xs text-gray-600">단백질</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.protein * factor)}
                         </p>
                         <p className="text-xs text-gray-400">g</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-2 text-center">
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
                         <p className="text-xs text-gray-600">탄수화물</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.carbs * factor)}
                         </p>
                         <p className="text-xs text-gray-400">g</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-2 text-center">
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
                         <p className="text-xs text-gray-600">지방</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.fat * factor)}

@@ -143,9 +143,9 @@ export default function FridgeManagement() {
               key={fridge.id}
               type="button"
               onClick={() => setDetailId(fridge.id)}
-              className="w-full bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-3 flex items-center gap-3 transition-colors text-left"
+              className="w-full bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl px-4 py-3 flex items-center gap-3 transition-colors text-left"
             >
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Refrigerator className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -185,7 +185,7 @@ export default function FridgeManagement() {
           onClick={() => setInviteCode(null)}
         >
           <div
-            className="bg-white rounded-2xl p-6 w-full max-w-sm"
+            className="bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl p-6 w-full max-w-sm"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-lg mb-1" style={{ fontWeight: 700 }}>초대 코드</h2>
@@ -288,7 +288,7 @@ function TextPromptModal({
           onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
           placeholder={config.placeholder}
           maxLength={config.maxLength}
-          className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:border-black mb-4"
+          className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black mb-4"
           style={config.uppercase
             ? { fontSize: '22px', fontWeight: 700, letterSpacing: '4px', textAlign: 'center' }
             : { fontSize: '15px' }}
@@ -297,7 +297,7 @@ function TextPromptModal({
         <div className="flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl bg-gray-100"
+            className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800"
             style={{ fontWeight: 600 }}
           >
             취소
@@ -342,12 +342,12 @@ function FridgeDetailModal({
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[85vh] flex flex-col"
+        className="bg-white dark:bg-gray-900 dark:text-gray-100 w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[85vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
         <div className="px-5 pt-5 pb-3 flex items-start gap-3 border-b border-gray-100">
-          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
             <Refrigerator className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
@@ -390,8 +390,8 @@ function FridgeDetailModal({
             </p>
             <div className="space-y-1">
               {fridge.members.map((m) => (
-                <div key={m.username} className="flex items-center gap-2 px-3 py-2.5 bg-gray-50 rounded-lg">
-                  <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                <div key={m.username} className="flex items-center gap-2 px-3 py-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="w-7 h-7 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
                     <User className="w-4 h-4 text-gray-600" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -404,7 +404,7 @@ function FridgeDetailModal({
                   {m.username !== myUsername && (
                     <button
                       onClick={() => onRemoveMember(m.username, m.name)}
-                      className="text-red-500 hover:bg-red-50 p-1.5 rounded"
+                      className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 p-1.5 rounded"
                       title="멤버 제거"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -436,8 +436,8 @@ function ActionRow({
   return (
     <button
       onClick={onClick}
-      className={`w-full px-4 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center gap-3 text-left transition-colors ${
-        destructive ? 'text-red-600' : 'text-black'
+      className={`w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-3 text-left transition-colors ${
+        destructive ? 'text-red-600' : 'text-black dark:text-gray-100'
       }`}
       style={{ fontWeight: 600 }}
     >
