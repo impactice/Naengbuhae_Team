@@ -36,7 +36,7 @@ export default function Home() {
   ].filter(item => item.value > 0);
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -223,7 +223,7 @@ export default function Home() {
               return (
                 <div
                   key={ingredient.id}
-                  className="bg-gray-50 rounded-xl p-4 flex items-center justify-between"
+                  className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center justify-between"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">

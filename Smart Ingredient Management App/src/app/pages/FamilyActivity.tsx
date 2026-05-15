@@ -81,7 +81,7 @@ export default function FamilyActivity() {
   if (isGuest()) return <GuestBlocked feature="가족 활동" />;
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">
@@ -142,7 +142,7 @@ export default function FamilyActivity() {
               ) : (
                 <div className="space-y-3">
                   {/* 그룹형 막대 차트 — 멤버 한 명당 추가/비움 두 막대 */}
-                  <div className="bg-gray-50 rounded-xl p-3">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                     <ResponsiveContainer width="100%" height={180}>
                       <BarChart
                         data={stats.members.map((m) => ({
@@ -165,7 +165,7 @@ export default function FamilyActivity() {
                   {stats.members.map((m) => (
                     <div
                       key={m.username}
-                      className="bg-gray-50 rounded-xl p-3 flex items-center gap-3"
+                      className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 flex items-center gap-3"
                     >
                       <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center">
                         <UserIcon className="w-4 h-4 text-gray-500" />
@@ -238,7 +238,7 @@ function RankedSection({
       <h2 className="text-sm mb-2" style={{ fontWeight: 600 }}>{title}</h2>
       <div className="space-y-2">
         {/* 도넛 차트 — TOP 항목 비율 */}
-        <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-3">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 flex items-center gap-3">
           <ResponsiveContainer width={120} height={120}>
             <PieChart>
               <Pie
@@ -274,7 +274,7 @@ function RankedSection({
           {items.map((item, i) => {
             const ratio = max === 0 ? 0 : item.count / max;
             return (
-              <div key={item.name} className="bg-gray-50 rounded-lg px-3 py-2.5 flex items-center gap-3">
+              <div key={item.name} className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2.5 flex items-center gap-3">
                 <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs" style={{ fontWeight: 700 }}>
                   {i + 1}
                 </span>
@@ -296,7 +296,7 @@ function RankedSection({
 
 function EmptyCard({ text }: { text: string }) {
   return (
-    <div className="bg-gray-50 rounded-xl py-6 text-center">
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl py-6 text-center">
       <p className="text-gray-400 text-sm">{text}</p>
     </div>
   );

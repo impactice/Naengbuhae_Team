@@ -122,7 +122,7 @@ export default function MyCustom() {
       { icon: Heart, title: '영양 분석', subtitle: '권장 칼로리 + 영양 비율' },
     ];
     return (
-      <div className="min-h-screen bg-white pb-20">
+      <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
         <div className="px-5 pt-6 pb-4">
           <h1 className="text-2xl mb-1" style={{ fontWeight: 700 }}>나의 맞춤</h1>
           <p className="text-sm text-gray-500">지금은 비로그인 상태예요</p>
@@ -190,7 +190,7 @@ export default function MyCustom() {
   // 로딩 중
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-6">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-6">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-500">프로필 정보를 불러오는 중...</p>
@@ -202,7 +202,7 @@ export default function MyCustom() {
   // 프로필 없음
   if (!profile) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-6">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-6">
         <div className="text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-gray-300" />
           <h2 className="text-xl font-semibold mb-2">프로필 정보가 없습니다</h2>
@@ -221,7 +221,7 @@ export default function MyCustom() {
   }
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 border-b border-gray-100">
         <h1 className="text-2xl mb-1" style={{ fontWeight: 700 }}>

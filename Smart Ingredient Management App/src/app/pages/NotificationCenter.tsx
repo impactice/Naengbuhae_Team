@@ -86,7 +86,7 @@ export default function NotificationCenter() {
   if (guest) return <GuestBlocked feature="알림 센터" />;
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">

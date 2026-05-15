@@ -141,7 +141,7 @@ export default function ShoppingList() {
   if (isGuest()) return <GuestBlocked feature="장보기" />;
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -209,7 +209,7 @@ export default function ShoppingList() {
             </button>
           </div>
         ) : (
-          <form onSubmit={handleAdd} className="bg-gray-50 rounded-xl p-4">
+          <form onSubmit={handleAdd} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
             <div className="mb-3">
               <input
                 type="text"

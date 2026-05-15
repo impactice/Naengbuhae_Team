@@ -316,7 +316,7 @@ function AIRecommendModal({
               {/* TODO: 백엔드 연동 후 실제 추천 결과 표시 로직으로 교체 */}
               백엔드 연동 후 추천 결과가 여기에 표시됩니다
             </p>
-            <div className="mt-4 px-4 py-3 bg-gray-50 rounded-xl w-full">
+            <div className="mt-4 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl w-full">
               <p className="text-xs text-gray-500 mb-1" style={{ fontWeight: 600 }}>전송된 데이터</p>
               <p className="text-xs text-gray-400">식재료: {selectedIngredients.join(', ')}</p>
               <p className="text-xs text-gray-400 mt-0.5">
@@ -376,14 +376,14 @@ export default function Recipes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <p className="text-gray-500">레시피를 불러오는 중...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-1">
@@ -475,7 +475,7 @@ export default function Recipes() {
                 key={match.recipe.id}
                 to={`/recipe/${match.recipe.id}`}
               >
-                <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 transition-colors">
                   <div className="flex items-start justify-between mb-3 gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">

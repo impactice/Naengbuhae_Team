@@ -139,7 +139,7 @@ export default function Ingredients() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -230,7 +230,7 @@ export default function Ingredients() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="이름으로 검색"
-            className="w-full pl-9 pr-9 py-2 bg-gray-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-full pl-9 pr-9 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
           />
           {searchQuery && (
             <button
@@ -252,7 +252,7 @@ export default function Ingredients() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value as CategoryType | 'all')}
-            className="px-3 py-2 bg-gray-100 rounded-lg text-sm flex-1"
+            className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm flex-1"
             style={{ fontWeight: 500 }}
           >
             <option value="all">전체 카테고리</option>
@@ -273,7 +273,7 @@ export default function Ingredients() {
           <select
             value={selectedStorage}
             onChange={(e) => setSelectedStorage(e.target.value as StorageType | 'all')}
-            className="px-3 py-2 bg-gray-100 rounded-lg text-sm flex-1"
+            className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm flex-1"
             style={{ fontWeight: 500 }}
           >
             <option value="all">전체 보관</option>
@@ -286,7 +286,7 @@ export default function Ingredients() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'expiry' | 'name' | 'category')}
-            className="px-3 py-2 bg-gray-100 rounded-lg text-sm flex-1"
+            className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm flex-1"
             style={{ fontWeight: 500 }}
           >
             <option value="expiry">유통기한 순</option>

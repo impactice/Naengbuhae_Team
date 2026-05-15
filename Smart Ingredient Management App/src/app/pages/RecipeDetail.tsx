@@ -63,7 +63,7 @@ export default function RecipeDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <p className="text-gray-500">레시피를 불러오는 중...</p>
       </div>
     );
@@ -71,7 +71,7 @@ export default function RecipeDetail() {
 
   if (!recipe || !match) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-400 mb-4">레시피를 찾을 수 없습니다</p>
           <button
@@ -94,7 +94,7 @@ export default function RecipeDetail() {
   if (isGuest()) return <GuestBlocked feature="레시피 상세" />;
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* 진입 시 자동 다이얼로그 — 부족한 재료가 있을 때 한 번만 묻기 */}
       {askDialog && recipe && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
@@ -109,7 +109,7 @@ export default function RecipeDetail() {
               <p className="text-sm text-gray-600">장보기 리스트에 한 번에 추가할까요?</p>
             </div>
             <div className="px-5 pb-3 max-h-48 overflow-y-auto">
-              <div className="bg-gray-50 rounded-xl p-3 space-y-1.5">
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-1.5">
                 {missingNotInList.map((i) => (
                   <div key={i.name} className="flex items-center justify-between text-sm">
                     <span style={{ fontWeight: 600 }}>{i.name}</span>
@@ -165,7 +165,7 @@ export default function RecipeDetail() {
 
       {/* 기본 정보 */}
       <div className="px-5 pb-4">
-        <div className="bg-gray-50 rounded-xl p-4">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-gray-600">{recipe.category}</span>
             <span
@@ -212,7 +212,7 @@ export default function RecipeDetail() {
             return (
               <div
                 key={index}
-                className="bg-gray-50 rounded-xl p-4 flex items-center justify-between"
+                className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3 flex-1">
                   <div
@@ -297,7 +297,7 @@ export default function RecipeDetail() {
         <h2 className="text-lg mb-3" style={{ fontWeight: 600 }}>
           영양 정보 (1인분 기준)
         </h2>
-        <div className="bg-gray-50 rounded-xl p-4">
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-gray-500 mb-1">칼로리</p>

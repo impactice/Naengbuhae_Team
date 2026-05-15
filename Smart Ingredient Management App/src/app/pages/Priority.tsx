@@ -39,7 +39,7 @@ export default function Priority() {
   ];
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -256,7 +256,7 @@ function PriorityCard({
   const statusColor = getStatusColor(status);
 
   return (
-    <div className="bg-gray-50 rounded-xl p-4 relative">
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 relative">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
