@@ -2,18 +2,22 @@ import { useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
 import { Link } from 'react-router';
-import { Plus, Trash2, Package, Sparkles, AlertTriangle, Search, X } from 'lucide-react';
+import { Plus, Trash2, Package, Sparkles, AlertTriangle, Search, X, Check, CheckSquare } from 'lucide-react';
 
 import { CategoryType, StorageType } from '../types/ingredient';
 import FridgeSelector from '../components/FridgeSelector';
 
 export default function Ingredients() {
-  const { ingredients, deleteIngredient } = useIngredients();
+  const { ingredients, deleteIngredient, bulkDeleteIngredients } = useIngredients();
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | 'all'>('all');
   const [selectedStorage, setSelectedStorage] = useState<StorageType | 'all'>('all');
   const [sortBy, setSortBy] = useState<'expiry' | 'name' | 'category'>('expiry');
   const [searchQuery, setSearchQuery] = useState('');
   const [showExpiredOnly, setShowExpiredOnly] = useState(false);
+  // 다중 선택 모드 — 선택 버튼 누르면 카드가 체크박스로 변하고 하단에 일괄 삭제 바 표시.
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
 
   // 영양 정보 데이터베이스 (100g 기준)
   const nutritionDatabase: Record<string, {
@@ -82,6 +86,41 @@ export default function Ingredients() {
     }
   };
 
+  const toggleSelection = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const enterSelectionMode = () => {
+    setSelectionMode(true);
+    setSelectedIds(new Set());
+  };
+
+  const exitSelectionMode = () => {
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const selectAll = () => {
+    setSelectedIds(new Set(sorted.map((i) => i.id)));
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`${selectedIds.size}개의 식재료를 삭제하시겠습니까?`)) return;
+    setDeleting(true);
+    try {
+      await bulkDeleteIngredients(Array.from(selectedIds));
+      exitSelectionMode();
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white pb-4">
       {/* 헤더 */}
@@ -90,33 +129,80 @@ export default function Ingredients() {
           <h1 className="text-2xl" style={{ fontWeight: 700 }}>
             식재료 관리
           </h1>
-          <FridgeSelector />
+          {selectionMode ? (
+            <button
+              type="button"
+              onClick={exitSelectionMode}
+              className="text-sm text-gray-600 hover:text-black"
+              style={{ fontWeight: 600 }}
+            >
+              취소
+            </button>
+          ) : (
+            <FridgeSelector />
+          )}
         </div>
-        <p className="text-sm text-gray-500 mt-1">총 {ingredients.length}개</p>
+        <p className="text-sm text-gray-500 mt-1">
+          {selectionMode ? `${selectedIds.size}개 선택됨` : `총 ${ingredients.length}개`}
+        </p>
       </div>
 
-      {/* 추가 버튼 */}
-      <div className="px-5 pb-4">
-        <div className="flex gap-2">
-          <Link to="/add-ingredient" className="flex-1">
+      {/* 추가 버튼 + 선택 모드 진입 */}
+      {!selectionMode && (
+        <div className="px-5 pb-4">
+          <div className="flex gap-2">
+            <Link to="/add-ingredient" className="flex-1">
+              <button
+                className="w-full rounded-xl py-4 flex items-center justify-center gap-2"
+                style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+              >
+                <Plus className="w-5 h-5" />
+                식재료 추가하기
+              </button>
+            </Link>
+            <Link to="/nutrition">
+              <button
+                className="rounded-xl py-4 px-4 flex items-center justify-center bg-gradient-to-br from-green-50 to-white border-2 border-green-200 hover:shadow-md transition-all"
+                title="영양 분석"
+              >
+                <Sparkles className="w-5 h-5 text-green-600" />
+              </button>
+            </Link>
             <button
-              className="w-full rounded-xl py-4 flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+              type="button"
+              onClick={enterSelectionMode}
+              disabled={ingredients.length === 0}
+              className="rounded-xl py-4 px-4 flex items-center justify-center bg-gray-100 border-2 border-gray-200 hover:shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              title="선택"
             >
-              <Plus className="w-5 h-5" />
-              식재료 추가하기
+              <CheckSquare className="w-5 h-5 text-gray-700" />
             </button>
-          </Link>
-          <Link to="/nutrition">
-            <button
-              className="rounded-xl py-4 px-4 flex items-center justify-center bg-gradient-to-br from-green-50 to-white border-2 border-green-200 hover:shadow-md transition-all"
-              title="영양 분석"
-            >
-              <Sparkles className="w-5 h-5 text-green-600" />
-            </button>
-          </Link>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* 선택 모드 액션 바 */}
+      {selectionMode && (
+        <div className="px-5 pb-4 flex gap-2">
+          <button
+            type="button"
+            onClick={selectAll}
+            className="flex-1 py-3 rounded-xl bg-gray-100 text-sm"
+            style={{ fontWeight: 600 }}
+          >
+            전체 선택 ({sorted.length})
+          </button>
+          <button
+            type="button"
+            onClick={handleBulkDelete}
+            disabled={selectedIds.size === 0 || deleting}
+            className="flex-1 py-3 rounded-xl bg-red-500 text-white text-sm disabled:bg-red-200"
+            style={{ fontWeight: 600 }}
+          >
+            {deleting ? '삭제 중...' : `${selectedIds.size}개 삭제`}
+          </button>
+        </div>
+      )}
 
       {/* 이름 검색 */}
       <div className="px-5 pb-3">
@@ -238,12 +324,33 @@ export default function Ingredients() {
               const nutrition = nutritionDatabase[ingredient.name] || nutritionDatabase['default'];
               const factor = ingredient.quantity / 100;
 
+              const isSelected = selectedIds.has(ingredient.id);
               return (
                 <div
                   key={ingredient.id}
-                  className="bg-gray-50 rounded-xl p-4 relative group"
+                  onClick={selectionMode ? () => toggleSelection(ingredient.id) : undefined}
+                  className={`rounded-xl p-4 relative group transition-colors ${
+                    selectionMode
+                      ? isSelected
+                        ? 'bg-green-50 border-2 border-[#CDFF00] cursor-pointer'
+                        : 'bg-gray-50 border-2 border-transparent cursor-pointer'
+                      : 'bg-gray-50'
+                  }`}
                 >
                   <div className="flex items-start justify-between">
+                    {selectionMode && (
+                      <div className="mr-3 mt-1 flex-shrink-0">
+                        <div
+                          className={`w-5 h-5 rounded-md flex items-center justify-center border-2 ${
+                            isSelected
+                              ? 'bg-[#CDFF00] border-[#CDFF00]'
+                              : 'bg-white border-gray-300'
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
+                        </div>
+                      </div>
+                    )}
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-base" style={{ fontWeight: 600 }}>
@@ -297,12 +404,14 @@ export default function Ingredients() {
                         </div>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleDelete(ingredient.id, ingredient.name)}
-                      className="ml-3 p-2 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5 text-red-500" />
-                    </button>
+                    {!selectionMode && (
+                      <button
+                        onClick={() => handleDelete(ingredient.id, ingredient.name)}
+                        className="ml-3 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5 text-red-500" />
+                      </button>
+                    )}
                   </div>
                 </div>
               );

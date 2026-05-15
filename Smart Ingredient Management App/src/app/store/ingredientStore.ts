@@ -213,6 +213,33 @@ class IngredientStore {
     }
   }
 
+  // 다중 선택 일괄 삭제. 게스트는 로컬에서 하나씩, 로그인이면 단일 요청으로 묶어 보낸다.
+  async bulkDeleteIngredients(ids: string[]): Promise<number> {
+    if (ids.length === 0) return 0;
+    if (isGuest()) {
+      ids.forEach((id) => localIngredientStore.remove(id));
+      this.ingredientsCache = localIngredientStore.list();
+      this.notifyListeners();
+      return ids.length;
+    }
+    try {
+      const response = await apiFetch('/api/ingredients/bulk-delete', {
+        method: 'POST',
+        body: JSON.stringify({ ids: ids.map((id) => Number(id)) }),
+      });
+      if (response.ok) {
+        await this.fetchIngredients();
+        return ids.length;
+      }
+      const errorText = await response.text();
+      throw new Error(`일괄 삭제 실패: ${errorText}`);
+    } catch (error) {
+      console.error('일괄 삭제 오류:', error);
+      alert('일괄 삭제 중 오류가 발생했습니다.');
+      throw error;
+    }
+  }
+
   // 장보기 리스트 가져오기
   async fetchShoppingList(): Promise<ShoppingItem[]> {
     try {

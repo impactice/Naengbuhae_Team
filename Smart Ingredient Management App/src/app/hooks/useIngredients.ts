@@ -44,6 +44,7 @@ export function useIngredients() {
     updateIngredient: (id: string, updates: Partial<Ingredient>) =>
       ingredientStore.updateIngredient(id, updates),
     deleteIngredient: (id: string) => ingredientStore.deleteIngredient(id),
+    bulkDeleteIngredients: (ids: string[]) => ingredientStore.bulkDeleteIngredients(ids),
   };
 }
 
