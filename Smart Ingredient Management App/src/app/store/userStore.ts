@@ -13,6 +13,8 @@ export interface UserProfile {
   allergies?: string;
   recommendedCalories?: number;
   emailVerified?: boolean;
+  // LOCAL/KAKAO/NAVER/GOOGLE — LOCAL일 때만 비번 변경 UI 노출.
+  provider?: 'LOCAL' | 'KAKAO' | 'NAVER' | 'GOOGLE';
 }
 
 class UserStore {

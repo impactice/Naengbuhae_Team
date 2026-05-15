@@ -19,6 +19,7 @@ import OAuthCallback from "./pages/OAuthCallback";
 import ProfileComplete from "./pages/ProfileComplete";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import ChangePassword from "./pages/ChangePassword";
 import NotificationCenter from "./pages/NotificationCenter";
 import FamilyActivity from "./pages/FamilyActivity";
 
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
       { path: "priority", Component: Priority },
       { path: "shopping-list", Component: ShoppingList },
       { path: "my-custom", Component: MyCustom },
+      { path: "change-password", Component: ChangePassword },
       { path: "fridges", Component: FridgeManagement },
       { path: "notifications", Component: NotificationCenter },
       { path: "family-activity", Component: FamilyActivity },

@@ -543,8 +543,17 @@ export default function MyCustom() {
       </div>
       )}
 
-      {/* 회원 탈퇴 */}
-      <div className="px-5 pt-4 pb-8 border-t border-gray-100 mt-4">
+      {/* 계정 관리: LOCAL 가입자만 비밀번호 변경 가능 (소셜 계정은 비번이 없음) + 회원 탈퇴 */}
+      <div className="px-5 pt-4 pb-8 border-t border-gray-100 mt-4 space-y-1">
+        {profile.provider === 'LOCAL' && (
+          <button
+            type="button"
+            onClick={() => navigate('/change-password')}
+            className="w-full py-3 text-sm text-gray-700 hover:text-black transition-colors underline underline-offset-4"
+          >
+            비밀번호 변경
+          </button>
+        )}
         <button
           type="button"
           onClick={handleDeleteAccount}
