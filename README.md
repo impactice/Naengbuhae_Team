@@ -101,13 +101,41 @@
 
 ---
 
-### 다크 모드 인프라
-- `styles/tailwind.css`에 `@custom-variant dark` — `<html class="dark">` 토글 기반
-- `utils/themeMode.ts` — localStorage + `prefers-color-scheme` listen + root 클래스 동기화
-- `main.tsx`에서 `themeModeStore.init()`
-- MyCustom에 시스템/라이트/다크 토글
-- `Root.tsx` 컨테이너/하단 네비에 `dark:` variant 적용
-- 그 외 페이지는 라이트 톤 그대로 — 점진적으로 `dark:` 클래스 추가 필요
+### 디자인 시스템 / 다크모드 (외주 디자인 적용)
+
+**토큰 시스템 — `styles/theme.css` 단일 소스**
+- `:root`(라이트) / `.dark` 두 블록 + `@theme inline` 매핑으로 시맨틱 토큰 운용
+- 다크 팔레트: 배경 `#08090A` · 카드 `#191C20` · 표면 `#23272D` · 보더 `rgba(255,255,255,.05/.10)`
+- `--primary` = 라이트 라임 `#CDFF00` / 다크 off-white `#F2F3EE` (primary CTA 색, 네온 제거)
+- `--accent` = sky `#8BCEEA` — AI·추천·진행바·활성탭·선택표시 전용 (CTA엔 안 씀)
+- `--status-{danger,warning,safe}` + `-bg`, `--chart-1~5` 다크 튜닝값
+- `tailwind.css`의 임시 accent override 제거 — theme.css가 유일 소스
+- 다크모드 전제: 페이지가 시맨틱 토큰을 써야 효과 → raw `dark:bg-gray-*` 전부 토큰화
+
+**페이지 전면 토큰화**
+- `bg-white→bg-background`, `bg-gray-50→bg-card`, `text-gray-*→text-muted-foreground`,
+  `border-gray-*→border-border`, 검정 CTA→`bg-foreground/text-background`
+- primary 버튼: `bg-[var(--primary)]` + 반드시 `color:var(--primary-foreground)`
+  (안 주면 다크에서 off-white 배경+off-white 글자 = 안 보임. 전 버튼 수정 완료)
+- 못생긴 보라/주황/초록 그라데이션 카드 13곳 → `bg-card border border-border`
+  (Home 상태·Priority 분석 카드엔 은은한 sky glow, 알림 배너는 좌측 컬러 레일)
+- 상태 행/배지 → `var(--status-*-bg)` + `var(--status-*)`
+
+**테마 토글**
+- `utils/themeMode.ts` — `'light' | 'dark'` 만 (system 제거). 기존 `'system'` 저장값은
+  최초 1회 OS 설정 따라 light/dark로 확정 후 저장(마이그레이션). 기본 라이트
+- MyCustom 토글 칩 2개(라이트/다크), `main.tsx`에서 `themeModeStore.init()`
+- `@custom-variant dark (&:where(.dark, .dark *))` — `.dark` 엘리먼트 자체 포함
+
+**컴포넌트 다듬기**
+- `FridgeSelector` 드롭다운: `bg-popover text-popover-foreground` (이전 `bg-white` 고정 →
+  다크에서 흰바탕+밝은글자 안보이던 버그), 선택/체크 표시 `text-accent`
+- MyCustom 맞춤기능 4카드 아이콘 전부 `text-accent`(sky)
+- Priority "외 N개 더 보기" → `/ingredients` 링크(sky)
+- `Root` 하단 네비 활성 탭 `text-accent`(sky)
+
+> 참고: 외주 README의 "theme.css만 바꾸면 80%" 전제는 이 코드베이스엔 안 맞았음
+> (페이지가 raw gray 사용, 시맨틱 토큰 미사용). 토큰 교체 + 페이지 전환을 같이 해야 효과.
 
 ---
 
