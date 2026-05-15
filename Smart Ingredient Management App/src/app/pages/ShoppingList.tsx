@@ -1,8 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useShoppingList } from '../hooks/useIngredients';
-import { Plus, Trash2, ShoppingCart, Check, CheckSquare } from 'lucide-react';
+import { Plus, Trash2, ShoppingCart, Check, CheckSquare, Sparkles } from 'lucide-react';
 import { isGuest } from '../utils/guestMode';
+import { fridgeStore } from '../store/fridgeStore';
+import { apiFetch } from '../utils/apiClient';
 import GuestBlocked from '../components/GuestBlocked';
+
+interface Suggestion {
+  name: string;
+  count: number;
+}
 
 export default function ShoppingList() {
   const {
@@ -18,6 +25,47 @@ export default function ShoppingList() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+
+  // 자동 제안 — 가족이 자주 비웠는데 지금 냉장고에도 없고 장보기에도 없는 식재료
+  const selectedFridge = useSyncExternalStore(
+    fridgeStore.subscribe.bind(fridgeStore),
+    () => fridgeStore.getSelected(),
+    () => fridgeStore.getSelected(),
+  );
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [adding, setAdding] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isGuest()) return;
+    const fridgeId = selectedFridge?.id;
+    let cancelled = false;
+    (async () => {
+      try {
+        const path = fridgeId != null
+          ? `/api/shopping-list/suggestions?fridgeId=${fridgeId}&limit=5`
+          : '/api/shopping-list/suggestions?limit=5';
+        const res = await apiFetch(path);
+        if (!res.ok) return;
+        const data = (await res.json()) as Suggestion[];
+        if (!cancelled) setSuggestions(data);
+      } catch {
+        // 무시 — 다음 진입 시 다시 시도
+      }
+    })();
+    return () => { cancelled = true; };
+    // shoppingList 변경(추가/삭제) 시도 갱신 — 제안이 장보기에 들어가면 사라지도록
+  }, [selectedFridge?.id, shoppingList.length]);
+
+  const handleAddSuggestion = async (name: string) => {
+    if (adding) return;
+    setAdding(name);
+    try {
+      await addShoppingItem(name, 1, '개');
+      // 추가하면 useEffect에서 shoppingList.length 변경으로 suggestions 자동 재요청
+    } finally {
+      setAdding(null);
+    }
+  };
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,6 +268,34 @@ export default function ShoppingList() {
           </form>
         )}
       </div>
+
+      {/* 자동 제안 — 가족이 자주 비웠는데 지금 없는 식재료 */}
+      {!selectionMode && !showAddForm && suggestions.length > 0 && (
+        <div className="px-5 pb-4">
+          <div className="bg-gradient-to-br from-lime-50 to-white rounded-2xl p-4 border border-lime-200">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-lime-700" />
+              <h3 className="text-sm" style={{ fontWeight: 600 }}>이건 어때요?</h3>
+              <span className="text-xs text-gray-500">자주 비우는데 지금 없어요</span>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+              {suggestions.map((s) => (
+                <button
+                  key={s.name}
+                  type="button"
+                  onClick={() => handleAddSuggestion(s.name)}
+                  disabled={adding === s.name}
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-white rounded-lg border border-lime-200 hover:bg-lime-50 disabled:opacity-50"
+                >
+                  <Plus className="w-3.5 h-3.5 text-lime-700" />
+                  <span className="text-sm" style={{ fontWeight: 600 }}>{s.name}</span>
+                  <span className="text-xs text-gray-400">{s.count}회</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 리스트 */}
       {shoppingList.length === 0 ? (
