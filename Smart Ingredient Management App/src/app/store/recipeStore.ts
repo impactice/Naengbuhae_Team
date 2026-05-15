@@ -27,6 +27,7 @@ function normalizeRecipe(raw: any): Recipe {
       sodium: Number(raw.nutrition?.sodium ?? 0),
     },
     imageUrl: raw.imageUrl ? String(raw.imageUrl) : undefined,
+    favorite: raw.favorite === true,
   };
 }
 
@@ -61,6 +62,22 @@ class RecipeStore {
 
   getRecipes(): Recipe[] {
     return this.recipesCache;
+  }
+
+  // 즐겨찾기 토글 — 백엔드가 새 상태(true/false) 반환. 캐시 즉시 동기화.
+  async toggleFavorite(recipeId: string): Promise<boolean | null> {
+    try {
+      const res = await apiFetch(`/api/recipes/${recipeId}/favorite/toggle`, { method: 'POST' });
+      if (!res.ok) return null;
+      const data = (await res.json()) as { favorite: boolean };
+      this.recipesCache = this.recipesCache.map((r) =>
+        r.id === recipeId ? { ...r, favorite: data.favorite } : r,
+      );
+      this.notifyListeners();
+      return data.favorite;
+    } catch {
+      return null;
+    }
   }
 
   subscribe(listener: () => void): () => void {

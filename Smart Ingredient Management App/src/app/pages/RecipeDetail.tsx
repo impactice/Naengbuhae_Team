@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { useIngredients, useShoppingList } from '../hooks/useIngredients';
 import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
-import { ArrowLeft, Clock, Users, Plus, Check, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Plus, Check, ShoppingCart, Heart } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
@@ -11,7 +11,7 @@ export default function RecipeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { ingredients } = useIngredients();
-  const { recipes, loading } = useRecipes();
+  const { recipes, loading, toggleFavorite } = useRecipes();
   const { shoppingList, addShoppingItem, bulkAddShoppingItems } = useShoppingList();
 
   const recipe = recipes.find((r) => r.id === id);
@@ -147,9 +147,20 @@ export default function RecipeDetail() {
         <button onClick={() => navigate(-1)} className="p-1">
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-2xl" style={{ fontWeight: 700 }}>
+        <h1 className="text-2xl flex-1" style={{ fontWeight: 700 }}>
           {recipe.name}
         </h1>
+        <button
+          type="button"
+          onClick={() => void toggleFavorite(recipe.id)}
+          className="p-1.5 rounded-lg hover:bg-gray-100"
+          aria-label="즐겨찾기"
+        >
+          <Heart
+            className={`w-6 h-6 ${recipe.favorite ? 'text-red-500' : 'text-gray-400'}`}
+            fill={recipe.favorite ? 'currentColor' : 'none'}
+          />
+        </button>
       </div>
 
       {/* 기본 정보 */}

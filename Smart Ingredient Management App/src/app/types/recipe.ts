@@ -20,4 +20,5 @@ export interface Recipe {
     sodium: number;
   };
   imageUrl?: string;
+  favorite?: boolean;
 }

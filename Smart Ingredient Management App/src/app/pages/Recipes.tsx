@@ -3,7 +3,7 @@ import { useIngredients } from '../hooks/useIngredients';
 import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
 import { Link } from 'react-router';
-import { ChefHat, Clock, Users, ArrowLeft, Sparkles, X, ChevronRight, Check } from 'lucide-react';
+import { ChefHat, Clock, Users, ArrowLeft, Sparkles, X, ChevronRight, Check, Heart } from 'lucide-react';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
 
@@ -344,8 +344,8 @@ function AIRecommendModal({
 // ─────────────────────────────────────────────────────────────────────────────
 export default function Recipes() {
   const { ingredients } = useIngredients();
-  const { recipes, loading } = useRecipes();
-  const [filterMode, setFilterMode] = useState<'all' | 'makeable'>('all');
+  const { recipes, loading, toggleFavorite } = useRecipes();
+  const [filterMode, setFilterMode] = useState<'all' | 'makeable' | 'favorites'>('all');
   const [showAIModal, setShowAIModal] = useState(false);
 
   const matches = useMemo(
@@ -353,9 +353,11 @@ export default function Recipes() {
     [recipes, ingredients]
   );
 
-  // "만들 수 있는 요리" = 보유 재료가 1개라도 들어가는 레시피
+  // 필터 적용 — "만들 수 있는 요리" 또는 "즐겨찾기만"
   const filteredMatches = filterMode === 'makeable'
     ? matches.filter((m) => m.hasIngredients.length > 0)
+    : filterMode === 'favorites'
+    ? matches.filter((m) => m.recipe.favorite)
     : matches;
 
   const makeableCount = matches.filter((m) => m.hasIngredients.length > 0).length;
@@ -413,6 +415,13 @@ export default function Recipes() {
           >
             만들 수 있는 요리
           </FilterButton>
+          <FilterButton
+            active={filterMode === 'favorites'}
+            onClick={() => setFilterMode('favorites')}
+          >
+            <Heart className="w-3.5 h-3.5 inline -mt-0.5 mr-0.5" fill={filterMode === 'favorites' ? 'currentColor' : 'none'} />
+            즐겨찾기
+          </FilterButton>
 
           {/* AI 추천 버튼 — 필터 버튼 오른쪽에 자연스럽게 배치 */}
           <button
@@ -467,8 +476,8 @@ export default function Recipes() {
                 to={`/recipe/${match.recipe.id}`}
               >
                 <div className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
+                  <div className="flex items-start justify-between mb-3 gap-2">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-base" style={{ fontWeight: 600 }}>
                           {match.recipe.name}
@@ -498,6 +507,22 @@ export default function Recipes() {
                         {match.recipe.category}
                       </p>
                     </div>
+                    {/* 하트 — Link 안이라 클릭 시 stopPropagation + preventDefault 필요 */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        void toggleFavorite(match.recipe.id);
+                      }}
+                      className="p-1.5 rounded-lg hover:bg-white"
+                      aria-label="즐겨찾기"
+                    >
+                      <Heart
+                        className={`w-5 h-5 ${match.recipe.favorite ? 'text-red-500' : 'text-gray-300'}`}
+                        fill={match.recipe.favorite ? 'currentColor' : 'none'}
+                      />
+                    </button>
                   </div>
 
                   <div className="flex items-center gap-4 text-xs text-gray-600 mb-3">

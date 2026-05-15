@@ -23,5 +23,9 @@ export function useRecipes() {
     return unsubscribe;
   }, []);
 
-  return { recipes, loading };
+  return {
+    recipes,
+    loading,
+    toggleFavorite: (id: string) => recipeStore.toggleFavorite(id),
+  };
 }
