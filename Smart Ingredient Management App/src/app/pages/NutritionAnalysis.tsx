@@ -282,22 +282,22 @@ export default function NutritionAnalysis() {
 
                     {/* 추가 영양 정보 */}
                     {(nutrition.fiber || nutrition.sodium || nutrition.vitamins) && (
-                      <div className="mt-3 pt-3 border-t border-gray-200">
+                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                         <div className="flex flex-wrap gap-2">
                           {nutrition.fiber && (
-                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded-lg text-xs">
+                            <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-lg text-xs">
                               식이섬유 {Math.round(nutrition.fiber * factor)}g
                             </span>
                           )}
                           {nutrition.sodium && (
-                            <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs">
+                            <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 rounded-lg text-xs">
                               나트륨 {Math.round(nutrition.sodium * factor)}mg
                             </span>
                           )}
                           {nutrition.vitamins?.map((vitamin) => (
                             <span
                               key={vitamin}
-                              className="px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs"
+                              className="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-lg text-xs"
                             >
                               {vitamin}
                             </span>
@@ -313,12 +313,12 @@ export default function NutritionAnalysis() {
 
           {/* 건강 팁 */}
           <div className="px-5 pb-5">
-            <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-2xl p-5">
+            <div className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/30 dark:to-gray-900 border border-blue-200 dark:border-blue-800/50 rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-3">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
+                <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                 <h3 className="font-semibold">영양 균형 팁</h3>
               </div>
-              <div className="space-y-2 text-sm text-gray-700">
+              <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                 <p>• 단백질은 체중 1kg당 0.8~1.2g 섭취를 권장합니다</p>
                 <p>• 탄수화물은 전체 칼로리의 50~60% 비율이 적정합니다</p>
                 <p>• 건강한 지방(불포화지방산)도 적절히 섭취해야 합니다</p>
