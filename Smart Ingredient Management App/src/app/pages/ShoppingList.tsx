@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useShoppingList } from '../hooks/useIngredients';
 import { Plus, Trash2, ShoppingCart, Check } from 'lucide-react';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 export default function ShoppingList() {
   const { shoppingList, addShoppingItem, toggleShoppingItem, deleteShoppingItem, transferShoppingItemToIngredient } =
@@ -46,6 +48,8 @@ export default function ShoppingList() {
       setTransferringIds((prev) => prev.filter((itemId) => itemId !== id));
     }
   };
+
+  if (isGuest()) return <GuestBlocked feature="장보기" />;
 
   return (
     <div className="min-h-screen bg-white pb-4">

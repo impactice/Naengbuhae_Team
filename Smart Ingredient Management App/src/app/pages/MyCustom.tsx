@@ -20,6 +20,7 @@ import { useUserProfile } from '../hooks/useUserProfile';
 import { userStore } from '../store/userStore';
 import { fridgeStore } from '../store/fridgeStore';
 import { apiFetch, clearAuth } from '../utils/apiClient';
+import { isGuest, clearGuest } from '../utils/guestMode';
 
 const DIET_GOAL_KO_TO_KEY: Record<string, 'weight-loss' | 'maintain' | 'muscle-gain' | 'health'> = {
   '체중 감량': 'weight-loss',
@@ -33,7 +34,10 @@ export default function MyCustom() {
   const { profile, loading } = useUserProfile();
   const [unread, setUnread] = useState(0);
 
+  const guest = isGuest();
+
   useEffect(() => {
+    if (guest) return;
     let cancelled = false;
     (async () => {
       try {
@@ -46,7 +50,7 @@ export default function MyCustom() {
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [guest]);
 
   const handleDeleteAccount = async () => {
     if (!confirm('정말 회원 탈퇴 하시겠습니까?\n\n탈퇴 시 계정과 모든 데이터(식재료, 레시피 기록 등)가 영구 삭제되며 복구할 수 없습니다.')) {
@@ -108,6 +112,82 @@ export default function MyCustom() {
   const isProfileIncomplete = !!profile && (
     !profile.height || !profile.weight || !profile.gender || !profile.birthDate
   );
+
+  // 게스트(비로그인)는 안내 화면을 즉시 표시 — /user/me 호출 안 함
+  if (guest) {
+    const lockedItems: Array<{ icon: typeof Bell; title: string; subtitle: string }> = [
+      { icon: Bell, title: '알림 센터', subtitle: '받은 알림 내역' },
+      { icon: Refrigerator, title: '냉장고 관리', subtitle: '가족 공유, 초대 코드' },
+      { icon: Users, title: '가족 활동', subtitle: '멤버별 추가/소비 통계' },
+      { icon: Calendar, title: '식단 계획', subtitle: '맞춤 식단 추천' },
+      { icon: ChefHat, title: '맞춤 레시피', subtitle: '내 식재료 기반 추천' },
+      { icon: Heart, title: '영양 분석', subtitle: '권장 칼로리 + 영양 비율' },
+    ];
+    return (
+      <div className="min-h-screen bg-white pb-20">
+        <div className="px-5 pt-6 pb-4">
+          <h1 className="text-2xl mb-1" style={{ fontWeight: 700 }}>나의 맞춤</h1>
+          <p className="text-sm text-gray-500">지금은 비로그인 상태예요</p>
+        </div>
+        <div className="mx-5 mt-2 p-5 rounded-2xl" style={{ background: 'linear-gradient(135deg, #CDFF00, #B8E600)' }}>
+          <h2 className="font-bold text-base">로그인하면 더 많은 기능을 사용할 수 있어요</h2>
+          <p className="mt-1 text-xs text-gray-800 leading-relaxed">
+            가족과 냉장고 공유 / 식단 추천 / 알림 등<br />
+            지금 추가한 식재료는 로그인하면 그대로 옮겨드려요.
+          </p>
+          <div className="mt-4 flex gap-2">
+            <Link to="/signup" className="flex-1 py-3 bg-black text-white rounded-lg text-sm font-bold text-center">
+              회원가입
+            </Link>
+            <Link to="/login" className="flex-1 py-3 bg-white text-black rounded-lg text-sm font-bold text-center">
+              로그인
+            </Link>
+          </div>
+        </div>
+
+        <div className="px-5 mt-6">
+          <h3 className="text-sm font-semibold mb-2">잠금 기능</h3>
+          {lockedItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.title}
+                onClick={() => {
+                  if (confirm(`${item.title} 기능은 로그인 후 사용할 수 있어요.\n지금 추가한 식재료는 로그인하면 그대로 옮겨드릴게요.\n\n로그인하시겠습니까?`)) {
+                    navigate('/login');
+                  }
+                }}
+                className="w-full flex items-center gap-3 p-4 mb-2 bg-gray-50 rounded-xl text-left"
+              >
+                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-gray-600">{item.title}</div>
+                  <div className="text-xs text-gray-400">{item.subtitle}</div>
+                </div>
+                <span className="text-xs text-gray-400">🔒</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="text-center mt-6">
+          <button
+            onClick={() => {
+              if (!confirm('비로그인 모드를 종료하시겠습니까?')) return;
+              clearGuest();
+              fridgeStore.clear();
+              navigate('/login');
+            }}
+            className="text-sm text-gray-500 underline underline-offset-2"
+          >
+            비로그인 모드 종료
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // 로딩 중
   if (loading) {

@@ -1,4 +1,5 @@
 import { apiFetch } from '../utils/apiClient';
+import { isGuest } from '../utils/guestMode';
 
 // 백엔드 응답 모양 그대로 보관 (members 배열, isOwner 포함).
 export interface FridgeMember {
@@ -54,6 +55,20 @@ class FridgeStore {
   }
 
   async fetch(): Promise<Fridge[]> {
+    // 게스트는 서버 호출 없이 가상 냉장고 1개만 들고 다닌다.
+    if (isGuest()) {
+      const guestFridge: Fridge = {
+        id: -1,
+        name: '내 냉장고',
+        ownerUsername: '',
+        isOwner: true,
+        members: [],
+      };
+      this.fridges = [guestFridge];
+      this.selectedId = -1;
+      this.notify();
+      return this.fridges;
+    }
     try {
       const res = await apiFetch('/api/fridges');
       if (!res.ok) return this.fridges;

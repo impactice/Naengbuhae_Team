@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { userStore } from '../store/userStore';
 import { saveAuth } from '../utils/apiClient';
+import { clearGuest } from '../utils/guestMode';
+import { promptAndMigrate } from '../utils/ingredientMigration';
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
@@ -20,12 +22,16 @@ export default function OAuthCallback() {
 
     // OAuth는 "간편 로그인" 의도라 항상 로그인 유지(localStorage)로 간주.
     saveAuth({ token, refreshToken: refreshToken ?? undefined }, true);
+    // 게스트 모드에서 진입한 경우 → 플래그 해제 + 로컬 식재료 마이그레이션 안내
+    clearGuest();
 
-    // 프로필 정보 받아오고 홈으로 이동
-    // (카카오 사용자는 신체정보가 비어있을 수 있는데, MyCustom 페이지에서 CTA로 안내)
-    userStore.fetchUserProfile().finally(() => {
+    (async () => {
+      await promptAndMigrate();
+      // 프로필 정보 받아오고 홈으로 이동
+      // (카카오 사용자는 신체정보가 비어있을 수 있는데, MyCustom 페이지에서 CTA로 안내)
+      await userStore.fetchUserProfile();
       navigate('/', { replace: true });
-    });
+    })();
   }, [navigate, searchParams]);
 
   return (

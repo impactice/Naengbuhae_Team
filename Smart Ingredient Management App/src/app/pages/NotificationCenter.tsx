@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowLeft, Bell } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 interface NotificationItem {
   id: number;
@@ -20,8 +22,10 @@ export default function NotificationCenter() {
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const guest = isGuest();
 
   useEffect(() => {
+    if (guest) return;
     (async () => {
       try {
         const res = await apiFetch('/api/notifications');
@@ -70,6 +74,8 @@ export default function NotificationCenter() {
     if (days < 7) return `${days}일 전`;
     return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
   };
+
+  if (guest) return <GuestBlocked feature="알림 센터" />;
 
   return (
     <div className="min-h-screen bg-white pb-4">

@@ -7,6 +7,8 @@ import {
 import { useFridges } from '../hooks/useFridges';
 import { useUserProfile } from '../hooks/useUserProfile';
 import type { Fridge } from '../store/fridgeStore';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 // 텍스트 입력 모달용 설정. 모든 prompt 케이스가 이 한 모달을 공유.
 interface TextPromptConfig {
@@ -96,6 +98,8 @@ export default function FridgeManagement() {
     if (!confirm(`${name}님을 "${fridge.name}"에서 제거할까요?`)) return;
     safe(() => f.removeMember(fridge.id, username));
   };
+
+  if (isGuest()) return <GuestBlocked feature="냉장고 관리" />;
 
   return (
     <div className="min-h-screen bg-white pb-20">

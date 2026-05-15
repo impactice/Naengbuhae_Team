@@ -3,6 +3,8 @@ import { useIngredients } from '../hooks/useIngredients';
 import { Link } from 'react-router';
 import { ChevronLeft, Sparkles, TrendingUp, AlertCircle } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 // 식재료별 영양 정보 데이터베이스 (100g 기준)
 const nutritionDatabase: Record<string, {
@@ -98,6 +100,8 @@ export default function NutritionAnalysis() {
     })
     .sort((a, b) => b.calories - a.calories)
     .slice(0, 8);
+
+  if (isGuest()) return <GuestBlocked feature="영양 분석" />;
 
   return (
     <div className="min-h-screen bg-white pb-20">

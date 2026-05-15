@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router';
 import { ArrowLeft, User as UserIcon } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
 import { fridgeStore } from '../store/fridgeStore';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 interface MemberCount {
   username: string;
@@ -70,6 +72,8 @@ export default function FamilyActivity() {
   const totalRemoved = stats?.members.reduce((s, m) => s + m.removed, 0) ?? 0;
   const maxAdded = Math.max(1, ...(stats?.topAdded.map((i) => i.count) ?? [1]));
   const maxRemoved = Math.max(1, ...(stats?.topRemoved.map((i) => i.count) ?? [1]));
+
+  if (isGuest()) return <GuestBlocked feature="가족 활동" />;
 
   return (
     <div className="min-h-screen bg-white pb-4">

@@ -4,6 +4,8 @@ import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
 import { ArrowLeft, Clock, Users, Plus, Check } from 'lucide-react';
 import { useMemo } from 'react';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 export default function RecipeDetail() {
   const { id } = useParams();
@@ -49,6 +51,8 @@ export default function RecipeDetail() {
     addShoppingItem(name, quantity, unit);
     alert(`${name}을(를) 장보기 리스트에 추가했습니다`);
   };
+
+  if (isGuest()) return <GuestBlocked feature="레시피 상세" />;
 
   return (
     <div className="min-h-screen bg-white pb-20">

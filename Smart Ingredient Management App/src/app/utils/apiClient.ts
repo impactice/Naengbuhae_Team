@@ -10,6 +10,8 @@
 // 읽기는 양쪽 모두 보고(localStorage 우선), 쓰기는 기존 토큰이 있던 쪽에 그대로 둠.
 // 처음 저장은 saveAuth(persistent)로 한 번에 위치 결정.
 
+import { isGuest } from './guestMode';
+
 const API_BASE_URL = 'http://localhost:8080';
 
 const AUTH_KEYS = ['authToken', 'refreshToken', 'isLoggedIn', 'userProfile'] as const;
@@ -103,12 +105,13 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
 
   let res = await fetch(url, { ...options, headers: buildHeaders(options.headers) });
 
-  // 인증 실패: refresh 시도 → 성공 시 1회 재시도, 실패 시 로그인 화면으로
+  // 인증 실패: refresh 시도 → 성공 시 1회 재시도, 실패 시 로그인 화면으로.
+  // 게스트는 처음부터 토큰이 없으므로 401을 받아도 로그아웃 처리하지 않는다 (화면이 자체적으로 가드).
   if (res.status === 401 || res.status === 403) {
     const refreshed = await refreshAccessToken();
     if (refreshed) {
       res = await fetch(url, { ...options, headers: buildHeaders(options.headers) });
-    } else {
+    } else if (!isGuest()) {
       clearAuth();
       if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
         window.location.href = '/login';
@@ -134,7 +137,7 @@ export async function apiUpload(path: string, formData: FormData): Promise<Respo
     const refreshed = await refreshAccessToken();
     if (refreshed) {
       res = await fetch(url, { method: 'POST', body: formData, headers: buildAuthOnlyHeaders() });
-    } else {
+    } else if (!isGuest()) {
       clearAuth();
       if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
         window.location.href = '/login';

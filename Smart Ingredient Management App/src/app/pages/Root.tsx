@@ -4,21 +4,31 @@ import { useEffect } from 'react';
 import { userStore } from '../store/userStore';
 import { fridgeStore } from '../store/fridgeStore';
 import { clearAuth, logoutOnServer } from '../utils/apiClient';
+import { isGuest, clearGuest } from '../utils/guestMode';
 
 export default function Root() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 로그인 여부 확인 — sessionStorage(세션 로그인) / localStorage(로그인 유지) 양쪽 다 봄
+  // 로그인 여부 확인 — sessionStorage(세션 로그인) / localStorage(로그인 유지) 양쪽 다 봄.
+  // 게스트(비로그인) 사용자도 허용.
   useEffect(() => {
     const isLoggedIn =
       sessionStorage.getItem('isLoggedIn') ?? localStorage.getItem('isLoggedIn');
-    if (!isLoggedIn) {
+    if (!isLoggedIn && !isGuest()) {
       navigate('/login');
     }
   }, [navigate]);
 
   const handleLogout = async () => {
+    if (isGuest()) {
+      // 게스트 모드 종료. 로컬 식재료도 같이 정리하면 데이터 손실 위험 → 로그인 화면으로만 이동.
+      if (!confirm('비로그인 모드를 종료하시겠습니까?')) return;
+      clearGuest();
+      fridgeStore.clear();
+      navigate('/login');
+      return;
+    }
     if (!confirm('로그아웃 하시겠습니까?')) return;
     await logoutOnServer();
     clearAuth();

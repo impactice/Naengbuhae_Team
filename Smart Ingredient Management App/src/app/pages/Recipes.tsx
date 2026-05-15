@@ -4,6 +4,8 @@ import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
 import { Link } from 'react-router';
 import { ChefHat, Clock, Users, ArrowLeft, Sparkles, X, ChevronRight, Check } from 'lucide-react';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 요리 스타일 옵션 목록
@@ -367,6 +369,8 @@ export default function Recipes() {
     () => ingredients.map((i) => i.name),
     [ingredients]
   );
+
+  if (isGuest()) return <GuestBlocked feature="맞춤 레시피" />;
 
   if (loading) {
     return (

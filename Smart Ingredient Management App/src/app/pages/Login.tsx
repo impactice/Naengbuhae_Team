@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Eye, EyeOff } from 'lucide-react';
 import { saveAuth } from '../utils/apiClient';
+import { setGuest, clearGuest } from '../utils/guestMode';
+import { promptAndMigrate } from '../utils/ingredientMigration';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -52,6 +54,10 @@ export default function Login() {
           rememberMe,
         );
 
+        // 게스트 모드에서 진입한 경우 → 플래그 해제 + 로컬 식재료 마이그레이션 안내
+        clearGuest();
+        await promptAndMigrate();
+
         navigate('/');
       } else {
         const error = await response.text();
@@ -75,6 +81,11 @@ export default function Login() {
     // 백엔드 OAuth 인증 엔드포인트로 이동
     // 백엔드에서 인증 처리 → JWT 발급 → /oauth/callback으로 redirect
     window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+  };
+
+  const handleStartAsGuest = () => {
+    setGuest();
+    navigate('/');
   };
 
   return (
@@ -215,6 +226,17 @@ export default function Login() {
           >
             회원가입
           </Link>
+        </div>
+
+        {/* 비로그인 진입 — 로컬 식재료 관리만 사용. 가족 공유/알림/식단은 가입 후. */}
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={handleStartAsGuest}
+            className="text-sm text-gray-500 underline underline-offset-2 hover:text-gray-700"
+          >
+            로그인 없이 둘러보기
+          </button>
         </div>
         </div>
       </div>

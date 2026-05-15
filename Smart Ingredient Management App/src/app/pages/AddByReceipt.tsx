@@ -4,6 +4,8 @@ import { useIngredients } from '../hooks/useIngredients';
 import { CategoryType, StorageType } from '../types/ingredient';
 import { ArrowLeft, Camera, Loader2, Trash2, RefreshCw } from 'lucide-react';
 import { apiUpload } from '../utils/apiClient';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 
 const CATEGORIES_KO = ['채소', '육류', '유제품', '곡물', '해산물', '과일',
     '가공식품', '음료', '조미료', '간식', '기타'] as const;
@@ -152,6 +154,8 @@ export default function AddByReceipt() {
   };
 
   const selectedCount = items.filter((i) => i.selected).length;
+
+  if (isGuest()) return <GuestBlocked feature="영수증 인식" />;
 
   return (
     <div className="min-h-screen bg-white pb-40">

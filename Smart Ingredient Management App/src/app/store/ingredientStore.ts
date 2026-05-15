@@ -1,5 +1,7 @@
 import { Ingredient, ShoppingItem, StorageType, CategoryType } from '../types/ingredient';
 import { apiFetch } from '../utils/apiClient';
+import { isGuest } from '../utils/guestMode';
+import { localIngredientStore } from './localIngredientStore';
 
 // 영어 키 → 한글 매핑 (프론트 → 백엔드)
 const STORAGE_TO_KO: Record<StorageType, string> = {
@@ -76,6 +78,12 @@ class IngredientStore {
 
   // 식재료 가져오기. fridgeStore에서 현재 선택된 냉장고의 id를 가져와 쿼리에 부착.
   async fetchIngredients(): Promise<Ingredient[]> {
+    // 게스트: 로컬 저장소에서 동기적으로 읽음
+    if (isGuest()) {
+      this.ingredientsCache = localIngredientStore.list();
+      this.notifyListeners();
+      return this.ingredientsCache;
+    }
     try {
       // 동적 import로 순환 의존 방지
       const { fridgeStore } = await import('./fridgeStore');
@@ -107,6 +115,12 @@ class IngredientStore {
 
   // 식재료 추가. fridgeStore의 현재 선택 냉장고에 자동 저장.
   async addIngredient(ingredient: Omit<Ingredient, 'id'>): Promise<void> {
+    if (isGuest()) {
+      localIngredientStore.add(ingredient);
+      this.ingredientsCache = localIngredientStore.list();
+      this.notifyListeners();
+      return;
+    }
     try {
       const { fridgeStore } = await import('./fridgeStore');
       const fridgeId = fridgeStore.getSelectedId();
@@ -131,6 +145,12 @@ class IngredientStore {
 
   // 식재료 수정
   async updateIngredient(id: string, updates: Partial<Ingredient>): Promise<void> {
+    if (isGuest()) {
+      localIngredientStore.update(id, updates);
+      this.ingredientsCache = localIngredientStore.list();
+      this.notifyListeners();
+      return;
+    }
     try {
       const updateData: any = { ...updates };
 
@@ -170,6 +190,12 @@ class IngredientStore {
 
   // 식재료 삭제
   async deleteIngredient(id: string): Promise<void> {
+    if (isGuest()) {
+      localIngredientStore.remove(id);
+      this.ingredientsCache = localIngredientStore.list();
+      this.notifyListeners();
+      return;
+    }
     try {
       const response = await apiFetch(`/api/ingredients/${id}`, { method: 'DELETE' });
 

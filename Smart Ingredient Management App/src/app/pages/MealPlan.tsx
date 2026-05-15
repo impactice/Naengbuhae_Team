@@ -4,6 +4,8 @@ import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients } from '../utils/recipeMatch';
 import { Link } from 'react-router';
 import { ArrowLeft, Calendar, ChevronRight, Sparkles } from 'lucide-react';
+import { isGuest } from '../utils/guestMode';
+import GuestBlocked from '../components/GuestBlocked';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 
 const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
@@ -107,6 +109,8 @@ export default function MealPlan() {
       </div>
     );
   }
+
+  if (isGuest()) return <GuestBlocked feature="식단 계획" />;
 
   return (
     <div className="min-h-screen bg-white pb-4">
