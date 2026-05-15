@@ -151,7 +151,8 @@ export default function SignUp() {
 
       if (data.success) {
         alert('회원가입이 완료되었습니다!');
-        navigate('/login');
+        // 로그인 화면에서 username을 자동으로 채우도록 state로 전달
+        navigate('/login', { state: { username: formData.username } });
         return;
       }
 

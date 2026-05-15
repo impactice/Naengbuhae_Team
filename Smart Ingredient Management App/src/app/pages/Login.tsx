@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import { saveAuth } from '../utils/apiClient';
 import { setGuest, clearGuest } from '../utils/guestMode';
@@ -7,10 +7,13 @@ import { promptAndMigrate } from '../utils/ingredientMigration';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  // 회원가입 직후 진입 시 SignUp에서 넘긴 username을 자동으로 채워준다.
+  const initialUsername = (location.state as { username?: string } | null)?.username ?? '';
   const [formData, setFormData] = useState({
-    username: '',
+    username: initialUsername,
     password: '',
   });
   // 이메일 미인증으로 로그인 거부된 사용자 안내 — 로그인 폼 위에 배너로 노출.
