@@ -1,6 +1,7 @@
+import { Link } from 'react-router';
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
-import { AlertCircle, Package, Trash2, TrendingUp } from 'lucide-react';
+import { AlertCircle, Package, Trash2, TrendingUp, ChevronRight } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import FridgeSelector from '../components/FridgeSelector';
 
@@ -233,9 +234,14 @@ export default function Priority() {
                 })}
               </div>
               {safeItems.length > 5 && (
-                <p className="text-sm text-muted-foreground text-center mt-3">
-                  외 {safeItems.length - 5}개 더 있음
-                </p>
+                <Link
+                  to="/ingredients"
+                  className="mt-3 flex items-center justify-center gap-1 text-sm text-accent hover:opacity-80 transition-opacity"
+                  style={{ fontWeight: 600 }}
+                >
+                  외 {safeItems.length - 5}개 더 보기
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
               )}
             </div>
           )}

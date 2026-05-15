@@ -100,15 +100,11 @@ export default function Root() {
                   className="flex flex-col items-center justify-center flex-1 h-full gap-1"
                 >
                   <Icon
-                    className={`w-6 h-6 ${
-                      active ? 'text-black dark:text-white' : 'text-muted-foreground dark:text-muted-foreground'
-                    }`}
+                    className={`w-6 h-6 ${active ? 'text-accent' : 'text-muted-foreground'}`}
                     strokeWidth={active ? 2.5 : 2}
                   />
                   <span
-                    className={`text-xs ${
-                      active ? 'text-black dark:text-white' : 'text-muted-foreground dark:text-muted-foreground'
-                    }`}
+                    className={`text-xs ${active ? 'text-accent' : 'text-muted-foreground'}`}
                     style={{ fontWeight: active ? 600 : 400 }}
                   >
                     {item.label}
