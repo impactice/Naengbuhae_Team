@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
-import { Eye, EyeOff, Mail } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { saveAuth } from '../utils/apiClient';
 import { setGuest, clearGuest } from '../utils/guestMode';
 import { promptAndMigrate } from '../utils/ingredientMigration';
@@ -16,12 +16,6 @@ export default function Login() {
     username: initialUsername,
     password: '',
   });
-  // 이메일 미인증으로 로그인 거부된 사용자 안내 — 로그인 폼 위에 배너로 노출.
-  const [pendingVerification, setPendingVerification] = useState<{
-    email: string;
-    sent: boolean;
-    sending: boolean;
-  } | null>(null);
 
   // ──────────────────────────────────────────────────────────────
   // [MSW 모킹 중] 이 handleSubmit 함수는 MSW가 가로채서 가짜 응답을 줍니다.
@@ -50,14 +44,9 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
 
-        // 백엔드 LoginResponse: { success, message, token, refreshToken, needsEmailVerification, email }
+        // 백엔드 LoginResponse: { success, message, token, refreshToken }
         // success=false여도 HTTP 200으로 오므로 별도 분기
         if (data.success === false) {
-          if (data.needsEmailVerification && data.email) {
-            // 이메일 인증 미완료 — 배너로 안내 + 재발송 버튼 노출
-            setPendingVerification({ email: data.email, sent: false, sending: false });
-            return;
-          }
           alert(`로그인 실패: ${data.message || '아이디 또는 비밀번호를 확인해주세요.'}`);
           return;
         }
@@ -102,33 +91,6 @@ export default function Login() {
     navigate('/');
   };
 
-  // 이메일 미인증 안내 배너의 "메일 다시 받기" 버튼 핸들러.
-  // 사용자가 다시 입력한 username/password로 백엔드가 재검증 + 재발송.
-  const handleResendVerification = async () => {
-    if (!pendingVerification || pendingVerification.sending) return;
-    setPendingVerification({ ...pendingVerification, sending: true });
-    try {
-      const res = await fetch('http://localhost:8080/user/resend-verification-public', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setPendingVerification({ ...pendingVerification, sent: true, sending: false });
-      } else {
-        alert(data.message || '메일 재발송에 실패했습니다.');
-        setPendingVerification({ ...pendingVerification, sending: false });
-      }
-    } catch {
-      alert('서버 연결에 실패했습니다.');
-      setPendingVerification({ ...pendingVerification, sending: false });
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
       <div className="w-full max-w-md bg-white min-h-screen shadow-xl flex flex-col">
@@ -142,37 +104,6 @@ export default function Login() {
               신선한 식재료 관리의 시작
             </p>
           </div>
-
-        {/* 이메일 미인증 안내 배너 — 로그인 거부된 직후 표시 */}
-        {pendingVerification && (
-          <div className="mb-6 p-4 rounded-xl border-2 border-yellow-200 bg-yellow-50">
-            <div className="flex items-start gap-3">
-              <div className="w-9 h-9 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0">
-                <Mail className="w-5 h-5 text-yellow-900" />
-              </div>
-              <div className="flex-1">
-                <p className="font-bold text-sm text-yellow-900">이메일 인증을 완료해주세요</p>
-                <p className="mt-1 text-xs text-yellow-900 leading-relaxed">
-                  <span className="font-semibold">{pendingVerification.email}</span>으로 보낸 인증 메일을 확인해주세요.
-                </p>
-                <div className="mt-2">
-                  {pendingVerification.sent ? (
-                    <p className="text-xs text-green-700 font-semibold">✓ 인증 메일을 다시 보냈어요. 메일함을 확인해주세요.</p>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleResendVerification}
-                      disabled={pendingVerification.sending}
-                      className="text-xs font-bold text-yellow-900 underline underline-offset-2 disabled:opacity-50"
-                    >
-                      {pendingVerification.sending ? '전송 중...' : '메일 다시 받기'}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* 로그인 폼 */}
         <form onSubmit={handleSubmit} className="space-y-4">

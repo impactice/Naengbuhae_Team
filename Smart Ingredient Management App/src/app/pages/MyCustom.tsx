@@ -234,11 +234,6 @@ export default function MyCustom() {
         </p>
       </div>
 
-      {/* 이메일 미인증 배너 */}
-      {profile.emailVerified === false && (
-        <EmailVerificationBanner email={profile.email} />
-      )}
-
       {/* 프로필 미완성 시 CTA — 카카오 등으로 가입한 사용자 안내 */}
       {isProfileIncomplete && (
         <div className="px-5 pt-5">
@@ -562,57 +557,3 @@ export default function MyCustom() {
   );
 }
 
-// 이메일 인증 배너 — 미인증 사용자에게 표시. "재발송" 버튼으로 메일 다시 받기.
-function EmailVerificationBanner({ email }: { email: string }) {
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  const handleResend = async () => {
-    setSending(true);
-    try {
-      const { apiFetch } = await import('../utils/apiClient');
-      const res = await apiFetch('/user/resend-verification', { method: 'POST' });
-      const data = await res.json().catch(() => ({}));
-      if (data?.success) {
-        setSent(true);
-      } else {
-        alert(data?.message ?? '재발송 실패');
-      }
-    } catch {
-      alert('서버 연결 실패');
-    } finally {
-      setSending(false);
-    }
-  };
-
-  return (
-    <div className="px-5 pt-5">
-      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0">
-            <AlertTriangle className="w-5 h-5 text-yellow-900" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-bold mb-1 text-yellow-900">이메일 인증을 완료해주세요</h3>
-            <p className="text-sm text-yellow-900 leading-relaxed">
-              <span className="font-semibold">{email}</span>로 보낸 인증 메일을 확인해주세요.
-            </p>
-            {sent ? (
-              <p className="text-xs text-green-700 mt-2 font-semibold">
-                ✓ 인증 메일을 다시 보냈어요. 메일함을 확인해주세요.
-              </p>
-            ) : (
-              <button
-                onClick={handleResend}
-                disabled={sending}
-                className="text-xs mt-2 font-semibold underline underline-offset-2 disabled:opacity-60"
-              >
-                {sending ? '전송 중...' : '메일 다시 받기'}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}

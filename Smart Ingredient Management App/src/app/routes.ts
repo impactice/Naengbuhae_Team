@@ -19,7 +19,6 @@ import OAuthCallback from "./pages/OAuthCallback";
 import ProfileComplete from "./pages/ProfileComplete";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import VerifyEmail from "./pages/VerifyEmail";
 import NotificationCenter from "./pages/NotificationCenter";
 import FamilyActivity from "./pages/FamilyActivity";
 
@@ -42,7 +41,6 @@ export const router = createBrowserRouter([
   },
   { path: "/forgot-password", Component: ForgotPassword },
   { path: "/reset-password", Component: ResetPassword },
-  { path: "/verify-email", Component: VerifyEmail },
   {
     path: "/",
     Component: Root,
