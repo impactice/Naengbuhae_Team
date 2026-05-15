@@ -107,12 +107,12 @@ function AIRecommendModal({
     >
       {/* 모달 바디 — 하단 시트 스타일 */}
       <div
-        className="w-full max-w-md bg-white rounded-t-3xl flex flex-col"
+        className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 rounded-t-3xl flex flex-col"
         style={{ maxHeight: '88vh' }}
       >
         {/* 핸들 바 */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-gray-200 rounded-full" />
+          <div className="w-10 h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
         </div>
 
         {/* 헤더 */}
@@ -123,7 +123,7 @@ function AIRecommendModal({
               AI 레시피 추천
             </span>
           </div>
-          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors">
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
@@ -204,7 +204,7 @@ function AIRecommendModal({
             </div>
 
             {/* 다음 버튼 */}
-            <div className="px-5 py-4 border-t border-gray-100">
+            <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800">
               <button
                 onClick={() => setStep(2)}
                 disabled={selectedIngredients.length === 0}
@@ -268,7 +268,7 @@ function AIRecommendModal({
             <div className="px-5 py-4 border-t border-gray-100 flex gap-2">
               <button
                 onClick={() => setStep(1)}
-                className="py-4 px-5 rounded-xl text-sm bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200"
+                className="py-4 px-5 rounded-xl text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
                 style={{ fontWeight: 600 }}
               >
                 이전
@@ -603,7 +603,7 @@ function FilterButton({
     <button
       onClick={onClick}
       className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap ${
-        active ? 'text-black' : 'bg-gray-100 text-gray-600'
+        active ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
       }`}
       style={{
         backgroundColor: active ? '#CDFF00' : undefined,
