@@ -208,8 +208,8 @@ export default function AddByReceipt() {
               key={idx}
               className={`rounded-xl p-3 border ${
                 item.selected
-                  ? 'bg-gray-50 border-gray-200'
-                  : 'bg-red-50 border-red-200'
+                  ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                  : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50'
               }`}
             >
               {/* 상단: 체크박스 + 이름 + 삭제 */}
@@ -244,7 +244,7 @@ export default function AddByReceipt() {
                     <select
                       value={item.categoryKo}
                       onChange={(e) => updateItem(idx, { categoryKo: e.target.value })}
-                      className="px-2 py-2 bg-white rounded-lg border border-gray-200 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
                     >
                       {CATEGORIES_KO.map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -253,7 +253,7 @@ export default function AddByReceipt() {
                     <select
                       value={item.storageKo}
                       onChange={(e) => updateItem(idx, { storageKo: e.target.value })}
-                      className="px-2 py-2 bg-white rounded-lg border border-gray-200 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
                     >
                       {STORAGES_KO.map((s) => (
                         <option key={s} value={s}>{s}</option>
@@ -265,12 +265,12 @@ export default function AddByReceipt() {
                       min="0"
                       value={item.quantity}
                       onChange={(e) => updateItem(idx, { quantity: e.target.value })}
-                      className="px-2 py-2 bg-white rounded-lg border border-gray-200 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
                     />
                     <select
                       value={item.unit}
                       onChange={(e) => updateItem(idx, { unit: e.target.value })}
-                      className="px-2 py-2 bg-white rounded-lg border border-gray-200 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
                     >
                       {UNITS.map((u) => (
                         <option key={u} value={u}>{u}</option>
@@ -289,7 +289,7 @@ export default function AddByReceipt() {
 
       {/* 하단 고정 저장 버튼 (하단 네비 위에 위치하도록 bottom-16) */}
       {items.length > 0 && (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-100 p-4">
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 p-4">
           <button
             onClick={saveAll}
             disabled={saving}
