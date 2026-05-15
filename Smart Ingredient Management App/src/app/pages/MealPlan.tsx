@@ -104,8 +104,8 @@ export default function MealPlan() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-500">식단 데이터를 불러오는 중...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">식단 데이터를 불러오는 중...</p>
       </div>
     );
   }
@@ -113,7 +113,7 @@ export default function MealPlan() {
   if (isGuest()) return <GuestBlocked feature="식단 계획" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
+    <div className="min-h-screen bg-background pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-1">
@@ -124,7 +124,7 @@ export default function MealPlan() {
             식단 추천
           </h1>
         </div>
-        <p className="text-sm text-gray-500 ml-10">
+        <p className="text-sm text-muted-foreground ml-10">
           보유 식재료 기반 균형잡힌 식단
         </p>
       </div>
@@ -135,10 +135,10 @@ export default function MealPlan() {
           <button
             onClick={() => setSelectedDays(1)}
             className={`px-4 py-2 rounded-lg text-sm ${
-              selectedDays === 1 ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+              selectedDays === 1 ? 'text-primary-foreground' : 'bg-secondary text-muted-foreground'
             }`}
             style={{
-              backgroundColor: selectedDays === 1 ? 'var(--accent)' : undefined,
+              backgroundColor: selectedDays === 1 ? 'var(--primary)' : undefined,
               fontWeight: selectedDays === 1 ? 600 : 500,
             }}
           >
@@ -147,10 +147,10 @@ export default function MealPlan() {
           <button
             onClick={() => setSelectedDays(3)}
             className={`px-4 py-2 rounded-lg text-sm ${
-              selectedDays === 3 ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+              selectedDays === 3 ? 'text-primary-foreground' : 'bg-secondary text-muted-foreground'
             }`}
             style={{
-              backgroundColor: selectedDays === 3 ? 'var(--accent)' : undefined,
+              backgroundColor: selectedDays === 3 ? 'var(--primary)' : undefined,
               fontWeight: selectedDays === 3 ? 600 : 500,
             }}
           >
@@ -159,10 +159,10 @@ export default function MealPlan() {
           <button
             onClick={() => setSelectedDays(7)}
             className={`px-4 py-2 rounded-lg text-sm ${
-              selectedDays === 7 ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+              selectedDays === 7 ? 'text-primary-foreground' : 'bg-secondary text-muted-foreground'
             }`}
             style={{
-              backgroundColor: selectedDays === 7 ? 'var(--accent)' : undefined,
+              backgroundColor: selectedDays === 7 ? 'var(--primary)' : undefined,
               fontWeight: selectedDays === 7 ? 600 : 500,
             }}
           >
@@ -173,7 +173,7 @@ export default function MealPlan() {
 
       {/* 영양 요약 */}
       <div className="px-5 pb-4">
-        <div className="bg-gradient-to-br from-lime-50 to-yellow-50 dark:from-lime-900/30 dark:to-yellow-900/30 rounded-2xl p-5 border border-lime-200 dark:border-lime-800/50">
+        <div className="bg-card border border-border rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-5 h-5 text-lime-700" />
             <h3 className="text-sm" style={{ fontWeight: 600 }}>
@@ -182,22 +182,22 @@ export default function MealPlan() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <p className="text-xs text-gray-600 mb-1">총 칼로리</p>
+              <p className="text-xs text-muted-foreground mb-1">총 칼로리</p>
               <p className="text-xl" style={{ fontWeight: 700 }}>
                 {weeklyTotal.calories.toLocaleString()}
-                <span className="text-sm text-gray-600 ml-1">kcal</span>
+                <span className="text-sm text-muted-foreground ml-1">kcal</span>
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 평균 {Math.round(weeklyTotal.calories / selectedDays)}kcal/일
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-600 mb-1">총 단백질</p>
+              <p className="text-xs text-muted-foreground mb-1">총 단백질</p>
               <p className="text-xl" style={{ fontWeight: 700 }}>
                 {Math.round(weeklyTotal.protein)}
-                <span className="text-sm text-gray-600 ml-1">g</span>
+                <span className="text-sm text-muted-foreground ml-1">g</span>
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 평균 {Math.round(weeklyTotal.protein / selectedDays)}g/일
               </p>
             </div>
@@ -208,7 +208,7 @@ export default function MealPlan() {
       {/* 영양소 추이 그래프 */}
       {selectedDays >= 3 && (
         <div className="px-5 pb-4">
-          <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/30 dark:to-blue-900/30 rounded-2xl p-5 border border-purple-100 dark:border-purple-800/50">
+          <div className="bg-card border border-border rounded-2xl p-5">
             <h3 className="text-sm mb-4" style={{ fontWeight: 600 }}>
               일별 영양소 추이
             </h3>
@@ -248,7 +248,7 @@ export default function MealPlan() {
                 />
               </LineChart>
             </ResponsiveContainer>
-            <p className="text-xs text-gray-500 mt-2 text-center">
+            <p className="text-xs text-muted-foreground mt-2 text-center">
               * 칼로리는 10분의 1로 표시됩니다
             </p>
           </div>
@@ -257,7 +257,7 @@ export default function MealPlan() {
 
       {/* 영양소 균형 그래프 */}
       <div className="px-5 pb-4">
-        <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900/30 dark:to-yellow-900/30 rounded-2xl p-5 border border-orange-100 dark:border-orange-800/50">
+        <div className="bg-card border border-border rounded-2xl p-5">
           <h3 className="text-sm mb-4" style={{ fontWeight: 600 }}>
             영양소 균형
           </h3>
@@ -299,15 +299,15 @@ export default function MealPlan() {
         </h2>
         <div className="space-y-3">
           {mealPlan.map((day, index) => (
-            <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+            <div key={index} className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-600" />
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
                   <h3 className="text-base" style={{ fontWeight: 600 }}>
                     {day.day}요일
                   </h3>
                 </div>
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-muted-foreground">
                   {day.totalCalories}kcal
                 </div>
               </div>
@@ -318,8 +318,8 @@ export default function MealPlan() {
                 <MealRow label="저녁" meal={day.dinner} />
               </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between text-xs text-gray-600">
+              <div className="mt-3 pt-3 border-t border-border">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>단백질 {Math.round(day.totalProtein)}g</span>
                   <Link
                     to="/recipes"
@@ -342,7 +342,7 @@ export default function MealPlan() {
           <p className="text-sm" style={{ fontWeight: 600 }}>
             더 정확한 식단 추천을 위해
           </p>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             보유 식재료를 등록하면 맞춤 식단을 추천해드려요
           </p>
         </div>
@@ -354,7 +354,7 @@ export default function MealPlan() {
 function MealRow({ label, meal }: { label: string; meal: string }) {
   return (
     <div className="flex items-center justify-between py-2">
-      <span className="text-sm text-gray-600 w-12">{label}</span>
+      <span className="text-sm text-muted-foreground w-12">{label}</span>
       <span className="text-sm flex-1" style={{ fontWeight: 500 }}>
         {meal}
       </span>

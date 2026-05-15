@@ -139,7 +139,7 @@ export default function Ingredients() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
+    <div className="min-h-screen bg-background pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -150,7 +150,7 @@ export default function Ingredients() {
             <button
               type="button"
               onClick={exitSelectionMode}
-              className="text-sm text-gray-600 hover:text-black"
+              className="text-sm text-muted-foreground hover:text-foreground"
               style={{ fontWeight: 600 }}
             >
               취소
@@ -159,7 +159,7 @@ export default function Ingredients() {
             <FridgeSelector />
           )}
         </div>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           {selectionMode ? `${selectedIds.size}개 선택됨` : `총 ${ingredients.length}개`}
         </p>
       </div>
@@ -171,7 +171,7 @@ export default function Ingredients() {
             <Link to="/add-ingredient" className="flex-1">
               <button
                 className="w-full rounded-xl py-4 flex items-center justify-center gap-2"
-                style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
               >
                 <Plus className="w-5 h-5" />
                 식재료 추가하기
@@ -179,7 +179,7 @@ export default function Ingredients() {
             </Link>
             <Link to="/nutrition">
               <button
-                className="rounded-xl py-4 px-4 flex items-center justify-center bg-gradient-to-br from-green-50 to-white dark:from-green-900/30 dark:to-gray-800 border-2 border-green-200 dark:border-green-800/50 hover:shadow-md transition-all"
+                className="rounded-xl py-4 px-4 flex items-center justify-center bg-card border border-border hover:shadow-md transition-all"
                 title="영양 분석"
               >
                 <Sparkles className="w-5 h-5 text-green-600" />
@@ -189,10 +189,10 @@ export default function Ingredients() {
               type="button"
               onClick={enterSelectionMode}
               disabled={ingredients.length === 0}
-              className="rounded-xl py-4 px-4 flex items-center justify-center bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="rounded-xl py-4 px-4 flex items-center justify-center bg-secondary border-2 border-border hover:shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               title="선택"
             >
-              <CheckSquare className="w-5 h-5 text-gray-700" />
+              <CheckSquare className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function Ingredients() {
           <button
             type="button"
             onClick={selectAll}
-            className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm"
+            className="flex-1 py-3 rounded-xl bg-secondary text-sm"
             style={{ fontWeight: 600 }}
           >
             전체 선택 ({sorted.length})
@@ -224,19 +224,19 @@ export default function Ingredients() {
       {/* 이름 검색 */}
       <div className="px-5 pb-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="이름으로 검색"
-            className="w-full pl-9 pr-9 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
+            className="w-full pl-9 pr-9 py-2 bg-secondary rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-muted-foreground"
               aria-label="검색어 지우기"
             >
               <X className="w-4 h-4" />
@@ -252,7 +252,7 @@ export default function Ingredients() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value as CategoryType | 'all')}
-            className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm flex-1"
+            className="px-3 py-2 bg-secondary rounded-lg text-sm flex-1"
             style={{ fontWeight: 500 }}
           >
             <option value="all">전체 카테고리</option>
@@ -273,7 +273,7 @@ export default function Ingredients() {
           <select
             value={selectedStorage}
             onChange={(e) => setSelectedStorage(e.target.value as StorageType | 'all')}
-            className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm flex-1"
+            className="px-3 py-2 bg-secondary rounded-lg text-sm flex-1"
             style={{ fontWeight: 500 }}
           >
             <option value="all">전체 보관</option>
@@ -286,7 +286,7 @@ export default function Ingredients() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'expiry' | 'name' | 'category')}
-            className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm flex-1"
+            className="px-3 py-2 bg-secondary rounded-lg text-sm flex-1"
             style={{ fontWeight: 500 }}
           >
             <option value="expiry">유통기한 순</option>
@@ -304,7 +304,7 @@ export default function Ingredients() {
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors ${
             showExpiredOnly
               ? 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-300'
-              : 'bg-gray-100 dark:bg-gray-800 border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              : 'bg-secondary border-transparent text-muted-foreground hover:opacity-80'
           }`}
           style={{ fontWeight: showExpiredOnly ? 600 : 500 }}
         >
@@ -323,8 +323,8 @@ export default function Ingredients() {
       <div className="px-5">
         {sorted.length === 0 ? (
           <div className="text-center py-12">
-            <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-400">
+            <Package className="w-12 h-12 text-muted-foreground opacity-50 mx-auto mb-3" />
+            <p className="text-muted-foreground">
               {selectedCategory !== 'all' || selectedStorage !== 'all' || trimmedQuery !== '' || showExpiredOnly
                 ? '조건에 맞는 식재료가 없습니다'
                 : '등록된 식재료가 없습니다'}
@@ -352,10 +352,10 @@ export default function Ingredients() {
                     selectionMode
                       ? isSelected
                         ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent cursor-pointer'
-                        : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer'
+                        : 'bg-card border border-border border-2 border-transparent cursor-pointer'
                       : isHighlighted
                       ? 'bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-300 dark:border-yellow-700 ring-2 ring-yellow-200 dark:ring-yellow-800/50'
-                      : 'bg-gray-50 dark:bg-gray-800'
+                      : 'bg-card border border-border'
                   }`}
                 >
                   <div className="flex items-start justify-between">
@@ -399,27 +399,27 @@ export default function Ingredients() {
                         )}
                       </div>
                       <div className="mt-2 space-y-1">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           수량: {ingredient.quantity}
                           {ingredient.unit}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           분류: {getCategoryLabel(ingredient.category)} ·{' '}
                           {getStorageLabel(ingredient.storage)}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           유통기한:{' '}
                           {ingredient.expirationDate.toLocaleDateString('ko-KR')}
                         </p>
                         {/* 영양 정보 추가 */}
-                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                          <span className="text-xs px-2 py-1 bg-white dark:bg-gray-900 rounded-md font-medium">
+                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border">
+                          <span className="text-xs px-2 py-1 bg-background rounded-md font-medium">
                             {Math.round(nutrition.calories * factor)}kcal
                           </span>
-                          <span className="text-xs px-2 py-1 bg-white dark:bg-gray-900 rounded-md">
+                          <span className="text-xs px-2 py-1 bg-background rounded-md">
                             단백질 {Math.round(nutrition.protein * factor)}g
                           </span>
-                          <span className="text-xs px-2 py-1 bg-white dark:bg-gray-900 rounded-md">
+                          <span className="text-xs px-2 py-1 bg-background rounded-md">
                             탄수화물 {Math.round(nutrition.carbs * factor)}g
                           </span>
                         </div>
@@ -428,7 +428,7 @@ export default function Ingredients() {
                     {!selectionMode && (
                       <button
                         onClick={() => handleDelete(ingredient.id, ingredient.name)}
-                        className="ml-3 p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                        className="ml-3 p-2 hover:bg-secondary rounded-lg transition-colors"
                       >
                         <Trash2 className="w-5 h-5 text-red-500" />
                       </button>

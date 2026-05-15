@@ -7,27 +7,9 @@
    사용자 설정(light/dark/system)을 themeMode store가 관리하고 root 클래스를 토글한다. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* 브랜드 액센트 색 (식재료 추가 버튼 등 primary 색)
-   라이트: 형광 라임 #CDFF00 (브랜드)
-   다크: 형광 라임이 너무 눈아파서 차분한 청록 #7BCAD5로 — 어두운 배경에 잘 어울림
-   사용처: bg-accent / text-accent / border-accent (Tailwind 유틸) 또는
-   inline 스타일에서 var(--accent) */
-@theme {
-  --color-accent: #CDFF00;
-  --color-accent-deep: #B8E600;
-}
-
-:root {
-  --accent: #CDFF00;
-  --accent-deep: #B8E600;
-}
-
-.dark {
-  --accent: #7BCAD5;
-  --accent-deep: #5EAFBE;
-  --color-accent: #7BCAD5;
-  --color-accent-deep: #5EAFBE;
-}
+/* 디자인 토큰(--primary/--accent/--card 등)은 theme.css 가 단일 소스.
+   primary CTA 색은 bg-primary / var(--primary) (라이트=라임, 다크=off-white),
+   sky 액센트는 bg-accent / var(--accent) (AI·추천·진행바 전용). */
 
 /* Tailwind v4는 button 기본 커서를 default로 리셋함 → 클릭 가능 요소에 포인터 복원
    레이어 밖에 두어 utilities 레이어보다 우선 적용됨 */

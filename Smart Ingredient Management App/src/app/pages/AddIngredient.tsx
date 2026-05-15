@@ -212,7 +212,7 @@ export default function AddIngredient() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
@@ -227,7 +227,7 @@ export default function AddIngredient() {
         {/* 영수증으로 일괄 추가 진입 */}
         <Link
           to="/add-by-receipt"
-          className="mb-4 flex items-center gap-3 px-4 py-3 bg-black rounded-xl hover:bg-gray-800 transition-colors"
+          className="mb-4 flex items-center gap-3 px-4 py-3 bg-primary rounded-xl hover:opacity-90 transition-colors"
         >
           <Receipt className="w-5 h-5" style={{ color: 'var(--accent)' }} />
           <span className="flex-1 text-white text-sm" style={{ fontWeight: 600 }}>
@@ -248,7 +248,7 @@ export default function AddIngredient() {
           {!imagePreview ? (
             <button
               type="button"
-              className="w-full border-2 border-dashed border-gray-300 rounded-xl py-8 flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-gray-400 transition-colors"
+              className="w-full border-2 border-dashed border-gray-300 rounded-xl py-8 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-gray-400 transition-colors"
               onClick={() => fileInputRef.current?.click()}
             >
               <Camera className="w-8 h-8" />
@@ -287,7 +287,7 @@ export default function AddIngredient() {
             value={name}
             onChange={(e) => handleNameChange(e.target.value)}
             placeholder="예: 우유, 계란, 양상추"
-            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+            className="w-full px-4 py-3 bg-card border border-border rounded-xl border border-border focus:outline-none focus:border-black"
             required
           />
         </div>
@@ -300,7 +300,7 @@ export default function AddIngredient() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as CategoryType)}
-            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+            className="w-full px-4 py-3 bg-card border border-border rounded-xl border border-border focus:outline-none focus:border-black"
           >
             <option value="vegetable">채소</option>
             <option value="meat">육류</option>
@@ -327,7 +327,7 @@ export default function AddIngredient() {
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               placeholder="1"
-              className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+              className="flex-1 px-4 py-3 bg-card border border-border rounded-xl border border-border focus:outline-none focus:border-black"
               min="0"
               step="0.1"
               required
@@ -335,7 +335,7 @@ export default function AddIngredient() {
             <select
               value={unit}
               onChange={(e) => setUnit(e.target.value)}
-              className="w-24 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+              className="w-24 px-4 py-3 bg-card border border-border rounded-xl border border-border focus:outline-none focus:border-black"
             >
               <option value="개">개</option>
               <option value="g">g</option>
@@ -383,7 +383,7 @@ export default function AddIngredient() {
             type="date"
             value={purchaseDate}
             onChange={(e) => setPurchaseDate(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+            className="w-full px-4 py-3 bg-card border border-border rounded-xl border border-border focus:outline-none focus:border-black"
             required
           />
         </div>
@@ -413,7 +413,7 @@ export default function AddIngredient() {
               type="date"
               value={expirationDate}
               onChange={(e) => setExpirationDate(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+              className="w-full px-4 py-3 bg-card border border-border rounded-xl border border-border focus:outline-none focus:border-black"
               required
             />
           </div>
@@ -423,7 +423,7 @@ export default function AddIngredient() {
         <button
           type="submit"
           className="w-full rounded-xl py-4 mt-4"
-          style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+          style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
         >
           추가하기
         </button>
@@ -446,7 +446,7 @@ function StorageButton({
       type="button"
       onClick={onClick}
       className={`py-3 rounded-xl ${
-        active ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+        active ? 'text-black' : 'bg-secondary text-muted-foreground'
       }`}
       style={{
         backgroundColor: active ? 'var(--accent)' : undefined,

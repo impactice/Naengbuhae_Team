@@ -27,7 +27,7 @@ export default function FridgeSelector() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary hover:opacity-80 rounded-full transition-colors"
       >
         <Refrigerator className="w-3.5 h-3.5" />
         <span className="text-sm" style={{ fontWeight: 600 }}>
@@ -37,13 +37,13 @@ export default function FridgeSelector() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
-          <div className="px-4 pt-3 pb-1 text-xs text-gray-500 dark:text-gray-400" style={{ fontWeight: 600 }}>
+        <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-border z-50 overflow-hidden">
+          <div className="px-4 pt-3 pb-1 text-xs text-muted-foreground" style={{ fontWeight: 600 }}>
             냉장고 전환
           </div>
           <div className="max-h-72 overflow-y-auto">
             {fridges.length === 0 ? (
-              <div className="px-4 py-6 text-sm text-gray-400 dark:text-gray-500 text-center">
+              <div className="px-4 py-6 text-sm text-muted-foreground dark:text-muted-foreground text-center">
                 냉장고가 없습니다
               </div>
             ) : (
@@ -55,13 +55,13 @@ export default function FridgeSelector() {
                     select(f.id);
                     setOpen(false);
                   }}
-                  className={`w-full px-4 py-2.5 flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 text-left ${
-                    f.id === selected?.id ? 'bg-gray-50 dark:bg-gray-700' : ''
+                  className={`w-full px-4 py-2.5 flex items-center gap-2 hover:bg-secondary text-left ${
+                    f.id === selected?.id ? 'bg-secondary' : ''
                   }`}
                 >
                   <Refrigerator
                     className={`w-4 h-4 ${
-                      f.id === selected?.id ? 'text-black dark:text-white' : 'text-gray-400 dark:text-gray-500'
+                      f.id === selected?.id ? 'text-black dark:text-white' : 'text-muted-foreground dark:text-muted-foreground'
                     }`}
                   />
                   <div className="flex-1 min-w-0">
@@ -76,13 +76,13 @@ export default function FridgeSelector() {
               ))
             )}
           </div>
-          <div className="border-t border-gray-100 dark:border-gray-700">
+          <div className="border-t border-border">
             <Link
               to="/fridges"
               onClick={() => setOpen(false)}
-              className="w-full px-4 py-3 flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700"
+              className="w-full px-4 py-3 flex items-center gap-2 hover:bg-secondary"
             >
-              <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <Settings className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm" style={{ fontWeight: 600 }}>
                 냉장고 관리
               </span>

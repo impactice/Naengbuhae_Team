@@ -141,7 +141,7 @@ export default function ShoppingList() {
   if (isGuest()) return <GuestBlocked feature="장보기" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
+    <div className="min-h-screen bg-background pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -152,14 +152,14 @@ export default function ShoppingList() {
             <button
               type="button"
               onClick={exitSelectionMode}
-              className="text-sm text-gray-600 hover:text-black"
+              className="text-sm text-muted-foreground hover:text-foreground"
               style={{ fontWeight: 600 }}
             >
               취소
             </button>
           )}
         </div>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           {selectionMode
             ? `${selectedIds.size}개 선택됨`
             : `총 ${shoppingList.length}개 · 완료 ${checkedItems.length}개`}
@@ -173,7 +173,7 @@ export default function ShoppingList() {
             <button
               type="button"
               onClick={selectAll}
-              className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm"
+              className="flex-1 py-3 rounded-xl bg-secondary text-sm"
               style={{ fontWeight: 600 }}
             >
               전체 선택 ({shoppingList.length})
@@ -193,7 +193,7 @@ export default function ShoppingList() {
             <button
               onClick={() => setShowAddForm(true)}
               className="flex-1 rounded-xl py-4 flex items-center justify-center gap-2"
-              style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+              style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
             >
               <Plus className="w-5 h-5" />
               항목 추가하기
@@ -202,21 +202,21 @@ export default function ShoppingList() {
               type="button"
               onClick={enterSelectionMode}
               disabled={shoppingList.length === 0}
-              className="rounded-xl py-4 px-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="rounded-xl py-4 px-4 bg-secondary hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="선택"
             >
-              <CheckSquare className="w-5 h-5 text-gray-700" />
+              <CheckSquare className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
         ) : (
-          <form onSubmit={handleAdd} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+          <form onSubmit={handleAdd} className="bg-card border border-border rounded-xl p-4">
             <div className="mb-3">
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="상품 이름"
-                className="w-full px-4 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+                className="w-full px-4 py-3 bg-background rounded-xl border border-border focus:outline-none focus:border-black"
                 autoFocus
               />
             </div>
@@ -226,14 +226,14 @@ export default function ShoppingList() {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="1"
-                className="flex-1 px-4 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+                className="flex-1 px-4 py-3 bg-background rounded-xl border border-border focus:outline-none focus:border-black"
                 min="0"
                 step="0.1"
               />
               <select
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
-                className="w-24 px-4 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+                className="w-24 px-4 py-3 bg-background rounded-xl border border-border focus:outline-none focus:border-black"
               >
                 <option value="개">개</option>
                 <option value="g">g</option>
@@ -247,7 +247,7 @@ export default function ShoppingList() {
               <button
                 type="submit"
                 className="flex-1 py-3 rounded-xl"
-                style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
               >
                 추가
               </button>
@@ -259,7 +259,7 @@ export default function ShoppingList() {
                   setQuantity('1');
                   setUnit('개');
                 }}
-                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl"
+                className="flex-1 py-3 bg-secondary rounded-xl"
                 style={{ fontWeight: 600 }}
               >
                 취소
@@ -272,11 +272,11 @@ export default function ShoppingList() {
       {/* 자동 제안 — 가족이 자주 비웠는데 지금 없는 식재료 */}
       {!selectionMode && !showAddForm && suggestions.length > 0 && (
         <div className="px-5 pb-4">
-          <div className="bg-gradient-to-br from-lime-50 to-white dark:from-lime-900/30 dark:to-gray-800 rounded-2xl p-4 border border-lime-200 dark:border-lime-800/50">
+          <div className="bg-card border border-border rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4 text-lime-700" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>이건 어때요?</h3>
-              <span className="text-xs text-gray-500">자주 비우는데 지금 없어요</span>
+              <span className="text-xs text-muted-foreground">자주 비우는데 지금 없어요</span>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
               {suggestions.map((s) => (
@@ -285,11 +285,11 @@ export default function ShoppingList() {
                   type="button"
                   onClick={() => handleAddSuggestion(s.name)}
                   disabled={adding === s.name}
-                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-gray-700 rounded-lg border border-lime-200 dark:border-lime-800/50 hover:bg-lime-50 dark:hover:bg-lime-900/30 disabled:opacity-50"
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-secondary rounded-lg border border-lime-200 dark:border-lime-800/50 hover:bg-lime-50 dark:hover:bg-lime-900/30 disabled:opacity-50"
                 >
                   <Plus className="w-3.5 h-3.5 text-lime-700" />
                   <span className="text-sm" style={{ fontWeight: 600 }}>{s.name}</span>
-                  <span className="text-xs text-gray-400">{s.count}회</span>
+                  <span className="text-xs text-muted-foreground">{s.count}회</span>
                 </button>
               ))}
             </div>
@@ -300,9 +300,9 @@ export default function ShoppingList() {
       {/* 리스트 */}
       {shoppingList.length === 0 ? (
         <div className="text-center py-12 px-5">
-          <ShoppingCart className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-400 mb-1">장보기 리스트가 비어있습니다</p>
-          <p className="text-xs text-gray-400">필요한 항목을 추가해보세요</p>
+          <ShoppingCart className="w-12 h-12 text-muted-foreground opacity-50 mx-auto mb-3" />
+          <p className="text-muted-foreground mb-1">장보기 리스트가 비어있습니다</p>
+          <p className="text-xs text-muted-foreground">필요한 항목을 추가해보세요</p>
         </div>
       ) : (
         <div className="px-5">
@@ -323,8 +323,8 @@ export default function ShoppingList() {
                         selectionMode
                           ? isSelected
                             ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent cursor-pointer'
-                            : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer'
-                          : 'bg-gray-50 dark:bg-gray-800'
+                            : 'bg-card border border-border border-2 border-transparent cursor-pointer'
+                          : 'bg-card border border-border'
                       }`}
                     >
                       {selectionMode ? (
@@ -343,7 +343,7 @@ export default function ShoppingList() {
                         <h3 className="text-base" style={{ fontWeight: 600 }}>
                           {item.name}
                         </h3>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {item.quantity}
                           {item.unit}
                         </p>
@@ -352,7 +352,7 @@ export default function ShoppingList() {
                         <>
                           <button
                             onClick={() => deleteShoppingItem(item.id)}
-                            className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                            className="p-2 hover:bg-secondary rounded-lg transition-colors"
                           >
                             <Trash2 className="w-5 h-5 text-red-500" />
                           </button>
@@ -376,7 +376,7 @@ export default function ShoppingList() {
           {/* 완료 항목 */}
           {checkedItems.length > 0 && (
             <div>
-              <h2 className="text-lg mb-3 text-gray-500" style={{ fontWeight: 600 }}>
+              <h2 className="text-lg mb-3 text-muted-foreground" style={{ fontWeight: 600 }}>
                 구매 완료 ({checkedItems.length})
               </h2>
               <div className="space-y-2">
@@ -390,8 +390,8 @@ export default function ShoppingList() {
                         selectionMode
                           ? isSelected
                             ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent cursor-pointer'
-                            : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer opacity-60'
-                          : 'bg-gray-50 dark:bg-gray-800 opacity-60'
+                            : 'bg-card border border-border border-2 border-transparent cursor-pointer opacity-60'
+                          : 'bg-card border border-border opacity-60'
                       }`}
                     >
                       {selectionMode ? (
@@ -404,19 +404,19 @@ export default function ShoppingList() {
                         <button
                           onClick={() => toggleShoppingItem(item.id)}
                           className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
-                          style={{ backgroundColor: 'var(--accent)' }}
+                          style={{ backgroundColor: 'var(--primary)' }}
                         >
                           <Check className="w-4 h-4" />
                         </button>
                       )}
                       <div className="flex-1">
                         <h3
-                          className="text-base line-through text-gray-500"
+                          className="text-base line-through text-muted-foreground"
                           style={{ fontWeight: 500 }}
                         >
                           {item.name}
                         </h3>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-muted-foreground">
                           {item.quantity}
                           {item.unit}
                         </p>
@@ -424,7 +424,7 @@ export default function ShoppingList() {
                       {!selectionMode && (
                         <button
                           onClick={() => deleteShoppingItem(item.id)}
-                          className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                          className="p-2 hover:bg-secondary rounded-lg transition-colors"
                         >
                           <Trash2 className="w-5 h-5 text-red-500" />
                         </button>

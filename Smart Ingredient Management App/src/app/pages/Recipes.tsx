@@ -107,12 +107,12 @@ function AIRecommendModal({
     >
       {/* 모달 바디 — 하단 시트 스타일 */}
       <div
-        className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 rounded-t-3xl flex flex-col"
+        className="w-full max-w-md bg-background text-foreground rounded-t-3xl flex flex-col"
         style={{ maxHeight: '88vh' }}
       >
         {/* 핸들 바 */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          <div className="w-10 h-1 bg-secondary rounded-full" />
         </div>
 
         {/* 헤더 */}
@@ -123,8 +123,8 @@ function AIRecommendModal({
               AI 레시피 추천
             </span>
           </div>
-          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+          <button onClick={onClose} className="p-1.5 hover:bg-secondary rounded-full transition-colors">
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -158,15 +158,15 @@ function AIRecommendModal({
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="px-5 pb-2">
               <p className="text-sm" style={{ fontWeight: 600 }}>사용할 식재료를 선택하세요</p>
-              <p className="text-xs text-gray-400 mt-0.5">중복 선택 가능 · {selectedIngredients.length}개 선택됨</p>
+              <p className="text-xs text-muted-foreground mt-0.5">중복 선택 가능 · {selectedIngredients.length}개 선택됨</p>
             </div>
 
             {/* 식재료 그리드 — 스크롤 */}
             <div className="flex-1 overflow-y-auto px-5 pb-4">
               {ingredientOptions.length === 0 ? (
                 <div className="text-center py-10">
-                  <p className="text-gray-400 text-sm">등록된 식재료가 없습니다</p>
-                  <p className="text-xs text-gray-300 mt-1">
+                  <p className="text-muted-foreground text-sm">등록된 식재료가 없습니다</p>
+                  <p className="text-xs text-muted-foreground opacity-50 mt-1">
                     {/* TODO: 백엔드 연동 시 실제 냉장고 식재료 목록이 여기에 표시됩니다 */}
                     식재료를 먼저 추가해주세요
                   </p>
@@ -204,7 +204,7 @@ function AIRecommendModal({
             </div>
 
             {/* 다음 버튼 */}
-            <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="px-5 py-4 border-t border-border">
               <button
                 onClick={() => setStep(2)}
                 disabled={selectedIngredients.length === 0}
@@ -227,7 +227,7 @@ function AIRecommendModal({
           <div className="flex flex-col flex-1 overflow-hidden">
             <div className="px-5 pb-2">
               <p className="text-sm" style={{ fontWeight: 600 }}>원하는 요리 스타일을 선택하세요</p>
-              <p className="text-xs text-gray-400 mt-0.5">중복 선택 가능 · 선택 없으면 전체 스타일 추천</p>
+              <p className="text-xs text-muted-foreground mt-0.5">중복 선택 가능 · 선택 없으면 전체 스타일 추천</p>
             </div>
 
             {/* 스타일 그리드 — 스크롤 */}
@@ -268,7 +268,7 @@ function AIRecommendModal({
             <div className="px-5 py-4 border-t border-gray-100 flex gap-2">
               <button
                 onClick={() => setStep(1)}
-                className="py-4 px-5 rounded-xl text-sm bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="py-4 px-5 rounded-xl text-sm bg-secondary text-muted-foreground transition-colors hover:opacity-80"
                 style={{ fontWeight: 600 }}
               >
                 이전
@@ -312,14 +312,14 @@ function AIRecommendModal({
             <p className="text-base text-center" style={{ fontWeight: 700 }}>
               AI 추천 요청을 전송했어요!
             </p>
-            <p className="text-sm text-gray-400 text-center mt-1">
+            <p className="text-sm text-muted-foreground text-center mt-1">
               {/* TODO: 백엔드 연동 후 실제 추천 결과 표시 로직으로 교체 */}
               백엔드 연동 후 추천 결과가 여기에 표시됩니다
             </p>
-            <div className="mt-4 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl w-full">
-              <p className="text-xs text-gray-500 mb-1" style={{ fontWeight: 600 }}>전송된 데이터</p>
-              <p className="text-xs text-gray-400">식재료: {selectedIngredients.join(', ')}</p>
-              <p className="text-xs text-gray-400 mt-0.5">
+            <div className="mt-4 px-4 py-3 bg-card border border-border rounded-xl w-full">
+              <p className="text-xs text-muted-foreground mb-1" style={{ fontWeight: 600 }}>전송된 데이터</p>
+              <p className="text-xs text-muted-foreground">식재료: {selectedIngredients.join(', ')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
                 스타일: {selectedStyles.length > 0
                   ? CUISINE_STYLES.filter((c) => selectedStyles.includes(c.id)).map((c) => c.label).join(', ')
                   : '전체'}
@@ -376,14 +376,14 @@ export default function Recipes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-500">레시피를 불러오는 중...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">레시피를 불러오는 중...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
+    <div className="min-h-screen bg-background pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-1">
@@ -394,7 +394,7 @@ export default function Recipes() {
             레시피 추천
           </h1>
         </div>
-        <p className="text-sm text-gray-500 ml-10">
+        <p className="text-sm text-muted-foreground ml-10">
           보유 식재료로 만들 수 있는 요리 {makeableCount}개
         </p>
       </div>
@@ -446,7 +446,7 @@ export default function Recipes() {
           <p className="text-sm" style={{ fontWeight: 600 }}>
             등록된 식재료가 없습니다
           </p>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             식재료를 등록하면 맞춤 레시피를 추천해드려요
           </p>
         </div>
@@ -456,14 +456,14 @@ export default function Recipes() {
       <div className="px-5">
         {filteredMatches.length === 0 ? (
           <div className="text-center py-12">
-            <ChefHat className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-400">
+            <ChefHat className="w-12 h-12 text-muted-foreground opacity-50 mx-auto mb-3" />
+            <p className="text-muted-foreground">
               {filterMode === 'makeable'
                 ? '현재 만들 수 있는 요리가 없습니다'
                 : '레시피가 없습니다'}
             </p>
             {filterMode === 'makeable' && (
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 식재료를 추가하면 더 많은 레시피를 만들 수 있어요
               </p>
             )}
@@ -475,7 +475,7 @@ export default function Recipes() {
                 key={match.recipe.id}
                 to={`/recipe/${match.recipe.id}`}
               >
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <div className="bg-card border border-border rounded-xl p-4 hover:bg-secondary transition-colors">
                   <div className="flex items-start justify-between mb-3 gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -503,7 +503,7 @@ export default function Recipes() {
                           {match.matchRate}% 매칭
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {match.recipe.category}
                       </p>
                     </div>
@@ -515,17 +515,17 @@ export default function Recipes() {
                         e.stopPropagation();
                         void toggleFavorite(match.recipe.id);
                       }}
-                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-700"
+                      className="p-1.5 rounded-lg hover:bg-white"
                       aria-label="즐겨찾기"
                     >
                       <Heart
-                        className={`w-5 h-5 ${match.recipe.favorite ? 'text-red-500' : 'text-gray-300'}`}
+                        className={`w-5 h-5 ${match.recipe.favorite ? 'text-red-500' : 'text-muted-foreground opacity-50'}`}
                         fill={match.recipe.favorite ? 'currentColor' : 'none'}
                       />
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs text-gray-600 mb-3">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{match.recipe.cookingTime}분</span>
@@ -544,7 +544,7 @@ export default function Recipes() {
                         <span className="text-xs text-green-600 flex-shrink-0" style={{ fontWeight: 600 }}>
                           보유:
                         </span>
-                        <span className="text-xs text-gray-600 flex-1">
+                        <span className="text-xs text-muted-foreground flex-1">
                           {match.hasIngredients.join(', ')}
                         </span>
                       </div>
@@ -554,7 +554,7 @@ export default function Recipes() {
                         <span className="text-xs text-red-600 flex-shrink-0" style={{ fontWeight: 600 }}>
                           부족:
                         </span>
-                        <span className="text-xs text-gray-600 flex-1">
+                        <span className="text-xs text-muted-foreground flex-1">
                           {match.missingIngredients.join(', ')}
                         </span>
                       </div>
@@ -562,8 +562,8 @@ export default function Recipes() {
                   </div>
 
                   {/* 영양 정보 미리보기 */}
-                  <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-4 text-xs text-gray-600">
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span>{match.recipe.nutrition.calories}kcal</span>
                       <span>단백질 {match.recipe.nutrition.protein}g</span>
                       <span>탄수화물 {match.recipe.nutrition.carbs}g</span>
@@ -603,7 +603,7 @@ function FilterButton({
     <button
       onClick={onClick}
       className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap ${
-        active ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+        active ? 'text-black' : 'bg-secondary text-muted-foreground'
       }`}
       style={{
         backgroundColor: active ? 'var(--accent)' : undefined,

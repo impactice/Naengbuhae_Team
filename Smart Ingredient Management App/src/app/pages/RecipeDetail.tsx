@@ -63,21 +63,21 @@ export default function RecipeDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <p className="text-gray-500">레시피를 불러오는 중...</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">레시피를 불러오는 중...</p>
       </div>
     );
   }
 
   if (!recipe || !match) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-400 mb-4">레시피를 찾을 수 없습니다</p>
+          <p className="text-muted-foreground mb-4">레시피를 찾을 수 없습니다</p>
           <button
             onClick={() => navigate('/recipes')}
             className="px-6 py-3 rounded-xl"
-            style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+            style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
           >
             목록으로 돌아가기
           </button>
@@ -94,11 +94,11 @@ export default function RecipeDetail() {
   if (isGuest()) return <GuestBlocked feature="레시피 상세" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* 진입 시 자동 다이얼로그 — 부족한 재료가 있을 때 한 번만 묻기 */}
       {askDialog && recipe && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl w-full max-w-md shadow-xl">
+          <div className="bg-background text-foreground rounded-2xl w-full max-w-md shadow-xl">
             <div className="px-5 pt-5 pb-3">
               <div className="flex items-center gap-2 mb-2">
                 <ShoppingCart className="w-5 h-5 text-lime-700" />
@@ -106,14 +106,14 @@ export default function RecipeDetail() {
                   부족한 재료 {missingNotInList.length}개가 있어요
                 </h3>
               </div>
-              <p className="text-sm text-gray-600">장보기 리스트에 한 번에 추가할까요?</p>
+              <p className="text-sm text-muted-foreground">장보기 리스트에 한 번에 추가할까요?</p>
             </div>
             <div className="px-5 pb-3 max-h-48 overflow-y-auto">
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 space-y-1.5">
+              <div className="bg-card border border-border rounded-xl p-3 space-y-1.5">
                 {missingNotInList.map((i) => (
                   <div key={i.name} className="flex items-center justify-between text-sm">
                     <span style={{ fontWeight: 600 }}>{i.name}</span>
-                    <span className="text-gray-500 text-xs">{i.quantity}{i.unit}</span>
+                    <span className="text-muted-foreground text-xs">{i.quantity}{i.unit}</span>
                   </div>
                 ))}
               </div>
@@ -123,7 +123,7 @@ export default function RecipeDetail() {
                 type="button"
                 onClick={dismissDialog}
                 disabled={adding}
-                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl text-sm disabled:opacity-50"
+                className="flex-1 py-3 bg-secondary rounded-xl text-sm disabled:opacity-50"
                 style={{ fontWeight: 600 }}
               >
                 괜찮아요
@@ -133,7 +133,7 @@ export default function RecipeDetail() {
                 onClick={handleBulkAdd}
                 disabled={adding}
                 className="flex-1 py-3 rounded-xl text-sm disabled:opacity-50"
-                style={{ backgroundColor: 'var(--accent)', fontWeight: 700 }}
+                style={{ backgroundColor: 'var(--primary)', fontWeight: 700 }}
               >
                 {adding ? '추가 중...' : '장보기에 추가'}
               </button>
@@ -153,11 +153,11 @@ export default function RecipeDetail() {
         <button
           type="button"
           onClick={() => void toggleFavorite(recipe.id)}
-          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="p-1.5 rounded-lg hover:bg-secondary"
           aria-label="즐겨찾기"
         >
           <Heart
-            className={`w-6 h-6 ${recipe.favorite ? 'text-red-500' : 'text-gray-400'}`}
+            className={`w-6 h-6 ${recipe.favorite ? 'text-red-500' : 'text-muted-foreground'}`}
             fill={recipe.favorite ? 'currentColor' : 'none'}
           />
         </button>
@@ -165,9 +165,9 @@ export default function RecipeDetail() {
 
       {/* 기본 정보 */}
       <div className="px-5 pb-4">
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+        <div className="bg-card border border-border rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-gray-600">{recipe.category}</span>
+            <span className="text-sm text-muted-foreground">{recipe.category}</span>
             <span
               className="px-3 py-1 rounded-lg text-sm"
               style={{
@@ -185,11 +185,11 @@ export default function RecipeDetail() {
           </div>
           <div className="flex items-center gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-gray-600" />
+              <Clock className="w-4 h-4 text-muted-foreground" />
               <span>{recipe.cookingTime}분</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-gray-600" />
+              <Users className="w-4 h-4 text-muted-foreground" />
               <span>{recipe.servings}인분</span>
             </div>
             <span>{getDifficultyLabel(recipe.difficulty)}</span>
@@ -212,12 +212,12 @@ export default function RecipeDetail() {
             return (
               <div
                 key={index}
-                className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center justify-between"
+                className="bg-card border border-border rounded-xl p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3 flex-1">
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      hasIngredient ? 'bg-green-500' : 'bg-gray-300'
+                      hasIngredient ? 'bg-green-500' : 'bg-secondary'
                     }`}
                   >
                     {hasIngredient && <Check className="w-3 h-3 text-white" />}
@@ -226,7 +226,7 @@ export default function RecipeDetail() {
                     <div className="flex items-center gap-2">
                       <span
                         className={`text-sm ${
-                          hasIngredient ? 'text-black' : 'text-gray-600'
+                          hasIngredient ? 'text-black' : 'text-muted-foreground'
                         }`}
                         style={{ fontWeight: hasIngredient ? 600 : 500 }}
                       >
@@ -238,7 +238,7 @@ export default function RecipeDetail() {
                         </span>
                       )}
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {ingredient.quantity}
                       {ingredient.unit}
                     </span>
@@ -253,9 +253,9 @@ export default function RecipeDetail() {
                         ingredient.unit
                       )
                     }
-                    className="ml-2 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                    className="ml-2 p-2 hover:opacity-80 rounded-lg transition-colors"
                   >
-                    <Plus className="w-4 h-4 text-gray-600" />
+                    <Plus className="w-4 h-4 text-muted-foreground" />
                   </button>
                 )}
                 {inShoppingList && (
@@ -280,13 +280,13 @@ export default function RecipeDetail() {
               <div
                 className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs"
                 style={{
-                  backgroundColor: 'var(--accent)',
+                  backgroundColor: 'var(--primary)',
                   fontWeight: 600,
                 }}
               >
                 {index + 1}
               </div>
-              <p className="flex-1 text-sm text-gray-700 dark:text-gray-300 pt-0.5">{step}</p>
+              <p className="flex-1 text-sm text-muted-foreground pt-0.5">{step}</p>
             </div>
           ))}
         </div>
@@ -297,41 +297,41 @@ export default function RecipeDetail() {
         <h2 className="text-lg mb-3" style={{ fontWeight: 600 }}>
           영양 정보 (1인분 기준)
         </h2>
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+        <div className="bg-card border border-border rounded-xl p-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-gray-500 mb-1">칼로리</p>
+              <p className="text-xs text-muted-foreground mb-1">칼로리</p>
               <p className="text-lg" style={{ fontWeight: 600 }}>
                 {Math.round(recipe.nutrition.calories / recipe.servings)}
-                <span className="text-sm text-gray-600 ml-1">kcal</span>
+                <span className="text-sm text-muted-foreground ml-1">kcal</span>
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-1">단백질</p>
+              <p className="text-xs text-muted-foreground mb-1">단백질</p>
               <p className="text-lg" style={{ fontWeight: 600 }}>
                 {Math.round(recipe.nutrition.protein / recipe.servings)}
-                <span className="text-sm text-gray-600 ml-1">g</span>
+                <span className="text-sm text-muted-foreground ml-1">g</span>
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-1">탄수화물</p>
+              <p className="text-xs text-muted-foreground mb-1">탄수화물</p>
               <p className="text-lg" style={{ fontWeight: 600 }}>
                 {Math.round(recipe.nutrition.carbs / recipe.servings)}
-                <span className="text-sm text-gray-600 ml-1">g</span>
+                <span className="text-sm text-muted-foreground ml-1">g</span>
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-1">지방</p>
+              <p className="text-xs text-muted-foreground mb-1">지방</p>
               <p className="text-lg" style={{ fontWeight: 600 }}>
                 {Math.round(recipe.nutrition.fat / recipe.servings)}
-                <span className="text-sm text-gray-600 ml-1">g</span>
+                <span className="text-sm text-muted-foreground ml-1">g</span>
               </p>
             </div>
             <div className="col-span-2">
-              <p className="text-xs text-gray-500 mb-1">나트륨</p>
+              <p className="text-xs text-muted-foreground mb-1">나트륨</p>
               <p className="text-lg" style={{ fontWeight: 600 }}>
                 {Math.round(recipe.nutrition.sodium / recipe.servings)}
-                <span className="text-sm text-gray-600 ml-1">mg</span>
+                <span className="text-sm text-muted-foreground ml-1">mg</span>
               </p>
             </div>
           </div>
@@ -339,13 +339,13 @@ export default function RecipeDetail() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-5">
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-gray-200 dark:border-gray-800 p-5">
         <div className="max-w-screen-sm mx-auto flex gap-2">
           {missingNotInList.length > 0 && (
             <button
               onClick={handleBulkAdd}
               disabled={adding}
-              className="flex-1 py-4 bg-gray-100 dark:bg-gray-800 rounded-xl disabled:opacity-50"
+              className="flex-1 py-4 bg-secondary rounded-xl disabled:opacity-50"
               style={{ fontWeight: 600 }}
             >
               {adding ? '추가 중...' : `부족한 재료 ${missingNotInList.length}개 추가`}
@@ -354,7 +354,7 @@ export default function RecipeDetail() {
           <Link to="/shopping-list" className="flex-1">
             <button
               className="w-full py-4 rounded-xl"
-              style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+              style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
             >
               장보기 리스트 보기
             </button>

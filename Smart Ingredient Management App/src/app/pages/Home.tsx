@@ -36,7 +36,7 @@ export default function Home() {
   ].filter(item => item.value > 0);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -45,7 +45,7 @@ export default function Home() {
           </h1>
           <FridgeSelector />
         </div>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           총 {totalItems}개 식재료 보관 중
         </p>
       </div>
@@ -53,15 +53,16 @@ export default function Home() {
       {/* 식재료 상태 대시보드 */}
       {totalItems > 0 && (
         <div className="px-5 pb-4">
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-5 border border-purple-100 dark:border-purple-800/50">
+          <div className="bg-card border border-border rounded-2xl p-5 relative overflow-hidden">
+            <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full blur-3xl opacity-[0.07] pointer-events-none" style={{ background: 'var(--accent)' }} />
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-lg mb-1" style={{ fontWeight: 600 }}>
                   식재료 상태
                 </h2>
-                <p className="text-xs text-gray-600 dark:text-gray-300">현재 냉장고 상태를 확인하세요</p>
+                <p className="text-xs text-muted-foreground">현재 냉장고 상태를 확인하세요</p>
               </div>
-              <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-300" />
+              <TrendingUp className="w-5 h-5 text-accent" />
             </div>
             
             <div className="flex items-center gap-4">
@@ -87,27 +88,27 @@ export default function Home() {
               {/* 통계 */}
               <div className="flex-1 space-y-2">
                 {dangerItems.length > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 bg-red-50 dark:bg-red-900/30 rounded-lg">
+                  <div className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ backgroundColor: 'var(--status-danger-bg)' }}>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500" />
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--status-danger)' }} />
                       <span className="text-sm" style={{ fontWeight: 600 }}>위험</span>
                     </div>
                     <span className="text-sm" style={{ fontWeight: 700 }}>{dangerItems.length}개</span>
                   </div>
                 )}
                 {warningItems.length > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+                  <div className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ backgroundColor: 'var(--status-warning-bg)' }}>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--status-warning)' }} />
                       <span className="text-sm" style={{ fontWeight: 600 }}>주의</span>
                     </div>
                     <span className="text-sm" style={{ fontWeight: 700 }}>{warningItems.length}개</span>
                   </div>
                 )}
                 {safeItems.length > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                  <div className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ backgroundColor: 'var(--status-safe-bg)' }}>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'var(--status-safe)' }} />
                       <span className="text-sm" style={{ fontWeight: 600 }}>안전</span>
                     </div>
                     <span className="text-sm" style={{ fontWeight: 700 }}>{safeItems.length}개</span>
@@ -124,7 +125,7 @@ export default function Home() {
         <Link to="/add-ingredient">
           <button
             className="w-full rounded-xl py-4 flex items-center justify-center gap-2"
-            style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+            style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
           >
             <Plus className="w-5 h-5" />
             식재료 추가하기
@@ -136,23 +137,23 @@ export default function Home() {
       <div className="px-5 pb-4">
         <div className="grid grid-cols-2 gap-3">
           <Link to="/recipes">
-            <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900/30 dark:to-yellow-900/30 rounded-xl p-4 border border-orange-200 dark:border-orange-800/50 relative overflow-hidden">
-              <ChefHat className="w-6 h-6 text-orange-600 dark:text-orange-300 mb-2" />
+            <div className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-colors">
+              <ChefHat className="w-6 h-6 text-accent mb-2" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
                 레시피 추천
               </h3>
-              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 보유 재료로 요리하기
               </p>
             </div>
           </Link>
           <Link to="/meal-plan">
-            <div className="bg-gradient-to-br from-green-50 to-lime-50 dark:from-green-900/30 dark:to-lime-900/30 rounded-xl p-4 border border-green-200 dark:border-green-800/50 relative overflow-hidden">
-              <Calendar className="w-6 h-6 text-green-600 dark:text-green-300 mb-2" />
+            <div className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-colors">
+              <Calendar className="w-6 h-6 text-accent mb-2" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
                 식단 추천
               </h3>
-              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 균형잡힌 식단 구성
               </p>
             </div>
@@ -163,16 +164,17 @@ export default function Home() {
       {/* 유통기한 임박 알림 */}
       {(dangerItems.length > 0 || warningItems.length > 0) && (
         <div className="px-5 pb-4">
-          <div className="bg-red-50 dark:bg-red-900/30 rounded-xl p-4 border border-red-100 dark:border-red-800/50 relative overflow-hidden">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="bg-card border border-border rounded-xl p-4 relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: 'var(--status-danger)' }} />
+            <div className="flex items-start gap-3 pl-2">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--status-danger)' }} />
               <div className="flex-1">
                 <h3 className="text-sm" style={{ fontWeight: 600 }}>
                   {dangerItems.length > 0
                     ? `유통기한이 지난 식재료가 ${dangerItems.length}개 있어요`
                     : `유통기한이 임박한 식재료가 ${warningItems.length}개 있어요`}
                 </h3>
-                <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   빨리 소비하거나 정리해 주세요
                 </p>
               </div>
@@ -189,7 +191,7 @@ export default function Home() {
           </h2>
           <Link
             to="/ingredients"
-            className="text-sm text-gray-500"
+            className="text-sm text-muted-foreground"
             style={{ fontWeight: 500 }}
           >
             전체보기
@@ -198,14 +200,14 @@ export default function Home() {
 
         {ingredients.length === 0 ? (
           <div className="text-center py-12">
-            <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-400 mb-1">등록된 식재료가 없습니다</p>
-            <p className="text-xs text-gray-400">첫 식재료를 추가해보세요!</p>
+            <Package className="w-12 h-12 text-muted-foreground opacity-50 mx-auto mb-3" />
+            <p className="text-muted-foreground mb-1">등록된 식재료가 없습니다</p>
+            <p className="text-xs text-muted-foreground">첫 식재료를 추가해보세요!</p>
             <Link to="/add-ingredient">
               <button
                 className="mt-4 px-6 py-2 rounded-lg text-sm"
                 style={{
-                  backgroundColor: 'var(--accent)',
+                  backgroundColor: 'var(--primary)',
                   fontWeight: 600,
                 }}
               >
@@ -223,7 +225,7 @@ export default function Home() {
               return (
                 <div
                   key={ingredient.id}
-                  className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center justify-between"
+                  className="bg-card border border-border rounded-xl p-4 flex items-center justify-between"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -241,7 +243,7 @@ export default function Home() {
                         {formatDDay(daysLeft)}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       {ingredient.quantity}
                       {ingredient.unit} · {getCategoryLabel(ingredient.category)} ·{' '}
                       {getStorageLabel(ingredient.storage)}

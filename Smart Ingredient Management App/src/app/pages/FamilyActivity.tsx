@@ -81,7 +81,7 @@ export default function FamilyActivity() {
   if (isGuest()) return <GuestBlocked feature="가족 활동" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
+    <div className="min-h-screen bg-background pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">
@@ -92,9 +92,9 @@ export default function FamilyActivity() {
 
       <div className="px-5">
         {loading ? (
-          <div className="text-center py-12 text-gray-400">불러오는 중...</div>
+          <div className="text-center py-12 text-muted-foreground">불러오는 중...</div>
         ) : error ? (
-          <div className="text-center py-12 text-gray-500">{error}</div>
+          <div className="text-center py-12 text-muted-foreground">{error}</div>
         ) : stats == null ? null : (
           <div className="space-y-5">
             {/* 헤더 카드 */}
@@ -105,7 +105,7 @@ export default function FamilyActivity() {
                 border: '1px solid #D9F99D',
               }}
             >
-              <p className="text-xs text-gray-500">{stats.fridgeName}</p>
+              <p className="text-xs text-muted-foreground">{stats.fridgeName}</p>
               <p className="text-lg mt-1" style={{ fontWeight: 700 }}>
                 지난 {stats.periodDays}일간 활동
               </p>
@@ -125,7 +125,7 @@ export default function FamilyActivity() {
                   className={`px-4 py-2 rounded-lg text-sm transition-colors ${
                     days === d
                       ? 'bg-lime-300 text-black'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      : 'bg-secondary text-muted-foreground hover:opacity-80'
                   }`}
                   style={{ fontWeight: days === d ? 600 : 500 }}
                 >
@@ -142,7 +142,7 @@ export default function FamilyActivity() {
               ) : (
                 <div className="space-y-3">
                   {/* 그룹형 막대 차트 — 멤버 한 명당 추가/비움 두 막대 */}
-                  <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                  <div className="bg-card border border-border rounded-xl p-3">
                     <ResponsiveContainer width="100%" height={180}>
                       <BarChart
                         data={stats.members.map((m) => ({
@@ -165,10 +165,10 @@ export default function FamilyActivity() {
                   {stats.members.map((m) => (
                     <div
                       key={m.username}
-                      className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 flex items-center gap-3"
+                      className="bg-card border border-border rounded-xl p-3 flex items-center gap-3"
                     >
                       <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center">
-                        <UserIcon className="w-4 h-4 text-gray-500" />
+                        <UserIcon className="w-4 h-4 text-muted-foreground" />
                       </div>
                       <p className="flex-1 text-sm" style={{ fontWeight: 600 }}>{m.name || m.username}</p>
                       <CountBadge text={`+${m.added}`} color="#16A34A" />
@@ -194,9 +194,9 @@ export default function FamilyActivity() {
 function SummaryStat({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="flex-1">
-      <p className="text-xs text-gray-500">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       <p className="text-2xl mt-1" style={{ fontWeight: 700, color }}>{value}</p>
-      <p className="text-xs text-gray-500">개</p>
+      <p className="text-xs text-muted-foreground">개</p>
     </div>
   );
 }
@@ -238,7 +238,7 @@ function RankedSection({
       <h2 className="text-sm mb-2" style={{ fontWeight: 600 }}>{title}</h2>
       <div className="space-y-2">
         {/* 도넛 차트 — TOP 항목 비율 */}
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 flex items-center gap-3">
+        <div className="bg-card border border-border rounded-xl p-3 flex items-center gap-3">
           <ResponsiveContainer width={120} height={120}>
             <PieChart>
               <Pie
@@ -264,7 +264,7 @@ function RankedSection({
               <div key={item.name} className="flex items-center gap-2 text-xs">
                 <span className="w-3 h-3 rounded" style={{ backgroundColor: pieColors[i % pieColors.length] }} />
                 <span className="flex-1 truncate" style={{ fontWeight: 500 }}>{item.name}</span>
-                <span className="text-gray-500">{item.count}회</span>
+                <span className="text-muted-foreground">{item.count}회</span>
               </div>
             ))}
           </div>
@@ -274,17 +274,17 @@ function RankedSection({
           {items.map((item, i) => {
             const ratio = max === 0 ? 0 : item.count / max;
             return (
-              <div key={item.name} className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2.5 flex items-center gap-3">
-                <span className="w-6 h-6 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-xs" style={{ fontWeight: 700 }}>
+              <div key={item.name} className="bg-card border border-border rounded-lg px-3 py-2.5 flex items-center gap-3">
+                <span className="w-6 h-6 bg-secondary rounded-full flex items-center justify-center text-xs" style={{ fontWeight: 700 }}>
                   {i + 1}
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm" style={{ fontWeight: 600 }}>{item.name}</p>
-                  <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded mt-1.5 overflow-hidden">
+                  <div className="h-1.5 bg-secondary rounded mt-1.5 overflow-hidden">
                     <div className="h-full" style={{ width: `${ratio * 100}%`, backgroundColor: color }} />
                   </div>
                 </div>
-                <span className="text-xs text-gray-500">{item.count}회</span>
+                <span className="text-xs text-muted-foreground">{item.count}회</span>
               </div>
             );
           })}
@@ -296,8 +296,8 @@ function RankedSection({
 
 function EmptyCard({ text }: { text: string }) {
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl py-6 text-center">
-      <p className="text-gray-400 text-sm">{text}</p>
+    <div className="bg-card border border-border rounded-xl py-6 text-center">
+      <p className="text-muted-foreground text-sm">{text}</p>
     </div>
   );
 }

@@ -104,10 +104,10 @@ export default function NutritionAnalysis() {
   if (isGuest()) return <GuestBlocked feature="영양 분석" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* 헤더 */}
-      <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center z-10">
-        <Link to="/my-custom" className="p-2 -ml-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors">
+      <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center z-10">
+        <Link to="/my-custom" className="p-2 -ml-2 hover:bg-secondary rounded-lg transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <h1 className="ml-2 text-xl" style={{ fontWeight: 700 }}>
@@ -117,8 +117,8 @@ export default function NutritionAnalysis() {
 
       {ingredients.length === 0 ? (
         <div className="px-5 py-12 text-center">
-          <Sparkles className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-          <p className="text-gray-400">등록된 식재료가 없습니다</p>
+          <Sparkles className="w-12 h-12 mx-auto mb-3 text-muted-foreground opacity-50" />
+          <p className="text-muted-foreground">등록된 식재료가 없습니다</p>
           <Link
             to="/add-ingredient"
             className="inline-block mt-4 px-6 py-3 bg-accent hover:bg-accent-deep rounded-xl font-semibold transition-colors"
@@ -130,31 +130,31 @@ export default function NutritionAnalysis() {
         <>
           {/* 전체 영양 요약 */}
           <div className="px-5 py-5">
-            <div className="bg-gradient-to-br from-accent to-accent-deep rounded-2xl p-5">
+            <div className="bg-primary text-primary-foreground rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-5 h-5" />
                 <h2 className="font-semibold">전체 식재료 영양 정보</h2>
               </div>
               <div className="grid grid-cols-4 gap-3">
-                <div className="bg-white/90 rounded-xl p-3 text-center">
-                  <p className="text-xs text-gray-600 mb-1">칼로리</p>
+                <div className="rounded-xl p-3 text-center" style={{ backgroundColor: 'color-mix(in srgb, var(--primary-foreground) 8%, transparent)' }}>
+                  <p className="text-xs opacity-60 mb-1">칼로리</p>
                   <p className="text-lg font-bold">{Math.round(totalNutrition.calories)}</p>
-                  <p className="text-xs text-gray-500">kcal</p>
+                  <p className="text-xs opacity-60">kcal</p>
                 </div>
-                <div className="bg-white/90 rounded-xl p-3 text-center">
-                  <p className="text-xs text-gray-600 mb-1">단백질</p>
+                <div className="rounded-xl p-3 text-center" style={{ backgroundColor: 'color-mix(in srgb, var(--primary-foreground) 8%, transparent)' }}>
+                  <p className="text-xs opacity-60 mb-1">단백질</p>
                   <p className="text-lg font-bold">{Math.round(totalNutrition.protein)}</p>
-                  <p className="text-xs text-gray-500">g</p>
+                  <p className="text-xs opacity-60">g</p>
                 </div>
-                <div className="bg-white/90 rounded-xl p-3 text-center">
-                  <p className="text-xs text-gray-600 mb-1">탄수화물</p>
+                <div className="rounded-xl p-3 text-center" style={{ backgroundColor: 'color-mix(in srgb, var(--primary-foreground) 8%, transparent)' }}>
+                  <p className="text-xs opacity-60 mb-1">탄수화물</p>
                   <p className="text-lg font-bold">{Math.round(totalNutrition.carbs)}</p>
-                  <p className="text-xs text-gray-500">g</p>
+                  <p className="text-xs opacity-60">g</p>
                 </div>
-                <div className="bg-white/90 rounded-xl p-3 text-center">
-                  <p className="text-xs text-gray-600 mb-1">지방</p>
+                <div className="rounded-xl p-3 text-center" style={{ backgroundColor: 'color-mix(in srgb, var(--primary-foreground) 8%, transparent)' }}>
+                  <p className="text-xs opacity-60 mb-1">지방</p>
                   <p className="text-lg font-bold">{Math.round(totalNutrition.fat)}</p>
-                  <p className="text-xs text-gray-500">g</p>
+                  <p className="text-xs opacity-60">g</p>
                 </div>
               </div>
             </div>
@@ -163,7 +163,7 @@ export default function NutritionAnalysis() {
           {/* 영양소 비율 차트 */}
           <div className="px-5 pb-5">
             <h3 className="font-semibold mb-3">영양소 구성 비율</h3>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5">
+            <div className="bg-card border border-border rounded-2xl p-5">
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
@@ -199,7 +199,7 @@ export default function NutritionAnalysis() {
           {/* 식재료별 칼로리 비교 */}
           <div className="px-5 pb-5">
             <h3 className="font-semibold mb-3">식재료별 칼로리</h3>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5">
+            <div className="bg-card border border-border rounded-2xl p-5">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={ingredientCalories}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -229,7 +229,7 @@ export default function NutritionAnalysis() {
                     className={`rounded-xl p-4 border-2 ${
                       isAllergic
                         ? 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50'
-                        : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700'
+                        : 'bg-background border-border'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -243,46 +243,46 @@ export default function NutritionAnalysis() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                           {ing.quantity}{ing.unit} 기준
                         </p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-4 gap-2">
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
-                        <p className="text-xs text-gray-600">칼로리</p>
+                      <div className="bg-card border border-border rounded-lg p-2 text-center">
+                        <p className="text-xs text-muted-foreground">칼로리</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.calories * factor)}
                         </p>
-                        <p className="text-xs text-gray-400">kcal</p>
+                        <p className="text-xs text-muted-foreground">kcal</p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
-                        <p className="text-xs text-gray-600">단백질</p>
+                      <div className="bg-card border border-border rounded-lg p-2 text-center">
+                        <p className="text-xs text-muted-foreground">단백질</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.protein * factor)}
                         </p>
-                        <p className="text-xs text-gray-400">g</p>
+                        <p className="text-xs text-muted-foreground">g</p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
-                        <p className="text-xs text-gray-600">탄수화물</p>
+                      <div className="bg-card border border-border rounded-lg p-2 text-center">
+                        <p className="text-xs text-muted-foreground">탄수화물</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.carbs * factor)}
                         </p>
-                        <p className="text-xs text-gray-400">g</p>
+                        <p className="text-xs text-muted-foreground">g</p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
-                        <p className="text-xs text-gray-600">지방</p>
+                      <div className="bg-card border border-border rounded-lg p-2 text-center">
+                        <p className="text-xs text-muted-foreground">지방</p>
                         <p className="font-bold text-sm mt-1">
                           {Math.round(nutrition.fat * factor)}
                         </p>
-                        <p className="text-xs text-gray-400">g</p>
+                        <p className="text-xs text-muted-foreground">g</p>
                       </div>
                     </div>
 
                     {/* 추가 영양 정보 */}
                     {(nutrition.fiber || nutrition.sodium || nutrition.vitamins) && (
-                      <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <div className="mt-3 pt-3 border-t border-border">
                         <div className="flex flex-wrap gap-2">
                           {nutrition.fiber && (
                             <span className="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-lg text-xs">
@@ -313,12 +313,12 @@ export default function NutritionAnalysis() {
 
           {/* 건강 팁 */}
           <div className="px-5 pb-5">
-            <div className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/30 dark:to-gray-900 border border-blue-200 dark:border-blue-800/50 rounded-2xl p-5">
+            <div className="bg-card border border-border rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-300" />
                 <h3 className="font-semibold">영양 균형 팁</h3>
               </div>
-              <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <p>• 단백질은 체중 1kg당 0.8~1.2g 섭취를 권장합니다</p>
                 <p>• 탄수화물은 전체 칼로리의 50~60% 비율이 적정합니다</p>
                 <p>• 건강한 지방(불포화지방산)도 적절히 섭취해야 합니다</p>

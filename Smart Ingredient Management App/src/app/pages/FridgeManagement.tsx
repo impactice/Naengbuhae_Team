@@ -102,7 +102,7 @@ export default function FridgeManagement() {
   if (isGuest()) return <GuestBlocked feature="냉장고 관리" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
@@ -117,7 +117,7 @@ export default function FridgeManagement() {
           onClick={handleCreate}
           disabled={working}
           className="rounded-xl py-3 flex items-center justify-center gap-2 disabled:opacity-60"
-          style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+          style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
         >
           <Plus className="w-4 h-4" />
           냉장고 만들기
@@ -125,7 +125,7 @@ export default function FridgeManagement() {
         <button
           onClick={handleJoin}
           disabled={working}
-          className="rounded-xl py-3 flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700 disabled:opacity-60"
+          className="rounded-xl py-3 flex items-center justify-center gap-2 border border-border disabled:opacity-60"
           style={{ fontWeight: 600 }}
         >
           <KeyRound className="w-4 h-4" />
@@ -135,7 +135,7 @@ export default function FridgeManagement() {
 
       {/* 냉장고 목록 — 클릭하면 상세 모달 */}
       {f.loading && f.fridges.length === 0 ? (
-        <div className="py-12 text-center text-gray-400">로딩 중...</div>
+        <div className="py-12 text-center text-muted-foreground">로딩 중...</div>
       ) : (
         <div className="px-5 space-y-2">
           {f.fridges.map((fridge) => (
@@ -143,21 +143,21 @@ export default function FridgeManagement() {
               key={fridge.id}
               type="button"
               onClick={() => setDetailId(fridge.id)}
-              className="w-full bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl px-4 py-3 flex items-center gap-3 transition-colors text-left"
+              className="w-full bg-card border border-border hover:bg-secondary rounded-xl px-4 py-3 flex items-center gap-3 transition-colors text-left"
             >
-              <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
                 <Refrigerator className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
                 <span className="text-base block truncate" style={{ fontWeight: 700 }}>
                   {fridge.name}
                 </span>
-                <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
                   <Users className="w-3 h-3" />
                   멤버 {fridge.members.length}명
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
             </button>
           ))}
         </div>
@@ -185,18 +185,18 @@ export default function FridgeManagement() {
           onClick={() => setInviteCode(null)}
         >
           <div
-            className="bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl p-6 w-full max-w-sm"
+            className="bg-background text-foreground rounded-2xl p-6 w-full max-w-sm"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-lg mb-1" style={{ fontWeight: 700 }}>초대 코드</h2>
-            <p className="text-sm text-gray-500 mb-4">{inviteCode.fridgeName}</p>
+            <p className="text-sm text-muted-foreground mb-4">{inviteCode.fridgeName}</p>
             <div
               className="text-center py-4 rounded-xl mb-3"
-              style={{ backgroundColor: 'var(--accent)', fontWeight: 700, fontSize: '28px', letterSpacing: '4px' }}
+              style={{ backgroundColor: 'var(--primary)', fontWeight: 700, fontSize: '28px', letterSpacing: '4px' }}
             >
               {inviteCode.code}
             </div>
-            <p className="text-xs text-gray-500 text-center mb-4">
+            <p className="text-xs text-muted-foreground text-center mb-4">
               24시간 동안 유효. 가족에게 이 코드를 알려주세요.
             </p>
             <div className="flex gap-2">
@@ -205,7 +205,7 @@ export default function FridgeManagement() {
                   navigator.clipboard.writeText(inviteCode.code);
                   alert('복사되었습니다');
                 }}
-                className="flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700"
+                className="flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 border border-border"
                 style={{ fontWeight: 600 }}
               >
                 <Copy className="w-4 h-4" />
@@ -214,7 +214,7 @@ export default function FridgeManagement() {
               <button
                 onClick={() => setInviteCode(null)}
                 className="flex-1 py-2.5 rounded-xl"
-                style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
               >
                 닫기
               </button>
@@ -269,12 +269,12 @@ function TextPromptModal({
       >
         <div className="flex items-start justify-between mb-1">
           <h2 className="text-lg" style={{ fontWeight: 700 }}>{config.title}</h2>
-          <button onClick={onClose} className="p-1 -m-1 text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="p-1 -m-1 text-muted-foreground hover:text-muted-foreground">
             <X className="w-5 h-5" />
           </button>
         </div>
         {config.subtitle && (
-          <p className="text-sm text-gray-500 mb-4">{config.subtitle}</p>
+          <p className="text-sm text-muted-foreground mb-4">{config.subtitle}</p>
         )}
 
         <input
@@ -288,7 +288,7 @@ function TextPromptModal({
           onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
           placeholder={config.placeholder}
           maxLength={config.maxLength}
-          className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black mb-4"
+          className="w-full px-4 py-3 bg-card border border-border rounded-xl border border-border focus:outline-none focus:border-black mb-4"
           style={config.uppercase
             ? { fontSize: '22px', fontWeight: 700, letterSpacing: '4px', textAlign: 'center' }
             : { fontSize: '15px' }}
@@ -297,7 +297,7 @@ function TextPromptModal({
         <div className="flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800"
+            className="flex-1 py-3 rounded-xl bg-secondary"
             style={{ fontWeight: 600 }}
           >
             취소
@@ -306,7 +306,7 @@ function TextPromptModal({
             onClick={submit}
             disabled={!value.trim()}
             className="flex-1 py-3 rounded-xl disabled:opacity-50"
-            style={{ backgroundColor: 'var(--accent)', fontWeight: 700 }}
+            style={{ backgroundColor: 'var(--primary)', fontWeight: 700 }}
           >
             {config.submitLabel}
           </button>
@@ -342,23 +342,23 @@ function FridgeDetailModal({
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-gray-900 dark:text-gray-100 w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[85vh] flex flex-col"
+        className="bg-background text-foreground w-full max-w-md rounded-t-2xl sm:rounded-2xl max-h-[85vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
-        <div className="px-5 pt-5 pb-3 flex items-start gap-3 border-b border-gray-100 dark:border-gray-800">
-          <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+        <div className="px-5 pt-5 pb-3 flex items-start gap-3 border-b border-border">
+          <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
             <Refrigerator className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-lg truncate" style={{ fontWeight: 700 }}>
               {fridge.name}
             </h2>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               멤버 {fridge.members.length}명과 함께 사용
             </p>
           </div>
-          <button onClick={onClose} className="p-1 -m-1 text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="p-1 -m-1 text-muted-foreground hover:text-muted-foreground">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -372,12 +372,12 @@ function FridgeDetailModal({
               onClick={onInvite}
               disabled={working}
               className="w-full rounded-xl py-3 flex items-center justify-center gap-2 disabled:opacity-60"
-              style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+              style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
             >
               <Share2 className="w-4 h-4" />
               초대 코드 발급
             </button>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               6자리 코드를 발급해서 가족에게 알려주면 같은 냉장고를 함께 관리할 수 있어요.
             </p>
           </div>
@@ -390,21 +390,21 @@ function FridgeDetailModal({
             </p>
             <div className="space-y-1">
               {fridge.members.map((m) => (
-                <div key={m.username} className="flex items-center gap-2 px-3 py-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div className="w-7 h-7 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="w-4 h-4 text-gray-600" />
+                <div key={m.username} className="flex items-center gap-2 px-3 py-2.5 bg-card border border-border rounded-lg">
+                  <div className="w-7 h-7 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm truncate" style={{ fontWeight: 600 }}>
                       {m.name}
                     </div>
-                    <div className="text-xs text-gray-500 truncate">{m.username}</div>
+                    <div className="text-xs text-muted-foreground truncate">{m.username}</div>
                   </div>
                   {/* 자기 자신 제외 모두 제거 가능 (본인은 '나가기' 버튼 사용) */}
                   {m.username !== myUsername && (
                     <button
                       onClick={() => onRemoveMember(m.username, m.name)}
-                      className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 p-1.5 rounded"
+                      className="text-red-500 hover:bg-secondary p-1.5 rounded"
                       title="멤버 제거"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -436,8 +436,8 @@ function ActionRow({
   return (
     <button
       onClick={onClick}
-      className={`w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-3 text-left transition-colors ${
-        destructive ? 'text-red-600' : 'text-black dark:text-gray-100'
+      className={`w-full px-4 py-3 rounded-xl border border-border hover:bg-secondary flex items-center gap-3 text-left transition-colors ${
+        destructive ? 'text-red-600' : 'text-black'
       }`}
       style={{ fontWeight: 600 }}
     >

@@ -158,7 +158,7 @@ export default function AddByReceipt() {
   if (isGuest()) return <GuestBlocked feature="영수증 인식" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-40">
+    <div className="min-h-screen bg-background pb-40">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
@@ -169,7 +169,7 @@ export default function AddByReceipt() {
         </h1>
         {items.length > 0 && !recognizing && (
           <button onClick={pickFile} className="p-1" title="다시 촬영">
-            <RefreshCw className="w-5 h-5 text-gray-600" />
+            <RefreshCw className="w-5 h-5 text-muted-foreground" />
           </button>
         )}
       </div>
@@ -183,20 +183,20 @@ export default function AddByReceipt() {
       />
 
       {recognizing ? (
-        <div className="flex flex-col items-center justify-center py-24 text-gray-600">
+        <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
           <Loader2 className="w-10 h-10 animate-spin mb-3" />
           <p style={{ fontWeight: 500 }}>AI가 영수증을 분석 중...</p>
         </div>
       ) : items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
-          <Camera className="w-16 h-16 text-gray-300 mb-3" />
-          <p className="text-gray-600 mb-4" style={{ fontWeight: 500 }}>
+          <Camera className="w-16 h-16 text-muted-foreground opacity-50 mb-3" />
+          <p className="text-muted-foreground mb-4" style={{ fontWeight: 500 }}>
             영수증 사진을 선택해주세요
           </p>
           <button
             onClick={pickFile}
             className="px-6 py-3 rounded-xl"
-            style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
+            style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
           >
             영수증 촬영/선택
           </button>
@@ -208,7 +208,7 @@ export default function AddByReceipt() {
               key={idx}
               className={`rounded-xl p-3 border ${
                 item.selected
-                  ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                  ? 'bg-card border border-border border-border'
                   : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50'
               }`}
             >
@@ -231,7 +231,7 @@ export default function AddByReceipt() {
                 />
                 <button
                   onClick={() => removeItem(idx)}
-                  className="p-1 text-gray-400 hover:text-red-500"
+                  className="p-1 text-muted-foreground hover:text-red-500"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -244,7 +244,7 @@ export default function AddByReceipt() {
                     <select
                       value={item.categoryKo}
                       onChange={(e) => updateItem(idx, { categoryKo: e.target.value })}
-                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-background rounded-lg border border-border focus:outline-none focus:border-black"
                     >
                       {CATEGORIES_KO.map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -253,7 +253,7 @@ export default function AddByReceipt() {
                     <select
                       value={item.storageKo}
                       onChange={(e) => updateItem(idx, { storageKo: e.target.value })}
-                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-background rounded-lg border border-border focus:outline-none focus:border-black"
                     >
                       {STORAGES_KO.map((s) => (
                         <option key={s} value={s}>{s}</option>
@@ -265,19 +265,19 @@ export default function AddByReceipt() {
                       min="0"
                       value={item.quantity}
                       onChange={(e) => updateItem(idx, { quantity: e.target.value })}
-                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-background rounded-lg border border-border focus:outline-none focus:border-black"
                     />
                     <select
                       value={item.unit}
                       onChange={(e) => updateItem(idx, { unit: e.target.value })}
-                      className="px-2 py-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
+                      className="px-2 py-2 bg-background rounded-lg border border-border focus:outline-none focus:border-black"
                     >
                       {UNITS.map((u) => (
                         <option key={u} value={u}>{u}</option>
                       ))}
                     </select>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     유통기한: {todayPlus(getExpiryDays(item))} ({getExpiryDays(item)}일)
                   </p>
                 </>
@@ -289,12 +289,12 @@ export default function AddByReceipt() {
 
       {/* 하단 고정 저장 버튼 (하단 네비 위에 위치하도록 bottom-16) */}
       {items.length > 0 && (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 p-4">
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-md bg-background border-t border-border p-4">
           <button
             onClick={saveAll}
             disabled={saving}
             className="w-full py-4 rounded-xl disabled:opacity-60"
-            style={{ backgroundColor: 'var(--accent)', fontWeight: 700 }}
+            style={{ backgroundColor: 'var(--primary)', fontWeight: 700 }}
           >
             {saving ? '저장 중...' : `선택한 ${selectedCount}개 추가하기`}
           </button>

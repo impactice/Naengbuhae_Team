@@ -92,15 +92,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center items-center">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl flex flex-col">
+    <div className="min-h-screen bg-background flex justify-center items-center">
+      <div className="w-full max-w-md bg-background text-foreground min-h-screen shadow-xl flex flex-col">
         <div className="flex-1 flex flex-col justify-center px-6 py-12">
           {/* 로고/타이틀 영역 */}
           <div className="mb-12">
             <h1 className="text-3xl mb-2" style={{ fontWeight: 700 }}>
               스마트 냉장고
             </h1>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               신선한 식재료 관리의 시작
             </p>
           </div>
@@ -115,7 +115,7 @@ export default function Login() {
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })
               }
-              className="w-full px-4 py-4 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+              className="w-full px-4 py-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
             />
           </div>
 
@@ -127,12 +127,12 @@ export default function Login() {
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full px-4 py-4 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all pr-12"
+              className="w-full px-4 py-4 bg-input-background rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all pr-12"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -151,16 +151,16 @@ export default function Login() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 accent-black cursor-pointer"
               />
-              <span className="text-sm text-gray-600">로그인 상태 유지</span>
+              <span className="text-sm text-muted-foreground">로그인 상태 유지</span>
             </label>
-            <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-black underline-offset-2 hover:underline">
+            <Link to="/forgot-password" className="text-sm text-muted-foreground hover:text-foreground underline-offset-2 hover:underline">
               비밀번호 잊으셨나요?
             </Link>
           </div>
 
           <button
             type="submit"
-            className="w-full py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors"
+            className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-colors"
           >
             로그인
           </button>
@@ -171,7 +171,7 @@ export default function Login() {
           <button
             type="button"
             onClick={handleStartAsGuest}
-            className="text-sm text-gray-600 underline underline-offset-2 hover:text-black"
+            className="text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
           >
             로그인 없이 둘러보기
           </button>
@@ -179,9 +179,9 @@ export default function Login() {
 
         {/* 구분선 */}
         <div className="flex items-center gap-4 my-8">
-          <div className="flex-1 h-px bg-gray-200"></div>
-          <span className="text-sm text-gray-400">간편 로그인</span>
-          <div className="flex-1 h-px bg-gray-200"></div>
+          <div className="flex-1 h-px bg-border"></div>
+          <span className="text-sm text-muted-foreground">간편 로그인</span>
+          <div className="flex-1 h-px bg-border"></div>
         </div>
 
         {/* 소셜 로그인 */}
@@ -206,7 +206,7 @@ export default function Login() {
 
           <button
             onClick={() => handleSocialLogin('google')}
-            className="w-full py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-black dark:text-gray-100 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full py-4 bg-card border-2 border-border text-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-secondary transition-colors"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -232,7 +232,7 @@ export default function Login() {
 
         {/* 회원가입 링크 */}
         <div className="mt-8 text-center">
-          <span className="text-gray-500">아직 회원이 아니신가요? </span>
+          <span className="text-muted-foreground">아직 회원이 아니신가요? </span>
           <Link
             to="/signup"
             className="font-semibold hover:underline"

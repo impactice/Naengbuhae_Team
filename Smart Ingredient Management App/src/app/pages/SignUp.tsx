@@ -265,13 +265,13 @@ export default function SignUp() {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl">
+    <div className="min-h-screen bg-background flex justify-center">
+      <div className="w-full max-w-md bg-background text-foreground min-h-screen shadow-xl">
         {/* 헤더 */}
-        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center z-10">
+        <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center z-10">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 -ml-2 hover:bg-secondary rounded-lg transition-colors"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -286,7 +286,7 @@ export default function SignUp() {
             <h2 className="text-2xl mb-2" style={{ fontWeight: 700 }}>
               건강한 식습관의 시작
             </h2>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               당신만을 위한 맞춤 식재료 관리와<br />
               건강한 식단을 추천해드립니다
             </p>
@@ -306,14 +306,14 @@ export default function SignUp() {
 
               {/* 이름 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">이름</label>
+                <label className="block text-sm text-muted-foreground mb-2">이름</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="홍길동"
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                     errors.name ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 />
@@ -322,7 +322,7 @@ export default function SignUp() {
 
               {/* 성별 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">성별</label>
+                <label className="block text-sm text-muted-foreground mb-2">성별</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -332,10 +332,10 @@ export default function SignUp() {
                     }}
                     className={`py-3 rounded-xl font-semibold transition-all ${
                       formData.gender === '남'
-                        ? 'bg-black text-white'
+                        ? 'bg-foreground text-background'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
-                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? 'border-2 border-red-500 bg-card border border-border text-muted-foreground'
+                        : 'bg-card border border-border text-muted-foreground hover:bg-secondary'
                     }`}
                   >
                     남성
@@ -348,10 +348,10 @@ export default function SignUp() {
                     }}
                     className={`py-3 rounded-xl font-semibold transition-all ${
                       formData.gender === '여'
-                        ? 'bg-black text-white'
+                        ? 'bg-foreground text-background'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
-                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? 'border-2 border-red-500 bg-card border border-border text-muted-foreground'
+                        : 'bg-card border border-border text-muted-foreground hover:bg-secondary'
                     }`}
                   >
                     여성
@@ -362,13 +362,13 @@ export default function SignUp() {
 
               {/* 생년월일 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">생년월일</label>
+                <label className="block text-sm text-muted-foreground mb-2">생년월일</label>
                 <div className="grid grid-cols-3 gap-2">
                   <select
                     name="birthYear"
                     value={formData.birthYear}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
@@ -383,7 +383,7 @@ export default function SignUp() {
                     name="birthMonth"
                     value={formData.birthMonth}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
@@ -398,7 +398,7 @@ export default function SignUp() {
                     name="birthDay"
                     value={formData.birthDay}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
@@ -416,28 +416,28 @@ export default function SignUp() {
               {/* 키/몸무게 */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">키 (cm)</label>
+                  <label className="block text-sm text-muted-foreground mb-2">키 (cm)</label>
                   <input
                     type="number"
                     name="height"
                     value={formData.height}
                     onChange={handleChange}
                     placeholder="170"
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.height ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
                   {errors.height && <p className="mt-1 text-sm text-red-600">{errors.height}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">몸무게 (kg)</label>
+                  <label className="block text-sm text-muted-foreground mb-2">몸무게 (kg)</label>
                   <input
                     type="number"
                     name="weight"
                     value={formData.weight}
                     onChange={handleChange}
                     placeholder="65"
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.weight ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
@@ -447,17 +447,17 @@ export default function SignUp() {
             </div>
 
             {/* 건강 정보 */}
-            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="space-y-4 pt-4 border-t border-border">
               <h3 className="text-lg font-semibold">건강 정보</h3>
 
               {/* 활동량 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">활동량</label>
+                <label className="block text-sm text-muted-foreground mb-2">활동량</label>
                 <select
                   name="activityLevel"
                   value={formData.activityLevel}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                     errors.activityLevel ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 >
@@ -473,12 +473,12 @@ export default function SignUp() {
 
               {/* 식단 목표 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">식단 목표</label>
+                <label className="block text-sm text-muted-foreground mb-2">식단 목표</label>
                 <select
                   name="dietGoal"
                   value={formData.dietGoal}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                     errors.dietGoal ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 >
@@ -493,7 +493,7 @@ export default function SignUp() {
 
               {/* 알레르기 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">
+                <label className="block text-sm text-muted-foreground mb-2">
                   알레르기 / 제한 식품 (선택사항)
                 </label>
                 <textarea
@@ -502,18 +502,18 @@ export default function SignUp() {
                   onChange={handleChange}
                   placeholder="예: 땅콩, 해산물, 유제품"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
                 />
               </div>
             </div>
 
             {/* 계정 정보 */}
-            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="space-y-4 pt-4 border-t border-border">
               <h3 className="text-lg font-semibold">계정 정보</h3>
 
               {/* 이메일 + 인증번호 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">이메일</label>
+                <label className="block text-sm text-muted-foreground mb-2">이메일</label>
                 <div className="flex gap-2">
                   <input
                     type="email"
@@ -522,7 +522,7 @@ export default function SignUp() {
                     onChange={handleChange}
                     placeholder="example@email.com"
                     disabled={verification.verifiedEmail === formData.email.trim() && !!verification.verifiedEmail}
-                    className={`flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all disabled:opacity-60 ${
+                    className={`flex-1 px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all disabled:opacity-60 ${
                       errors.email ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
@@ -535,7 +535,7 @@ export default function SignUp() {
                       type="button"
                       onClick={handleSendCode}
                       disabled={verification.sending}
-                      className="px-4 py-3 bg-black text-white rounded-xl text-sm font-semibold whitespace-nowrap disabled:opacity-50"
+                      className="px-4 py-3 bg-foreground text-background rounded-xl text-sm font-semibold whitespace-nowrap disabled:opacity-50"
                     >
                       {verification.sending ? '전송 중...' : verification.sentTo ? '재발송' : '인증번호 받기'}
                     </button>
@@ -553,7 +553,7 @@ export default function SignUp() {
                       value={verification.code}
                       onChange={(e) => setVerification(v => ({ ...v, code: e.target.value.replace(/\D/g, '') }))}
                       placeholder="6자리 인증번호"
-                      className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent tracking-widest"
+                      className="flex-1 px-4 py-3 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent tracking-widest"
                     />
                     <button
                       type="button"
@@ -567,20 +567,20 @@ export default function SignUp() {
                 )}
                 {verification.error && <p className="mt-1 text-sm text-red-600">{verification.error}</p>}
                 {verification.sentTo && !verification.verifiedEmail && !verification.error && (
-                  <p className="mt-1 text-xs text-gray-500">{verification.sentTo}로 보낸 6자리 코드를 입력해주세요 (10분 유효).</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{verification.sentTo}로 보낸 6자리 코드를 입력해주세요 (10분 유효).</p>
                 )}
               </div>
 
               {/* 아이디 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">아이디</label>
+                <label className="block text-sm text-muted-foreground mb-2">아이디</label>
                 <input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="영문, 숫자 조합 6자 이상"
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                     errors.username ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 />
@@ -589,7 +589,7 @@ export default function SignUp() {
 
               {/* 비밀번호 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">비밀번호</label>
+                <label className="block text-sm text-muted-foreground mb-2">비밀번호</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -597,7 +597,7 @@ export default function SignUp() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="영문, 숫자, 특수문자 조합 8자 이상"
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all pr-12 ${
+                    className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all pr-12 ${
                       errors.password ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
@@ -605,7 +605,7 @@ export default function SignUp() {
                     type="button"
                     tabIndex={-1}
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -615,7 +615,7 @@ export default function SignUp() {
 
               {/* 비밀번호 확인 */}
               <div>
-                <label className="block text-sm text-gray-600 mb-2">비밀번호 확인</label>
+                <label className="block text-sm text-muted-foreground mb-2">비밀번호 확인</label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -623,7 +623,7 @@ export default function SignUp() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="비밀번호를 다시 입력해주세요"
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all pr-12 ${
+                    className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all pr-12 ${
                       errors.confirmPassword ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
@@ -631,7 +631,7 @@ export default function SignUp() {
                     type="button"
                     tabIndex={-1}
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -643,7 +643,7 @@ export default function SignUp() {
             {/* 가입하기 버튼 */}
             <button
               type="submit"
-              className="w-full py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors mt-8"
+              className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-colors mt-8"
             >
               가입하기
             </button>
@@ -651,7 +651,7 @@ export default function SignUp() {
 
           {/* 로그인 링크 */}
           <div className="mt-6 text-center">
-            <span className="text-gray-500">이미 계정이 있으신가요? </span>
+            <span className="text-muted-foreground">이미 계정이 있으신가요? </span>
             <Link to="/login" className="font-semibold hover:underline">
               로그인
             </Link>

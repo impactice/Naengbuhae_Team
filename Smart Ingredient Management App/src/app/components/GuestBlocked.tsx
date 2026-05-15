@@ -9,26 +9,26 @@ interface Props {
 
 export default function GuestBlocked({ feature }: Props) {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 dark:text-gray-100 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6">
       <div className="text-center max-w-sm">
-        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Lock className="w-7 h-7 text-gray-400" />
+        <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+          <Lock className="w-7 h-7 text-muted-foreground" />
         </div>
         <h2 className="text-lg font-semibold mb-2">{feature}은 로그인 후 사용할 수 있어요</h2>
-        <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+        <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
           지금 추가한 식재료는<br />
           로그인하면 그대로 옮겨드릴게요.
         </p>
         <div className="flex gap-2 justify-center">
           <Link
             to="/signup"
-            className="px-6 py-3 bg-black text-white rounded-xl font-semibold text-sm"
+            className="px-6 py-3 bg-foreground text-background rounded-xl font-semibold text-sm"
           >
             회원가입
           </Link>
           <Link
             to="/login"
-            className="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-black dark:text-gray-100 rounded-xl font-semibold text-sm"
+            className="px-6 py-3 bg-secondary text-black rounded-xl font-semibold text-sm"
           >
             로그인하기
           </Link>

@@ -134,19 +134,19 @@ export default function ProfileComplete() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-gray-200 dark:border-gray-700 border-t-black dark:border-t-white rounded-full animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-border border-t-black dark:border-t-white rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl">
-        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center z-10">
+    <div className="min-h-screen bg-background flex justify-center">
+      <div className="w-full max-w-md bg-background text-foreground min-h-screen shadow-xl">
+        <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center z-10">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 -ml-2 hover:bg-secondary rounded-lg transition-colors"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -160,7 +160,7 @@ export default function ProfileComplete() {
             <h2 className="text-2xl mb-2" style={{ fontWeight: 700 }}>
               {isEditMode ? '정보를 수정해주세요' : '맞춤 추천을 위해'}
             </h2>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               {isEditMode ? (
                 <>
                   변경할 항목을 입력하시면<br />
@@ -181,14 +181,14 @@ export default function ProfileComplete() {
               <h3 className="text-lg font-semibold">기본 정보</h3>
 
               <div>
-                <label className="block text-sm text-gray-600 mb-2">이름</label>
+                <label className="block text-sm text-muted-foreground mb-2">이름</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="홍길동"
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                     errors.name ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 />
@@ -196,7 +196,7 @@ export default function ProfileComplete() {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-600 mb-2">성별</label>
+                <label className="block text-sm text-muted-foreground mb-2">성별</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -206,10 +206,10 @@ export default function ProfileComplete() {
                     }}
                     className={`py-3 rounded-xl font-semibold transition-all ${
                       formData.gender === '남'
-                        ? 'bg-black text-white'
+                        ? 'bg-foreground text-background'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
-                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? 'border-2 border-red-500 bg-card border border-border text-muted-foreground'
+                        : 'bg-card border border-border text-muted-foreground hover:bg-secondary'
                     }`}
                   >
                     남성
@@ -222,10 +222,10 @@ export default function ProfileComplete() {
                     }}
                     className={`py-3 rounded-xl font-semibold transition-all ${
                       formData.gender === '여'
-                        ? 'bg-black text-white'
+                        ? 'bg-foreground text-background'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
-                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        ? 'border-2 border-red-500 bg-card border border-border text-muted-foreground'
+                        : 'bg-card border border-border text-muted-foreground hover:bg-secondary'
                     }`}
                   >
                     여성
@@ -235,13 +235,13 @@ export default function ProfileComplete() {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-600 mb-2">생년월일</label>
+                <label className="block text-sm text-muted-foreground mb-2">생년월일</label>
                 <div className="grid grid-cols-3 gap-2">
                   <select
                     name="birthYear"
                     value={formData.birthYear}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
@@ -256,7 +256,7 @@ export default function ProfileComplete() {
                     name="birthMonth"
                     value={formData.birthMonth}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
@@ -271,7 +271,7 @@ export default function ProfileComplete() {
                     name="birthDay"
                     value={formData.birthDay}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
@@ -288,28 +288,28 @@ export default function ProfileComplete() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">키 (cm)</label>
+                  <label className="block text-sm text-muted-foreground mb-2">키 (cm)</label>
                   <input
                     type="number"
                     name="height"
                     value={formData.height}
                     onChange={handleChange}
                     placeholder="170"
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.height ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
                   {errors.height && <p className="mt-1 text-sm text-red-600">{errors.height}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-2">몸무게 (kg)</label>
+                  <label className="block text-sm text-muted-foreground mb-2">몸무게 (kg)</label>
                   <input
                     type="number"
                     name="weight"
                     value={formData.weight}
                     onChange={handleChange}
                     placeholder="65"
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                       errors.weight ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
@@ -319,16 +319,16 @@ export default function ProfileComplete() {
             </div>
 
             {/* 건강 정보 */}
-            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="space-y-4 pt-4 border-t border-border">
               <h3 className="text-lg font-semibold">건강 정보</h3>
 
               <div>
-                <label className="block text-sm text-gray-600 mb-2">활동량</label>
+                <label className="block text-sm text-muted-foreground mb-2">활동량</label>
                 <select
                   name="activityLevel"
                   value={formData.activityLevel}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                     errors.activityLevel ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 >
@@ -343,12 +343,12 @@ export default function ProfileComplete() {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-600 mb-2">식단 목표</label>
+                <label className="block text-sm text-muted-foreground mb-2">식단 목표</label>
                 <select
                   name="dietGoal"
                   value={formData.dietGoal}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none transition-all ${
                     errors.dietGoal ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 >
@@ -362,7 +362,7 @@ export default function ProfileComplete() {
               </div>
 
               <div>
-                <label className="block text-sm text-gray-600 mb-2">
+                <label className="block text-sm text-muted-foreground mb-2">
                   알레르기 / 제한 식품 (선택사항)
                 </label>
                 <textarea
@@ -371,7 +371,7 @@ export default function ProfileComplete() {
                   onChange={handleChange}
                   placeholder="예: 땅콩, 해산물, 유제품"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
                 />
               </div>
             </div>
@@ -379,7 +379,7 @@ export default function ProfileComplete() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors mt-8 disabled:opacity-50"
+              className="w-full py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-colors mt-8 disabled:opacity-50"
             >
               {submitting ? (isEditMode ? '수정 중...' : '저장 중...') : (isEditMode ? '수정하기' : '저장하기')}
             </button>

@@ -86,7 +86,7 @@ export default function NotificationCenter() {
   if (guest) return <GuestBlocked feature="알림 센터" />;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
+    <div className="min-h-screen bg-background pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1 -ml-1">
@@ -97,15 +97,15 @@ export default function NotificationCenter() {
 
       <div className="px-5">
         {loading ? (
-          <div className="text-center py-12 text-gray-400">불러오는 중...</div>
+          <div className="text-center py-12 text-muted-foreground">불러오는 중...</div>
         ) : error ? (
           <div className="text-center py-12">
-            <p className="text-gray-500">{error}</p>
+            <p className="text-muted-foreground">{error}</p>
           </div>
         ) : items.length === 0 ? (
           <div className="text-center py-16">
-            <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-400">받은 알림이 없어요</p>
+            <Bell className="w-12 h-12 text-muted-foreground opacity-50 mx-auto mb-3" />
+            <p className="text-muted-foreground">받은 알림이 없어요</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -115,7 +115,7 @@ export default function NotificationCenter() {
                 onClick={() => onTap(item)}
                 className={`w-full text-left rounded-xl p-4 border transition-colors ${
                   item.read
-                    ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-card border border-border border-border hover:bg-secondary'
                     : 'bg-lime-50 dark:bg-lime-900/30 border-lime-200 dark:border-lime-800/50 hover:bg-lime-100 dark:hover:bg-lime-900/40'
                 }`}
               >
@@ -129,8 +129,8 @@ export default function NotificationCenter() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm" style={{ fontWeight: 700 }}>{item.title}</p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 leading-relaxed">{item.body}</p>
-                    <p className="text-xs text-gray-400 mt-1.5">{formatTime(item.createdAt)}</p>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{item.body}</p>
+                    <p className="text-xs text-muted-foreground mt-1.5">{formatTime(item.createdAt)}</p>
                   </div>
                 </div>
               </button>

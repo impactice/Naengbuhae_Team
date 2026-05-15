@@ -39,7 +39,7 @@ export default function Priority() {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
+    <div className="min-h-screen bg-background pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center justify-between">
@@ -48,7 +48,7 @@ export default function Priority() {
           </h1>
           <FridgeSelector />
         </div>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           유통기한 기준으로 우선 소비해야 할 식재료
         </p>
       </div>
@@ -56,9 +56,10 @@ export default function Priority() {
       {/* 상태 그래프 — 도넛으로 비율, 옆 stat box로 개수 */}
       {ingredients.length > 0 && (
         <div className="px-5 pb-4">
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-5 border border-purple-100 dark:border-purple-800/50">
+          <div className="bg-card border border-border rounded-2xl p-5 relative overflow-hidden">
+            <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full blur-3xl opacity-[0.07] pointer-events-none" style={{ background: 'var(--accent)' }} />
             <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
+              <TrendingUp className="w-5 h-5 text-accent" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
                 식재료 위험도 분석
               </h3>
@@ -90,7 +91,7 @@ export default function Priority() {
                   <p className="text-2xl" style={{ fontWeight: 700 }}>
                     {ingredients.length}
                   </p>
-                  <p className="text-xs text-gray-500">개</p>
+                  <p className="text-xs text-muted-foreground">개</p>
                 </div>
               </div>
 
@@ -98,18 +99,18 @@ export default function Priority() {
               <div className="flex-shrink-0 space-y-2">
                 {categoryData.map((c) => {
                   const pct = ingredients.length === 0 ? 0 : Math.round((c.value / ingredients.length) * 100);
-                  const bg =
-                    c.name === '위험' ? 'bg-red-50 dark:bg-red-900/30'
-                    : c.name === '주의' ? 'bg-yellow-50 dark:bg-yellow-900/30'
-                    : 'bg-green-50 dark:bg-green-900/30';
+                  const bgVar =
+                    c.name === '위험' ? 'var(--status-danger-bg)'
+                    : c.name === '주의' ? 'var(--status-warning-bg)'
+                    : 'var(--status-safe-bg)';
                   return (
-                    <div key={c.name} className={`${bg} rounded-lg p-2 text-center min-w-[80px]`}>
-                      <div className="flex items-center justify-center gap-1.5 text-xs text-gray-600">
+                    <div key={c.name} className="rounded-lg p-2 text-center min-w-[80px]" style={{ backgroundColor: bgVar }}>
+                      <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} />
                         {c.name}
                       </div>
                       <p className="text-lg leading-tight" style={{ fontWeight: 700 }}>
-                        {c.value} <span className="text-xs text-gray-500" style={{ fontWeight: 500 }}>· {pct}%</span>
+                        {c.value} <span className="text-xs text-muted-foreground" style={{ fontWeight: 500 }}>· {pct}%</span>
                       </p>
                     </div>
                   );
@@ -122,9 +123,10 @@ export default function Priority() {
 
       {/* 우선순위 요약 */}
       <div className="px-5 pb-6">
-        <div className="bg-red-50 dark:bg-red-900/30 rounded-xl p-4 border border-red-100 dark:border-red-800/50">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+        <div className="bg-card border border-border rounded-xl p-4 relative overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: dangerItems.length > 0 ? 'var(--status-danger)' : warningItems.length > 0 ? 'var(--status-warning)' : 'var(--status-safe)' }} />
+          <div className="flex items-start gap-3 pl-2">
+            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: dangerItems.length > 0 ? 'var(--status-danger)' : warningItems.length > 0 ? 'var(--status-warning)' : 'var(--status-safe)' }} />
             <div className="flex-1">
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
                 {dangerItems.length > 0
@@ -133,7 +135,7 @@ export default function Priority() {
                   ? `주의: ${warningItems.length}개 식재료 곧 소비 필요`
                   : '안전: 모든 식재료가 양호합니다'}
               </h3>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 위험도가 높은 식재료부터 우선 소비하세요
               </p>
             </div>
@@ -143,9 +145,9 @@ export default function Priority() {
 
       {ingredients.length === 0 ? (
         <div className="text-center py-12 px-5">
-          <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-400 mb-1">등록된 식재료가 없습니다</p>
-          <p className="text-xs text-gray-400">식재료를 추가하고 관리를 시작하세요</p>
+          <Package className="w-12 h-12 text-muted-foreground opacity-50 mx-auto mb-3" />
+          <p className="text-muted-foreground mb-1">등록된 식재료가 없습니다</p>
+          <p className="text-xs text-muted-foreground">식재료를 추가하고 관리를 시작하세요</p>
         </div>
       ) : (
         <div className="px-5 space-y-6">
@@ -231,7 +233,7 @@ export default function Priority() {
                 })}
               </div>
               {safeItems.length > 5 && (
-                <p className="text-sm text-gray-500 text-center mt-3">
+                <p className="text-sm text-muted-foreground text-center mt-3">
                   외 {safeItems.length - 5}개 더 있음
                 </p>
               )}
@@ -256,7 +258,7 @@ function PriorityCard({
   const statusColor = getStatusColor(status);
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 relative">
+    <div className="bg-card border border-border rounded-xl p-4 relative">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
@@ -266,7 +268,7 @@ function PriorityCard({
             <span
               className="px-2 py-0.5 rounded text-xs"
               style={{
-                backgroundColor: `${statusColor}20`,
+                backgroundColor: `${statusColor}1F`,
                 color: statusColor,
                 fontWeight: 600,
               }}
@@ -275,11 +277,11 @@ function PriorityCard({
             </span>
           </div>
           <div className="mt-2 space-y-1">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               수량: {ingredient.quantity}
               {ingredient.unit}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               유통기한: {ingredient.expirationDate.toLocaleDateString('ko-KR')}
             </p>
             {daysLeft <= 0 && (
@@ -296,7 +298,7 @@ function PriorityCard({
         </div>
         <button
           onClick={() => onDelete(ingredient.id, ingredient.name)}
-          className="ml-3 p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+          className="ml-3 p-2 hover:bg-secondary rounded-lg transition-colors"
         >
           <Trash2 className="w-5 h-5 text-red-500" />
         </button>

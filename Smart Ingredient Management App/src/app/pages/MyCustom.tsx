@@ -122,19 +122,19 @@ export default function MyCustom() {
       { icon: Heart, title: '영양 분석', subtitle: '권장 칼로리 + 영양 비율' },
     ];
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
+      <div className="min-h-screen bg-background pb-20">
         <div className="px-5 pt-6 pb-4">
           <h1 className="text-2xl mb-1" style={{ fontWeight: 700 }}>나의 맞춤</h1>
-          <p className="text-sm text-gray-500">지금은 비로그인 상태예요</p>
+          <p className="text-sm text-muted-foreground">지금은 비로그인 상태예요</p>
         </div>
-        <div className="mx-5 mt-2 p-5 rounded-2xl bg-gradient-to-br from-accent to-accent-deep">
+        <div className="mx-5 mt-2 p-5 rounded-2xl bg-primary text-primary-foreground">
           <h2 className="font-bold text-base">로그인하면 더 많은 기능을 사용할 수 있어요</h2>
-          <p className="mt-1 text-xs text-gray-800 leading-relaxed">
+          <p className="mt-1 text-xs opacity-70 leading-relaxed">
             가족과 냉장고 공유 / 식단 추천 / 알림 등<br />
             지금 추가한 식재료는 로그인하면 그대로 옮겨드려요.
           </p>
           <div className="mt-4 flex gap-2">
-            <Link to="/signup" className="flex-1 py-3 bg-black text-white rounded-lg text-sm font-bold text-center">
+            <Link to="/signup" className="flex-1 py-3 bg-foreground text-background rounded-lg text-sm font-bold text-center">
               회원가입
             </Link>
             <Link to="/login" className="flex-1 py-3 bg-white text-black rounded-lg text-sm font-bold text-center">
@@ -155,16 +155,16 @@ export default function MyCustom() {
                     navigate('/login');
                   }
                 }}
-                className="w-full flex items-center gap-3 p-4 mb-2 bg-gray-50 rounded-xl text-left"
+                className="w-full flex items-center gap-3 p-4 mb-2 bg-card border border-border rounded-xl text-left"
               >
-                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-gray-400" />
+                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-semibold text-gray-600">{item.title}</div>
-                  <div className="text-xs text-gray-400">{item.subtitle}</div>
+                  <div className="text-sm font-semibold text-muted-foreground">{item.title}</div>
+                  <div className="text-xs text-muted-foreground">{item.subtitle}</div>
                 </div>
-                <span className="text-xs text-gray-400">🔒</span>
+                <span className="text-xs text-muted-foreground">🔒</span>
               </button>
             );
           })}
@@ -178,7 +178,7 @@ export default function MyCustom() {
               fridgeStore.clear();
               navigate('/login');
             }}
-            className="text-sm text-gray-500 underline underline-offset-2"
+            className="text-sm text-muted-foreground underline underline-offset-2"
           >
             비로그인 모드 종료
           </button>
@@ -190,10 +190,10 @@ export default function MyCustom() {
   // 로딩 중
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-6">
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gray-200 dark:border-gray-700 border-t-black dark:border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-500">프로필 정보를 불러오는 중...</p>
+          <div className="w-12 h-12 border-4 border-border border-t-black dark:border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">프로필 정보를 불러오는 중...</p>
         </div>
       </div>
     );
@@ -202,16 +202,16 @@ export default function MyCustom() {
   // 프로필 없음
   if (!profile) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-6">
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
         <div className="text-center">
-          <User className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+          <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
           <h2 className="text-xl font-semibold mb-2">프로필 정보가 없습니다</h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-muted-foreground mb-6">
             로그인 후 프로필을 확인할 수 있습니다
           </p>
           <button
             onClick={() => navigate('/login')}
-            className="px-6 py-3 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors"
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-colors"
           >
             로그인하기
           </button>
@@ -221,13 +221,13 @@ export default function MyCustom() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* 헤더 */}
-      <div className="px-5 pt-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+      <div className="px-5 pt-6 pb-4 border-b border-border">
         <h1 className="text-2xl mb-1" style={{ fontWeight: 700 }}>
           나의 맞춤
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           {profile.name}님을 위한 건강 관리
         </p>
       </div>
@@ -237,19 +237,19 @@ export default function MyCustom() {
         <div className="px-5 pt-5">
           <button
             onClick={() => navigate('/profile/complete')}
-            className="w-full bg-gradient-to-br from-accent to-accent-deep rounded-2xl p-5 text-left hover:shadow-lg transition-all"
+            className="w-full bg-primary text-primary-foreground rounded-2xl p-5 text-left hover:shadow-lg transition-all"
           >
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--accent-soft)' }}>
                 <Sparkles className="w-5 h-5 text-accent" />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold mb-1">정보 입력 마저하기</h3>
-                <p className="text-sm text-gray-800 leading-relaxed">
+                <p className="text-sm opacity-70 leading-relaxed">
                   키, 몸무게, 활동량 등을 입력하면<br />
                   맞춤 칼로리와 식단 추천을 받을 수 있어요
                 </p>
-                <p className="text-xs text-gray-700 mt-2 font-semibold">
+                <p className="text-xs opacity-90 mt-2 font-semibold">
                   지금 입력하기 →
                 </p>
               </div>
@@ -260,11 +260,11 @@ export default function MyCustom() {
 
       {/* 기본 정보 카드 */}
       <div className="px-5 py-5">
-        <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
+        <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 border border-border rounded-2xl p-5">
           <button
             type="button"
             onClick={() => navigate('/profile/complete')}
-            className="w-full flex items-center justify-between mb-4 -m-2 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left"
+            className="w-full flex items-center justify-between mb-4 -m-2 p-2 rounded-xl hover:bg-secondary transition-colors text-left"
             title="회원 정보 수정"
           >
             <div className="flex items-center gap-3">
@@ -273,38 +273,38 @@ export default function MyCustom() {
               </div>
               <div>
                 <h2 className="text-lg font-semibold">{profile.name}</h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   {age != null && profile.gender
                     ? `${age}세 · ${profile.gender === '남' ? '남성' : profile.gender === '여' ? '여성' : profile.gender}`
                     : '프로필 정보를 완성해주세요'}
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
           </button>
 
           {(profile.height || profile.weight) && (
             <div className="grid grid-cols-2 gap-4">
               {profile.height && (
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
-                  <p className="text-xs text-gray-500 mb-1">키</p>
+                <div className="bg-background rounded-xl p-3 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">키</p>
                   <p className="text-lg font-semibold">{profile.height} cm</p>
                 </div>
               )}
               {profile.weight && (
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
-                  <p className="text-xs text-gray-500 mb-1">몸무게</p>
+                <div className="bg-background rounded-xl p-3 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">몸무게</p>
                   <p className="text-lg font-semibold">{profile.weight} kg</p>
                 </div>
               )}
               {bmi && (
                 <>
-                  <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
-                    <p className="text-xs text-gray-500 mb-1">BMI</p>
+                  <div className="bg-background rounded-xl p-3 border border-border">
+                    <p className="text-xs text-muted-foreground mb-1">BMI</p>
                     <p className="text-lg font-semibold">{bmi}</p>
                   </div>
-                  <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
-                    <p className="text-xs text-gray-500 mb-1">상태</p>
+                  <div className="bg-background rounded-xl p-3 border border-border">
+                    <p className="text-xs text-muted-foreground mb-1">상태</p>
                     <p className={`text-lg font-semibold ${bmiStatus?.color}`}>
                       {bmiStatus?.text}
                     </p>
@@ -319,13 +319,13 @@ export default function MyCustom() {
       {/* 일일 권장 칼로리 (백엔드에서 계산한 값 사용) */}
       {profile.recommendedCalories && (
         <div className="px-5 pb-5">
-          <div className="bg-black text-white rounded-2xl p-5">
+          <div className="bg-foreground text-background rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
               <Flame className="w-5 h-5 text-accent" />
               <h3 className="font-semibold">일일 권장 칼로리</h3>
             </div>
             <p className="text-3xl font-bold mb-2">{profile.recommendedCalories.toLocaleString()} kcal</p>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-muted-foreground opacity-50">
               {profile.dietGoal} 목표 기준
             </p>
           </div>
@@ -338,24 +338,24 @@ export default function MyCustom() {
           <h3 className="font-semibold mb-3">건강 목표</h3>
           <div className="space-y-3">
             {profile.dietGoal && (
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
+              <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
                   <Target className="w-5 h-5 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500">식단 목표</p>
+                  <p className="text-xs text-muted-foreground">식단 목표</p>
                   <p className="font-semibold">{profile.dietGoal}</p>
                 </div>
               </div>
             )}
 
             {profile.activityLevel && (
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
+              <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
+                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
                   <Activity className="w-5 h-5 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500">활동량</p>
+                  <p className="text-xs text-muted-foreground">활동량</p>
                   <p className="font-semibold">{profile.activityLevel}</p>
                 </div>
               </div>
@@ -369,14 +369,14 @@ export default function MyCustom() {
         <Link
           to="/notifications"
           onClick={() => setUnread(0)}
-          className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-secondary transition-colors"
         >
-          <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
             <Bell className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <p className="font-semibold">알림</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">받은 알림 내역 (가족 활동 / 멤버 변경)</p>
+            <p className="text-xs text-muted-foreground">받은 알림 내역 (가족 활동 / 멤버 변경)</p>
           </div>
           {unread > 0 && (
             <span
@@ -386,7 +386,7 @@ export default function MyCustom() {
               {unread > 99 ? '99+' : unread}
             </span>
           )}
-          <ChevronRight className="w-5 h-5 text-gray-400" />
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </Link>
       </div>
 
@@ -394,16 +394,16 @@ export default function MyCustom() {
       <div className="px-5 pb-3">
         <Link
           to="/fridges"
-          className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-secondary transition-colors"
         >
-          <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
             <Refrigerator className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <p className="font-semibold">냉장고 관리</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">가족 공유, 초대 코드, 김치냉장고 추가 등</p>
+            <p className="text-xs text-muted-foreground">가족 공유, 초대 코드, 김치냉장고 추가 등</p>
           </div>
-          <ChevronRight className="w-5 h-5 text-gray-400" />
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </Link>
       </div>
 
@@ -411,16 +411,16 @@ export default function MyCustom() {
       <div className="px-5 pb-5">
         <Link
           to="/family-activity"
-          className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="flex items-center gap-3 bg-card border border-border rounded-xl p-4 hover:bg-secondary transition-colors"
         >
-          <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
             <Users className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <p className="font-semibold">가족 활동</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">멤버별 추가/소비 + 자주 사는 식재료 TOP</p>
+            <p className="text-xs text-muted-foreground">멤버별 추가/소비 + 자주 사는 식재료 TOP</p>
           </div>
-          <ChevronRight className="w-5 h-5 text-gray-400" />
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
         </Link>
       </div>
 
@@ -448,44 +448,44 @@ export default function MyCustom() {
         <div className="grid grid-cols-2 gap-3">
           <Link
             to="/recipes"
-            className="bg-gradient-to-br from-accent to-accent-deep rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <ChefHat className="w-8 h-8 mb-2" />
+            <ChefHat className="w-8 h-8 mb-2 text-accent" />
             <p className="font-semibold mb-1">맞춤 레시피</p>
-            <p className="text-xs text-gray-700">
+            <p className="text-xs text-muted-foreground">
               건강 목표에 맞는<br />레시피 추천
             </p>
           </Link>
 
           <Link
             to="/meal-plan"
-            className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/30 dark:to-gray-800 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <Calendar className="w-8 h-8 mb-2 text-blue-600" />
+            <Calendar className="w-8 h-8 mb-2 text-blue-500" />
             <p className="font-semibold mb-1">식단 계획</p>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-muted-foreground">
               주간/월간<br />식단 관리
             </p>
           </Link>
 
           <Link
             to="/priority"
-            className="bg-gradient-to-br from-orange-50 to-white dark:from-orange-900/30 dark:to-gray-800 border border-orange-200 dark:border-orange-800/50 rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <TrendingUp className="w-8 h-8 mb-2 text-orange-600" />
+            <TrendingUp className="w-8 h-8 mb-2 text-orange-500" />
             <p className="font-semibold mb-1">소비 우선순위</p>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-muted-foreground">
               유통기한 기반<br />우선 소비 추천
             </p>
           </Link>
 
           <Link
             to="/nutrition"
-            className="bg-gradient-to-br from-green-50 to-white dark:from-green-900/30 dark:to-gray-800 border border-green-200 dark:border-green-800/50 rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <Heart className="w-8 h-8 mb-2 text-green-600" />
+            <Heart className="w-8 h-8 mb-2 text-green-500" />
             <p className="font-semibold mb-1">영양 분석</p>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-muted-foreground">
               식재료별<br />영양성분 확인
             </p>
           </Link>
@@ -496,14 +496,14 @@ export default function MyCustom() {
       {profile.dietGoal && (
         <div className="px-5 pb-5">
           <h3 className="font-semibold mb-3">권장 영양소 비율</h3>
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5">
+        <div className="bg-card border border-border rounded-2xl p-5">
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">탄수화물</span>
-                <span className="text-sm text-gray-500">50-60%</span>
+                <span className="text-sm text-muted-foreground">50-60%</span>
               </div>
-              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-secondary rounded-full overflow-hidden">
                 <div className="h-full bg-blue-500" style={{ width: '55%' }}></div>
               </div>
             </div>
@@ -511,11 +511,11 @@ export default function MyCustom() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">단백질</span>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-muted-foreground">
                   {normalizedDietGoal === 'muscle-gain' ? '25-30%' : '15-20%'}
                 </span>
               </div>
-              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-secondary rounded-full overflow-hidden">
                 <div
                   className="h-full bg-red-500"
                   style={{ width: normalizedDietGoal === 'muscle-gain' ? '27%' : '17%' }}
@@ -526,15 +526,15 @@ export default function MyCustom() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">지방</span>
-                <span className="text-sm text-gray-500">20-25%</span>
+                <span className="text-sm text-muted-foreground">20-25%</span>
               </div>
-              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-secondary rounded-full overflow-hidden">
                 <div className="h-full bg-yellow-500" style={{ width: '22%' }}></div>
               </div>
             </div>
           </div>
 
-          <p className="text-xs text-gray-500 mt-4">
+          <p className="text-xs text-muted-foreground mt-4">
             * {profile.dietGoal} 목표에 최적화된 비율입니다
           </p>
         </div>
@@ -557,8 +557,8 @@ export default function MyCustom() {
                 onClick={() => themeModeStore.set(m)}
                 className={`flex-1 py-2 rounded-lg text-sm transition-colors ${
                   selected
-                    ? 'bg-black text-white dark:bg-white dark:text-black'
-                    : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                    ? 'bg-foreground text-background'
+                    : 'bg-secondary text-muted-foreground'
                 }`}
                 style={{ fontWeight: selected ? 700 : 500 }}
               >
@@ -570,12 +570,12 @@ export default function MyCustom() {
       </div>
 
       {/* 계정 관리: LOCAL 가입자만 비밀번호 변경 가능 (소셜 계정은 비번이 없음) + 회원 탈퇴 */}
-      <div className="px-5 pt-4 pb-8 border-t border-gray-100 dark:border-gray-800 mt-4 space-y-1">
+      <div className="px-5 pt-4 pb-8 border-t border-border mt-4 space-y-1">
         {profile.provider === 'LOCAL' && (
           <button
             type="button"
             onClick={() => navigate('/change-password')}
-            className="w-full py-3 text-sm text-gray-700 hover:text-black transition-colors underline underline-offset-4"
+            className="w-full py-3 text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
           >
             비밀번호 변경
           </button>
@@ -583,7 +583,7 @@ export default function MyCustom() {
         <button
           type="button"
           onClick={handleDeleteAccount}
-          className="w-full py-3 text-sm text-gray-500 hover:text-red-600 transition-colors underline underline-offset-4"
+          className="w-full py-3 text-sm text-muted-foreground hover:text-red-600 transition-colors underline underline-offset-4"
         >
           회원 탈퇴
         </button>
