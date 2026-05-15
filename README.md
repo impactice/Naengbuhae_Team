@@ -8,72 +8,110 @@
 
 ## 🆕 이번 작업 정리 (2026-05-15)
 
-### 1) 비로그인 게스트 모드
+### 계정 관리
 
-토큰 없이도 식재료 관리만 쓸 수 있게, 가입은 의향 있는 사람만.
+**비로그인 게스트 모드**
+- `Login.tsx` 로그인 버튼 바로 아래 "로그인 없이 둘러보기"
+- `utils/guestMode.ts` — `isGuest()` / `setGuest()` / `clearGuest()` (localStorage)
+- `store/localIngredientStore.ts` — 로컬 식재료 CRUD. id는 `local-N` 문자열로 충돌 회피
+- 자동 분기 — `ingredientStore` / `fridgeStore`가 `isGuest()` 검사 후 로컬/서버 라우팅, 호출자(`useIngredients` 등)는 변경 없음
+- 공통 잠금 화면 `components/GuestBlocked.tsx` — 9개 페이지에서 진입 시 표시
+- MyCustom 게스트 변형 — `/user/me` 호출 없이 가입/로그인 CTA
+- 마이그레이션 — 로그인/OAuth 콜백 시 `utils/ingredientMigration.ts`의 `promptAndMigrate`가 `/api/ingredients/import` 호출
 
-- **진입**: `Login.tsx` 로그인 버튼 바로 아래 작은 텍스트 버튼 "로그인 없이 둘러보기"
-- **`utils/guestMode.ts`**: `isGuest()` / `setGuest()` / `clearGuest()` (localStorage 플래그)
-- **`store/localIngredientStore.ts`**: 로컬 식재료 CRUD. id는 `local-N` 문자열로 발급해 서버 id와 충돌 회피
-- **자동 분기**: `ingredientStore` / `fridgeStore`가 `isGuest()` 검사 후 로컬 또는 `/api/ingredients`로 라우팅 — 호출자(`useIngredients` 등)는 변경 없음
-- **공통 잠금 화면 `components/GuestBlocked.tsx`**: NotificationCenter / FamilyActivity / FridgeManagement / MealPlan / Recipes / RecipeDetail / NutritionAnalysis / ShoppingList / AddByReceipt 진입 시 표시
-- **MyCustom 게스트 변형**: `/user/me` 호출 없이 가입/로그인 CTA + 잠금 기능 미리보기
-- **마이그레이션**: 로그인/OAuth 콜백 시 `utils/ingredientMigration.ts`의 `promptAndMigrate`가 `/api/ingredients/import` 호출
-
-### 2) 회원가입 인라인 이메일 인증 (`SignUp.tsx`)
-
-매직 링크 → 6자리 코드 인라인 입력 방식.
-
-- 이메일 옆 "**인증번호 받기**" → 6자리 코드 메일 발송
-- 코드 입력 + "**확인**" → 검증 통과 시 "인증완료" 뱃지 표시 (이메일 입력칸도 disabled)
-- 이메일을 바꾸면 `handleChange`에서 인증 상태 자동 무효화
-- 가입 유효성 검사에 `verification.verifiedEmail === formData.email.trim()` 가드 추가
+**회원가입 인라인 이메일 인증 (`SignUp.tsx`)**
+- 이메일 옆 "인증번호 받기" → 6자리 코드 메일
+- 코드 입력 + "확인" → "인증완료" 뱃지 (이메일 입력칸도 disabled)
+- 이메일 변경 시 `handleChange`에서 인증 상태 자동 무효화
 - 백엔드: `POST /user/email/send-code`, `POST /user/email/verify-code`
 
-### 3) 회원가입 후 username 자동 채우기
+**회원가입 후 username 자동 채우기**
+- `navigate('/login', { state: { username } })` → Login의 `formData.username` 초기값으로 자동
 
-가입 성공 → `navigate('/login', { state: { username } })` → Login의 `formData.username` 초기값으로 자동 세팅 (`useLocation().state`로 읽음). 사용자는 비번만 치면 됨.
-
-### 4) 비밀번호 변경 (`/change-password`)
-
-- `pages/ChangePassword.tsx`: 현재 비번 + 새 비번(확인) → `POST /user/me/password`
-- `routes.ts`에 `change-password` 등록 (Root 하위라 로그인 가드됨)
-- MyCustom의 회원 탈퇴 위에 진입 버튼, `profile.provider === 'LOCAL'`일 때만 노출
+**비밀번호 변경 (`/change-password`)**
+- `pages/ChangePassword.tsx` — 현재 비번 + 새 비번(확인) → `POST /user/me/password`
+- Root 하위라 로그인 가드됨
+- MyCustom의 회원 탈퇴 위, `profile.provider === 'LOCAL'`일 때만 노출
 - `userStore.UserProfile`에 `provider` 필드 추가
 
-### 5) 식재료 / 장보기 다중 선택 일괄 삭제
+**죽은 매직 링크 흔적 정리**
+- `pages/VerifyEmail.tsx` + 라우트 삭제
+- `Login.tsx`의 `pendingVerification` 상태 + 노란 배너 제거
+- `MyCustom.tsx`의 `EmailVerificationBanner` 제거
 
-- 두 페이지 모두 같은 패턴: 우측 `CheckSquare` 버튼으로 선택 모드 진입, 카드 클릭으로 토글, 상단 액션 바에서 "전체 선택 + N개 삭제"
-- `ingredientStore.bulkDeleteIngredients(ids)` — 게스트면 로컬 순차, 로그인이면 `/api/ingredients/bulk-delete`
+---
+
+### 식재료 / 장보기
+
+**다중 선택 일괄 삭제 (식재료 + 장보기)**
+- 두 페이지 모두 우측 `CheckSquare` 버튼으로 선택 모드 진입, 카드 클릭으로 토글, 액션 바 "전체 선택 + N개 삭제"
+- `ingredientStore.bulkDeleteIngredients(ids)` — 게스트 로컬 순차 / 로그인 `/api/ingredients/bulk-delete`
 - `ingredientStore.bulkDeleteShoppingItems(ids)` — `/api/shopping-list/bulk-delete`
-- `useIngredients` / `useShoppingList` 훅에 노출
 
-### 6) 알림 탭 → 정확한 식재료 카드로 강조
+**장보기 자동 제안 ("이건 어때요?")**
+- ShoppingList 상단 lime 톤 가로 스크롤 chip — 자주 비우는데 없는 식재료
+- 각 chip 탭 시 1개 단위 추가, 추가 후 `shoppingList.length` 변경 → `useEffect`로 제안 자동 재요청
+- `fridgeStore` 구독으로 냉장고 전환 시 즉시 갱신
 
-`NotificationCenter` onTap이 `"ingredient:{id}"` 패턴 인식:
+**레시피 부족 재료 자동 다이얼로그**
+- `RecipeDetail` 진입 시 부족 재료가 있고 장보기에도 없으면 모달 자동 노출
+- 부족 재료 목록 미리보기 + "장보기에 추가" / "괜찮아요"
+- 같은 세션 동안 같은 레시피 다시 봐도 안 묻도록 sessionStorage 기록
+- 하단 버튼도 `ingredientStore.bulkAddShoppingItems`로 통일 — 단건 N번 호출 → 단일 요청
 
-- `/ingredients?highlight={id}`로 navigate
-- `Ingredients.tsx`가 `useSearchParams`로 `highlight` 읽어 해당 카드에 ref 설정
+---
+
+### 레시피 즐겨찾기
+- `Recipes.tsx` 카드 우측 상단에 `Heart` 아이콘 (Link 안이라 `e.preventDefault + stopPropagation`)
+- 필터 chips에 "즐겨찾기" 추가 — `match.recipe.favorite`으로 필터
+- `RecipeDetail.tsx` 헤더 우측에 하트 토글
+- `recipeStore.toggleFavorite` — 캐시 즉시 동기화 + listeners 알림
+- `Recipe` 타입에 `favorite?: boolean`
+
+---
+
+### 알림
+
+**알림 탭 → 정확한 식재료 카드로 스크롤 + 강조**
+- `NotificationCenter` onTap이 `"ingredient:{id}"` 패턴 인식 → `/ingredients?highlight={id}`로 navigate
+- `Ingredients.tsx`가 `useSearchParams`로 `highlight` 읽고 해당 카드에 ref 설정
 - 진입 직후 `scrollIntoView` + 노란 ring으로 2.6초간 강조 후 fade-out
 
-### 7) 가족 활동 통계 차트 시각화 (`FamilyActivity.tsx`)
+**알림 배지 실시간 갱신 (polling + visibility)**
+- `store/notificationStore.ts` — 전역 unread count store
+- Root에서 로그인 시 `start()` / 로그아웃 시 `stop() + reset()`
+- 탭 visible일 때 30초 간격 + `visibilitychange` 시 즉시 refresh
+- MyCustom이 `useSyncExternalStore`로 구독
+- NotificationCenter 진입 직후 read-all + `store.reset()`
 
-`recharts` 사용 (`MealPlan`, `NutritionAnalysis`와 동일).
+---
 
-- **멤버별 활동**: `BarChart` + Bar 2개 — 한 멤버당 추가(녹색) / 비움(주황) 두 막대
-- **자주 추가/비운 식재료 TOP5**: `PieChart` + 색깔 범례 5단계 (`PIE_COLORS` / `PIE_COLORS_ORANGE`)
-- 차트 아래 기존 멤버 행 / 랭크 리스트(progress bar)는 그대로 유지
+### 시각화
 
-### 8) 죽은 매직 링크 흔적 정리
+**가족 활동 통계 차트 (`FamilyActivity.tsx`)**
+- recharts 사용 (`MealPlan`, `NutritionAnalysis`와 동일)
+- 멤버별 활동 — `BarChart` + Bar 2개 (추가/비움)
+- 자주 추가/비운 TOP5 — `PieChart` + 색깔 범례 5단계 (`PIE_COLORS` / `PIE_COLORS_ORANGE`)
+- 기존 멤버 행/랭크 리스트(progress bar)는 그대로 유지
 
-코드 기반 가입 인증으로 전환되며 안 쓰이는 코드 제거:
+**우선순위 화면: 막대 → 도넛 (`Priority.tsx`)**
+- 위험/주의/안전 비율을 `PieChart`로 시각화 (가운데 총 개수)
+- stat box에 개수 + % 함께 노출
+- 0인 카테고리 자동 제외해 슬라이스 깔끔하게
 
-- `pages/VerifyEmail.tsx` 파일 + `routes.ts`의 `/verify-email` 라우트 삭제
-- `Login.tsx`의 `pendingVerification` 상태 + `handleResendVerification` + 노란 배너 제거
-- `MyCustom.tsx`의 `EmailVerificationBanner` 함수 + `emailVerified` 분기 제거
+---
 
-### 9) 기타
+### 다크 모드 인프라
+- `styles/tailwind.css`에 `@custom-variant dark` — `<html class="dark">` 토글 기반
+- `utils/themeMode.ts` — localStorage + `prefers-color-scheme` listen + root 클래스 동기화
+- `main.tsx`에서 `themeModeStore.init()`
+- MyCustom에 시스템/라이트/다크 토글
+- `Root.tsx` 컨테이너/하단 네비에 `dark:` variant 적용
+- 그 외 페이지는 라이트 톤 그대로 — 점진적으로 `dark:` 클래스 추가 필요
 
+---
+
+### 기타
 - `main.tsx`에서 MSW dev 모킹 import 제거 (`msw` 패키지 미설치 + 백엔드 연동 완료 상태)
 
 ---
