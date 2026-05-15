@@ -1,17 +1,23 @@
 import { useState } from 'react';
 import { useShoppingList } from '../hooks/useIngredients';
-import { Plus, Trash2, ShoppingCart, Check } from 'lucide-react';
+import { Plus, Trash2, ShoppingCart, Check, CheckSquare } from 'lucide-react';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
 
 export default function ShoppingList() {
-  const { shoppingList, addShoppingItem, toggleShoppingItem, deleteShoppingItem, transferShoppingItemToIngredient } =
-    useShoppingList();
+  const {
+    shoppingList, addShoppingItem, toggleShoppingItem, deleteShoppingItem,
+    bulkDeleteShoppingItems, transferShoppingItemToIngredient,
+  } = useShoppingList();
   const [showAddForm, setShowAddForm] = useState(false);
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [unit, setUnit] = useState('개');
   const [transferringIds, setTransferringIds] = useState<string[]>([]);
+  // 다중 선택 모드 — 카드 탭으로 토글, 하단 액션바에서 일괄 삭제.
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +40,41 @@ export default function ShoppingList() {
   const uncheckedItems = shoppingList.filter((item) => !item.checked);
   const checkedItems = shoppingList.filter((item) => item.checked);
 
+  const toggleSelection = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const enterSelectionMode = () => {
+    setSelectionMode(true);
+    setSelectedIds(new Set());
+  };
+
+  const exitSelectionMode = () => {
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const selectAll = () => {
+    setSelectedIds(new Set(shoppingList.map((i) => i.id)));
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`${selectedIds.size}개의 장보기 항목을 삭제하시겠습니까?`)) return;
+    setDeleting(true);
+    try {
+      await bulkDeleteShoppingItems(Array.from(selectedIds));
+      exitSelectionMode();
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleTransfer = async (id: string, name: string) => {
     if (transferringIds.includes(id)) return;
     setTransferringIds((prev) => [...prev, id]);
@@ -55,25 +96,70 @@ export default function ShoppingList() {
     <div className="min-h-screen bg-white pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
-        <h1 className="text-2xl" style={{ fontWeight: 700 }}>
-          장보기 리스트
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl" style={{ fontWeight: 700 }}>
+            장보기 리스트
+          </h1>
+          {selectionMode && (
+            <button
+              type="button"
+              onClick={exitSelectionMode}
+              className="text-sm text-gray-600 hover:text-black"
+              style={{ fontWeight: 600 }}
+            >
+              취소
+            </button>
+          )}
+        </div>
         <p className="text-sm text-gray-500 mt-1">
-          총 {shoppingList.length}개 · 완료 {checkedItems.length}개
+          {selectionMode
+            ? `${selectedIds.size}개 선택됨`
+            : `총 ${shoppingList.length}개 · 완료 ${checkedItems.length}개`}
         </p>
       </div>
 
-      {/* 추가 버튼 */}
+      {/* 선택 모드 액션 바 또는 추가 버튼 */}
       <div className="px-5 pb-4">
-        {!showAddForm ? (
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="w-full rounded-xl py-4 flex items-center justify-center gap-2 relative overflow-hidden"
-            style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
-          >
-            <Plus className="w-5 h-5" />
-            항목 추가하기
-          </button>
+        {selectionMode ? (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={selectAll}
+              className="flex-1 py-3 rounded-xl bg-gray-100 text-sm"
+              style={{ fontWeight: 600 }}
+            >
+              전체 선택 ({shoppingList.length})
+            </button>
+            <button
+              type="button"
+              onClick={handleBulkDelete}
+              disabled={selectedIds.size === 0 || deleting}
+              className="flex-1 py-3 rounded-xl bg-red-500 text-white text-sm disabled:bg-red-200"
+              style={{ fontWeight: 600 }}
+            >
+              {deleting ? '삭제 중...' : `${selectedIds.size}개 삭제`}
+            </button>
+          </div>
+        ) : !showAddForm ? (
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex-1 rounded-xl py-4 flex items-center justify-center gap-2"
+              style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+            >
+              <Plus className="w-5 h-5" />
+              항목 추가하기
+            </button>
+            <button
+              type="button"
+              onClick={enterSelectionMode}
+              disabled={shoppingList.length === 0}
+              className="rounded-xl py-4 px-4 bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              title="선택"
+            >
+              <CheckSquare className="w-5 h-5 text-gray-700" />
+            </button>
+          </div>
         ) : (
           <form onSubmit={handleAdd} className="bg-gray-50 rounded-xl p-4">
             <div className="mb-3">
@@ -151,40 +237,62 @@ export default function ShoppingList() {
                 구매할 항목 ({uncheckedItems.length})
               </h2>
               <div className="space-y-2">
-                {uncheckedItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-gray-50 rounded-xl p-4 flex items-center gap-3"
-                  >
-                    <button
-                      onClick={() => toggleShoppingItem(item.id)}
-                      className="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 hover:border-lime-500 transition-colors"
-                    />
-                    <div className="flex-1">
-                      <h3 className="text-base" style={{ fontWeight: 600 }}>
-                        {item.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {item.quantity}
-                        {item.unit}
-                      </p>
+                {uncheckedItems.map((item) => {
+                  const isSelected = selectedIds.has(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={selectionMode ? () => toggleSelection(item.id) : undefined}
+                      className={`rounded-xl p-4 flex items-center gap-3 transition-colors ${
+                        selectionMode
+                          ? isSelected
+                            ? 'bg-green-50 border-2 border-[#CDFF00] cursor-pointer'
+                            : 'bg-gray-50 border-2 border-transparent cursor-pointer'
+                          : 'bg-gray-50'
+                      }`}
+                    >
+                      {selectionMode ? (
+                        <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 flex-shrink-0 ${
+                          isSelected ? 'bg-[#CDFF00] border-[#CDFF00]' : 'bg-white border-gray-300'
+                        }`}>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => toggleShoppingItem(item.id)}
+                          className="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 hover:border-lime-500 transition-colors"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h3 className="text-base" style={{ fontWeight: 600 }}>
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {item.quantity}
+                          {item.unit}
+                        </p>
+                      </div>
+                      {!selectionMode && (
+                        <>
+                          <button
+                            onClick={() => deleteShoppingItem(item.id)}
+                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-5 h-5 text-red-500" />
+                          </button>
+                          <button
+                            onClick={() => handleTransfer(item.id, item.name)}
+                            disabled={transferringIds.includes(item.id)}
+                            className="px-3 py-2 text-xs rounded-lg bg-[#CDFF00] hover:bg-[#b8e600] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            style={{ fontWeight: 600 }}
+                          >
+                            {transferringIds.includes(item.id) ? '이관 중...' : '냉장고 이관'}
+                          </button>
+                        </>
+                      )}
                     </div>
-                    <button
-                      onClick={() => deleteShoppingItem(item.id)}
-                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5 text-red-500" />
-                    </button>
-                    <button
-                      onClick={() => handleTransfer(item.id, item.name)}
-                      disabled={transferringIds.includes(item.id)}
-                      className="px-3 py-2 text-xs rounded-lg bg-[#CDFF00] hover:bg-[#b8e600] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                      style={{ fontWeight: 600 }}
-                    >
-                      {transferringIds.includes(item.id) ? '이관 중...' : '냉장고 이관'}
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -196,38 +304,58 @@ export default function ShoppingList() {
                 구매 완료 ({checkedItems.length})
               </h2>
               <div className="space-y-2">
-                {checkedItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-gray-50 rounded-xl p-4 flex items-center gap-3 opacity-60"
-                  >
-                    <button
-                      onClick={() => toggleShoppingItem(item.id)}
-                      className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
-                      style={{ backgroundColor: '#CDFF00' }}
+                {checkedItems.map((item) => {
+                  const isSelected = selectedIds.has(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={selectionMode ? () => toggleSelection(item.id) : undefined}
+                      className={`rounded-xl p-4 flex items-center gap-3 transition-colors ${
+                        selectionMode
+                          ? isSelected
+                            ? 'bg-green-50 border-2 border-[#CDFF00] cursor-pointer'
+                            : 'bg-gray-50 border-2 border-transparent cursor-pointer opacity-60'
+                          : 'bg-gray-50 opacity-60'
+                      }`}
                     >
-                      <Check className="w-4 h-4" />
-                    </button>
-                    <div className="flex-1">
-                      <h3
-                        className="text-base line-through text-gray-500"
-                        style={{ fontWeight: 500 }}
-                      >
-                        {item.name}
-                      </h3>
-                      <p className="text-sm text-gray-400">
-                        {item.quantity}
-                        {item.unit}
-                      </p>
+                      {selectionMode ? (
+                        <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 flex-shrink-0 ${
+                          isSelected ? 'bg-[#CDFF00] border-[#CDFF00]' : 'bg-white border-gray-300'
+                        }`}>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => toggleShoppingItem(item.id)}
+                          className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
+                          style={{ backgroundColor: '#CDFF00' }}
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                      )}
+                      <div className="flex-1">
+                        <h3
+                          className="text-base line-through text-gray-500"
+                          style={{ fontWeight: 500 }}
+                        >
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-gray-400">
+                          {item.quantity}
+                          {item.unit}
+                        </p>
+                      </div>
+                      {!selectionMode && (
+                        <button
+                          onClick={() => deleteShoppingItem(item.id)}
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-5 h-5 text-red-500" />
+                        </button>
+                      )}
                     </div>
-                    <button
-                      onClick={() => deleteShoppingItem(item.id)}
-                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5 text-red-500" />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

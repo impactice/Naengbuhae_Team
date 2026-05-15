@@ -324,6 +324,27 @@ class IngredientStore {
     }
   }
 
+  // 장보기 일괄 삭제. 본인 소유 항목만 서버에서 삭제, 그 외 id는 무시.
+  async bulkDeleteShoppingItems(ids: string[]): Promise<number> {
+    if (ids.length === 0) return 0;
+    try {
+      const response = await apiFetch('/api/shopping-list/bulk-delete', {
+        method: 'POST',
+        body: JSON.stringify({ ids: ids.map((id) => Number(id)) }),
+      });
+      if (response.ok) {
+        await this.fetchShoppingList();
+        return ids.length;
+      }
+      const errorText = await response.text();
+      throw new Error(`장보기 일괄 삭제 실패: ${errorText}`);
+    } catch (error) {
+      console.error('장보기 일괄 삭제 오류:', error);
+      alert('일괄 삭제 중 오류가 발생했습니다.');
+      throw error;
+    }
+  }
+
   // 장보기 → 냉장고 이관
   async transferShoppingItemToIngredient(id: string): Promise<void> {
     try {
