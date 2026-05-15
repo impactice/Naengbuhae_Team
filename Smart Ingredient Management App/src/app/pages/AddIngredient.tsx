@@ -227,13 +227,13 @@ export default function AddIngredient() {
         {/* 영수증으로 일괄 추가 진입 */}
         <Link
           to="/add-by-receipt"
-          className="mb-4 flex items-center gap-3 px-4 py-3 bg-primary rounded-xl hover:opacity-90 transition-colors"
+          className="mb-4 flex items-center gap-3 px-4 py-3 bg-card border border-border rounded-xl hover:border-border-strong transition-colors"
         >
-          <Receipt className="w-5 h-5" style={{ color: 'var(--accent)' }} />
-          <span className="flex-1 text-white text-sm" style={{ fontWeight: 600 }}>
+          <Receipt className="w-5 h-5 text-accent" />
+          <span className="flex-1 text-sm" style={{ fontWeight: 600 }}>
             영수증으로 여러 개 한 번에 추가
           </span>
-          <ChevronRight className="w-4 h-4 text-white" />
+          <ChevronRight className="w-4 h-4 text-muted-foreground" />
         </Link>
 
         {/* 사진 첨부 (선택). 모바일 브라우저는 카메라 옵션, 데스크탑은 파일 선택. */}
@@ -423,7 +423,7 @@ export default function AddIngredient() {
         <button
           type="submit"
           className="w-full rounded-xl py-4 mt-4"
-          style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
+          style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
         >
           추가하기
         </button>

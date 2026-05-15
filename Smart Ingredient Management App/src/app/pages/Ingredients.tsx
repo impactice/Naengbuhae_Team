@@ -171,7 +171,7 @@ export default function Ingredients() {
             <Link to="/add-ingredient" className="flex-1">
               <button
                 className="w-full rounded-xl py-4 flex items-center justify-center gap-2"
-                style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
               >
                 <Plus className="w-5 h-5" />
                 식재료 추가하기

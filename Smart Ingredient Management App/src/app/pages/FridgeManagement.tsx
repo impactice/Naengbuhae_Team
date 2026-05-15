@@ -117,7 +117,7 @@ export default function FridgeManagement() {
           onClick={handleCreate}
           disabled={working}
           className="rounded-xl py-3 flex items-center justify-center gap-2 disabled:opacity-60"
-          style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
+          style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
         >
           <Plus className="w-4 h-4" />
           냉장고 만들기
@@ -192,7 +192,7 @@ export default function FridgeManagement() {
             <p className="text-sm text-muted-foreground mb-4">{inviteCode.fridgeName}</p>
             <div
               className="text-center py-4 rounded-xl mb-3"
-              style={{ backgroundColor: 'var(--primary)', fontWeight: 700, fontSize: '28px', letterSpacing: '4px' }}
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 700, fontSize: '28px', letterSpacing: '4px' }}
             >
               {inviteCode.code}
             </div>
@@ -214,7 +214,7 @@ export default function FridgeManagement() {
               <button
                 onClick={() => setInviteCode(null)}
                 className="flex-1 py-2.5 rounded-xl"
-                style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
               >
                 닫기
               </button>
@@ -306,7 +306,7 @@ function TextPromptModal({
             onClick={submit}
             disabled={!value.trim()}
             className="flex-1 py-3 rounded-xl disabled:opacity-50"
-            style={{ backgroundColor: 'var(--primary)', fontWeight: 700 }}
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 700 }}
           >
             {config.submitLabel}
           </button>
@@ -372,7 +372,7 @@ function FridgeDetailModal({
               onClick={onInvite}
               disabled={working}
               className="w-full rounded-xl py-3 flex items-center justify-center gap-2 disabled:opacity-60"
-              style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
             >
               <Share2 className="w-4 h-4" />
               초대 코드 발급

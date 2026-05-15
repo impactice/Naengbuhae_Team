@@ -193,7 +193,7 @@ export default function ShoppingList() {
             <button
               onClick={() => setShowAddForm(true)}
               className="flex-1 rounded-xl py-4 flex items-center justify-center gap-2"
-              style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
             >
               <Plus className="w-5 h-5" />
               항목 추가하기
@@ -247,7 +247,7 @@ export default function ShoppingList() {
               <button
                 type="submit"
                 className="flex-1 py-3 rounded-xl"
-                style={{ backgroundColor: 'var(--primary)', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
               >
                 추가
               </button>
@@ -404,7 +404,7 @@ export default function ShoppingList() {
                         <button
                           onClick={() => toggleShoppingItem(item.id)}
                           className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
-                          style={{ backgroundColor: 'var(--primary)' }}
+                          style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}
                         >
                           <Check className="w-4 h-4" />
                         </button>
