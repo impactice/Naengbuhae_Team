@@ -6,7 +6,35 @@
 
 ---
 
-## 🆕 이번 작업 정리 (2026-05-14)
+## 🆕 이번 작업 정리 (2026-05-15)
+
+**비로그인 게스트 모드 + 회원가입 인라인 이메일 인증.**
+
+게스트 모드:
+1. **"로그인 없이 둘러보기"** — `Login.tsx` 로그인 버튼 바로 아래에 작은 버튼. 토큰 없이 `/`로 진입
+2. **`utils/guestMode.ts`** — `isGuest()` / `setGuest()` / `clearGuest()` (localStorage 플래그)
+3. **`store/localIngredientStore.ts`** — 로컬 식재료 CRUD, id는 `local-N` 문자열로 발급해 서버 id와 충돌 회피
+4. **`ingredientStore` / `fridgeStore` 분기** — `isGuest()` 검사 후 로컬 또는 `/api/ingredients`로 자동 분기
+5. **`components/GuestBlocked.tsx`** — 잠금 페이지 공통 안내. NotificationCenter / FamilyActivity / FridgeManagement / MealPlan / Recipes / RecipeDetail / NutritionAnalysis / ShoppingList / AddByReceipt 진입 시 표시
+6. **MyCustom 게스트 변형** — `/user/me` 호출 없이 가입/로그인 CTA + 잠금 기능 미리보기 표시
+7. **로그인 / OAuth 콜백 시 마이그레이션** — `utils/ingredientMigration.ts`의 `promptAndMigrate`가 `/api/ingredients/import` 호출
+
+회원가입 인라인 이메일 인증 (`SignUp.tsx`):
+1. 이메일 옆 "**인증번호 받기**" 버튼 → 6자리 코드 메일 발송
+2. 코드 입력 + "**확인**" → 검증 통과 시 "인증완료" 뱃지 표시 (이메일 입력칸도 disabled)
+3. 이메일을 바꾸면 `handleChange`에서 인증 상태 자동 무효화
+4. 가입 유효성 검사에 `verification.verifiedEmail === formData.email.trim()` 추가
+
+로그인 화면 UX 개선 (`Login.tsx`):
+1. "로그인 없이 둘러보기"를 **로그인 버튼 바로 아래**로 이동
+2. 미인증 사용자 응답 시 **노란 배너 + "메일 다시 받기"** 노출
+
+기타:
+- `main.tsx`에서 MSW dev 모킹 import 제거 (`msw` 패키지 미설치 + 백엔드 연동 완료 상태)
+
+---
+
+## 이전 작업 정리 (2026-05-14)
 
 **식재료 검색 + 인앱 알림 센터 + 가족 활동 통계.**
 
@@ -56,7 +84,7 @@
 
 ---
 
-## 이전 작업 정리 (2026-05-13)
+## 더 이전 작업 정리 (2026-05-13)
 
 1. **다중 냉장고 + 가족 공유** — 한 계정이 여러 냉장고를 가지고, 6자리 초대 코드로 다른 사용자를 끌어들임
 2. **AI 사진 인식 (Gemini Vision)** — 식재료 단건 인식 + 영수증 OCR. 결과로 폼 자동 채움
@@ -253,7 +281,7 @@ const CATEGORY_TO_KO: Record<CategoryType, string> = {
 
 ---
 
-## 이전 작업 정리 (2026-05-08)
+## 더 이전 작업 정리 (2026-05-08)
 
 이번 세션의 큰 줄기:
 1. **세션 저장소 정책 정리** — `localStorage` 일변도 → "로그인 상태 유지" 체크박스로 사용자가 직접 선택
@@ -395,7 +423,7 @@ apiClient의 `refreshAccessToken`은 새로 받은 토큰을 **기존 토큰이 
 
 ---
 
-## 이전 작업 정리 (2026-05-07)
+## 더 이전 작업 정리 (2026-05-07)
 
 이번 세션의 큰 줄기:
 1. **인증 흐름 보강** — 로그아웃 버그 수정, 회원 탈퇴, refresh token 자동 갱신
