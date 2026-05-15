@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { Plus, Trash2, Package, Sparkles, AlertTriangle, Search, X, Check, CheckSquare } from 'lucide-react';
 
 import { CategoryType, StorageType } from '../types/ingredient';
@@ -18,6 +18,23 @@ export default function Ingredients() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+
+  // 알림 센터에서 ?highlight=:id로 진입 시 해당 카드 스크롤 + 잠깐 강조.
+  const [searchParams] = useSearchParams();
+  const highlightId = searchParams.get('highlight');
+  const highlightRef = useRef<HTMLDivElement | null>(null);
+  const [highlightActive, setHighlightActive] = useState(false);
+
+  useEffect(() => {
+    if (!highlightId) return;
+    // 카드가 렌더된 후 스크롤 + 2.5초 동안 강조 → fade-out
+    const t1 = setTimeout(() => {
+      highlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setHighlightActive(true);
+    }, 100);
+    const t2 = setTimeout(() => setHighlightActive(false), 2600);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [highlightId, ingredients.length]);
 
   // 영양 정보 데이터베이스 (100g 기준)
   const nutritionDatabase: Record<string, {
@@ -325,15 +342,19 @@ export default function Ingredients() {
               const factor = ingredient.quantity / 100;
 
               const isSelected = selectedIds.has(ingredient.id);
+              const isHighlighted = highlightActive && highlightId === ingredient.id;
               return (
                 <div
                   key={ingredient.id}
+                  ref={highlightId === ingredient.id ? highlightRef : undefined}
                   onClick={selectionMode ? () => toggleSelection(ingredient.id) : undefined}
                   className={`rounded-xl p-4 relative group transition-colors ${
                     selectionMode
                       ? isSelected
                         ? 'bg-green-50 border-2 border-[#CDFF00] cursor-pointer'
                         : 'bg-gray-50 border-2 border-transparent cursor-pointer'
+                      : isHighlighted
+                      ? 'bg-yellow-50 border-2 border-yellow-300 ring-2 ring-yellow-200'
                       : 'bg-gray-50'
                   }`}
                 >

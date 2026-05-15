@@ -47,6 +47,12 @@ export default function NotificationCenter() {
 
   const onTap = (item: NotificationItem) => {
     if (!item.route) return;
+    // "ingredient:{id}" → 해당 식재료를 강조해서 표시
+    if (item.route.startsWith('ingredient:')) {
+      const id = item.route.substring('ingredient:'.length);
+      navigate(`/ingredients?highlight=${encodeURIComponent(id)}`);
+      return;
+    }
     switch (item.route) {
       case 'fridge':
         navigate('/fridges');
