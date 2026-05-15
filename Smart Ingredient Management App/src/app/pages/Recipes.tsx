@@ -562,7 +562,7 @@ export default function Recipes() {
                   </div>
 
                   {/* 영양 정보 미리보기 */}
-                  <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-4 text-xs text-gray-600">
                       <span>{match.recipe.nutrition.calories}kcal</span>
                       <span>단백질 {match.recipe.nutrition.protein}g</span>

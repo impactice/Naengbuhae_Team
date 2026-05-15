@@ -63,7 +63,7 @@ export default function ChangePassword() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center">
       <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl">
-        <div className="px-5 pt-6 pb-4 flex items-center gap-3 border-b border-gray-100">
+        <div className="px-5 pt-6 pb-4 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800">
           <button onClick={() => navigate(-1)} className="p-1 -ml-1">
             <ChevronLeft className="w-6 h-6" />
           </button>

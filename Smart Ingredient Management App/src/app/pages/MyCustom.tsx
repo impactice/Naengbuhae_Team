@@ -223,7 +223,7 @@ export default function MyCustom() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* 헤더 */}
-      <div className="px-5 pt-6 pb-4 border-b border-gray-100">
+      <div className="px-5 pt-6 pb-4 border-b border-gray-100 dark:border-gray-800">
         <h1 className="text-2xl mb-1" style={{ fontWeight: 700 }}>
           나의 맞춤
         </h1>
@@ -570,7 +570,7 @@ export default function MyCustom() {
       </div>
 
       {/* 계정 관리: LOCAL 가입자만 비밀번호 변경 가능 (소셜 계정은 비번이 없음) + 회원 탈퇴 */}
-      <div className="px-5 pt-4 pb-8 border-t border-gray-100 mt-4 space-y-1">
+      <div className="px-5 pt-4 pb-8 border-t border-gray-100 dark:border-gray-800 mt-4 space-y-1">
         {profile.provider === 'LOCAL' && (
           <button
             type="button"

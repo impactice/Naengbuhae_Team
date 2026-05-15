@@ -447,7 +447,7 @@ export default function SignUp() {
             </div>
 
             {/* 건강 정보 */}
-            <div className="space-y-4 pt-4 border-t border-gray-100">
+            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
               <h3 className="text-lg font-semibold">건강 정보</h3>
 
               {/* 활동량 */}
@@ -508,7 +508,7 @@ export default function SignUp() {
             </div>
 
             {/* 계정 정보 */}
-            <div className="space-y-4 pt-4 border-t border-gray-100">
+            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
               <h3 className="text-lg font-semibold">계정 정보</h3>
 
               {/* 이메일 + 인증번호 */}

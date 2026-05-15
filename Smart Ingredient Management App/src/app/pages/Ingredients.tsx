@@ -412,7 +412,7 @@ export default function Ingredients() {
                           {ingredient.expirationDate.toLocaleDateString('ko-KR')}
                         </p>
                         {/* 영양 정보 추가 */}
-                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">
+                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                           <span className="text-xs px-2 py-1 bg-white rounded-md font-medium">
                             {Math.round(nutrition.calories * factor)}kcal
                           </span>

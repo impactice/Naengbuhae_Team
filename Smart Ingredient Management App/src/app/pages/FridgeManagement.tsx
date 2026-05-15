@@ -125,7 +125,7 @@ export default function FridgeManagement() {
         <button
           onClick={handleJoin}
           disabled={working}
-          className="rounded-xl py-3 flex items-center justify-center gap-2 border border-gray-200 disabled:opacity-60"
+          className="rounded-xl py-3 flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700 disabled:opacity-60"
           style={{ fontWeight: 600 }}
         >
           <KeyRound className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function FridgeManagement() {
                   navigator.clipboard.writeText(inviteCode.code);
                   alert('복사되었습니다');
                 }}
-                className="flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 border border-gray-200"
+                className="flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700"
                 style={{ fontWeight: 600 }}
               >
                 <Copy className="w-4 h-4" />
@@ -346,7 +346,7 @@ function FridgeDetailModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
-        <div className="px-5 pt-5 pb-3 flex items-start gap-3 border-b border-gray-100">
+        <div className="px-5 pt-5 pb-3 flex items-start gap-3 border-b border-gray-100 dark:border-gray-800">
           <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
             <Refrigerator className="w-5 h-5" />
           </div>
