@@ -37,13 +37,13 @@ export default function FridgeSelector() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-border z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-64 bg-popover text-popover-foreground rounded-xl shadow-lg border border-border z-50 overflow-hidden">
           <div className="px-4 pt-3 pb-1 text-xs text-muted-foreground" style={{ fontWeight: 600 }}>
             냉장고 전환
           </div>
           <div className="max-h-72 overflow-y-auto">
             {fridges.length === 0 ? (
-              <div className="px-4 py-6 text-sm text-muted-foreground dark:text-muted-foreground text-center">
+              <div className="px-4 py-6 text-sm text-muted-foreground text-center">
                 냉장고가 없습니다
               </div>
             ) : (
@@ -61,7 +61,7 @@ export default function FridgeSelector() {
                 >
                   <Refrigerator
                     className={`w-4 h-4 ${
-                      f.id === selected?.id ? 'text-black dark:text-white' : 'text-muted-foreground dark:text-muted-foreground'
+                      f.id === selected?.id ? 'text-accent' : 'text-muted-foreground'
                     }`}
                   />
                   <div className="flex-1 min-w-0">
@@ -70,7 +70,7 @@ export default function FridgeSelector() {
                     </div>
                   </div>
                   {f.id === selected?.id && (
-                    <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                    <Check className="w-4 h-4 text-accent" />
                   )}
                 </button>
               ))

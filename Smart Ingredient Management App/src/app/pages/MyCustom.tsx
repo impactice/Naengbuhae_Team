@@ -461,7 +461,7 @@ export default function MyCustom() {
             to="/meal-plan"
             className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <Calendar className="w-8 h-8 mb-2 text-blue-500" />
+            <Calendar className="w-8 h-8 mb-2 text-accent" />
             <p className="font-semibold mb-1">식단 계획</p>
             <p className="text-xs text-muted-foreground">
               주간/월간<br />식단 관리
@@ -472,7 +472,7 @@ export default function MyCustom() {
             to="/priority"
             className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <TrendingUp className="w-8 h-8 mb-2 text-orange-500" />
+            <TrendingUp className="w-8 h-8 mb-2 text-accent" />
             <p className="font-semibold mb-1">소비 우선순위</p>
             <p className="text-xs text-muted-foreground">
               유통기한 기반<br />우선 소비 추천
@@ -483,7 +483,7 @@ export default function MyCustom() {
             to="/nutrition"
             className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <Heart className="w-8 h-8 mb-2 text-green-500" />
+            <Heart className="w-8 h-8 mb-2 text-accent" />
             <p className="font-semibold mb-1">영양 분석</p>
             <p className="text-xs text-muted-foreground">
               식재료별<br />영양성분 확인
@@ -541,14 +541,14 @@ export default function MyCustom() {
       </div>
       )}
 
-      {/* 테마 모드 — 시스템/라이트/다크 */}
+      {/* 테마 모드 — 라이트/다크 */}
       <div className="px-5 pt-4 pb-2">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-sm" style={{ fontWeight: 600 }}>테마</span>
         </div>
         <div className="flex gap-2">
-          {(['system', 'light', 'dark'] as ThemeMode[]).map((m) => {
-            const label = m === 'system' ? '시스템' : m === 'light' ? '라이트' : '다크';
+          {(['light', 'dark'] as ThemeMode[]).map((m) => {
+            const label = m === 'light' ? '라이트' : '다크';
             const selected = themeMode === m;
             return (
               <button
