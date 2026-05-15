@@ -133,18 +133,18 @@ function AIRecommendModal({
           <div
             className="flex items-center justify-center w-6 h-6 rounded-full text-xs"
             style={{
-              backgroundColor: step >= 1 ? '#CDFF00' : '#F3F4F6',
+              backgroundColor: step >= 1 ? 'var(--accent)' : '#F3F4F6',
               fontWeight: 700,
               color: step >= 1 ? '#000' : '#9CA3AF',
             }}
           >
             1
           </div>
-          <div className="flex-1 h-0.5 rounded-full" style={{ backgroundColor: step >= 2 ? '#CDFF00' : '#E5E7EB' }} />
+          <div className="flex-1 h-0.5 rounded-full" style={{ backgroundColor: step >= 2 ? 'var(--accent)' : '#E5E7EB' }} />
           <div
             className="flex items-center justify-center w-6 h-6 rounded-full text-xs"
             style={{
-              backgroundColor: step >= 2 ? '#CDFF00' : '#F3F4F6',
+              backgroundColor: step >= 2 ? 'var(--accent)' : '#F3F4F6',
               fontWeight: 700,
               color: step >= 2 ? '#000' : '#9CA3AF',
             }}
@@ -181,7 +181,7 @@ function AIRecommendModal({
                         onClick={() => toggleIngredient(name)}
                         className="relative py-3 px-2 rounded-xl border-2 text-sm transition-all active:scale-95"
                         style={{
-                          borderColor: isSelected ? '#CDFF00' : '#E5E7EB',
+                          borderColor: isSelected ? 'var(--accent)' : '#E5E7EB',
                           backgroundColor: isSelected ? '#CDFF0015' : '#F9FAFB',
                           fontWeight: isSelected ? 700 : 500,
                           color: isSelected ? '#3D5A00' : '#374151',
@@ -190,7 +190,7 @@ function AIRecommendModal({
                         {isSelected && (
                           <span
                             className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center"
-                            style={{ backgroundColor: '#CDFF00' }}
+                            style={{ backgroundColor: 'var(--accent)' }}
                           >
                             <Check className="w-2.5 h-2.5" style={{ color: '#3D5A00' }} />
                           </span>
@@ -210,7 +210,7 @@ function AIRecommendModal({
                 disabled={selectedIngredients.length === 0}
                 className="w-full py-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-all"
                 style={{
-                  backgroundColor: selectedIngredients.length > 0 ? '#CDFF00' : '#F3F4F6',
+                  backgroundColor: selectedIngredients.length > 0 ? 'var(--accent)' : '#F3F4F6',
                   color: selectedIngredients.length > 0 ? '#000' : '#9CA3AF',
                   fontWeight: 600,
                 }}
@@ -241,7 +241,7 @@ function AIRecommendModal({
                       onClick={() => toggleStyle(id)}
                       className="flex items-center gap-3 py-3.5 px-4 rounded-xl border-2 transition-all active:scale-95"
                       style={{
-                        borderColor: isSelected ? '#CDFF00' : '#E5E7EB',
+                        borderColor: isSelected ? 'var(--accent)' : '#E5E7EB',
                         backgroundColor: isSelected ? '#CDFF0015' : '#F9FAFB',
                       }}
                     >
@@ -278,7 +278,7 @@ function AIRecommendModal({
                 disabled={isLoading}
                 className="flex-1 py-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-all"
                 style={{
-                  backgroundColor: '#CDFF00',
+                  backgroundColor: 'var(--accent)',
                   fontWeight: 700,
                   color: '#000',
                   opacity: isLoading ? 0.7 : 1,
@@ -328,7 +328,7 @@ function AIRecommendModal({
             <button
               onClick={onClose}
               className="mt-5 w-full py-4 rounded-xl text-sm"
-              style={{ backgroundColor: '#CDFF00', fontWeight: 700 }}
+              style={{ backgroundColor: 'var(--accent)', fontWeight: 700 }}
             >
               확인
             </button>
@@ -428,7 +428,7 @@ export default function Recipes() {
             onClick={() => setShowAIModal(true)}
             className="ml-auto flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all active:scale-95 whitespace-nowrap"
             style={{
-              background: 'linear-gradient(135deg, #CDFF00 0%, #A8D400 100%)',
+              background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%)',
               fontWeight: 700,
               color: '#1A3300',
               boxShadow: '0 2px 8px rgba(205,255,0,0.4)',
@@ -606,7 +606,7 @@ function FilterButton({
         active ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
       }`}
       style={{
-        backgroundColor: active ? '#CDFF00' : undefined,
+        backgroundColor: active ? 'var(--accent)' : undefined,
         fontWeight: active ? 600 : 500,
       }}
     >

@@ -229,7 +229,7 @@ export default function AddIngredient() {
           to="/add-by-receipt"
           className="mb-4 flex items-center gap-3 px-4 py-3 bg-black rounded-xl hover:bg-gray-800 transition-colors"
         >
-          <Receipt className="w-5 h-5" style={{ color: '#CDFF00' }} />
+          <Receipt className="w-5 h-5" style={{ color: 'var(--accent)' }} />
           <span className="flex-1 text-white text-sm" style={{ fontWeight: 600 }}>
             영수증으로 여러 개 한 번에 추가
           </span>
@@ -423,7 +423,7 @@ export default function AddIngredient() {
         <button
           type="submit"
           className="w-full rounded-xl py-4 mt-4"
-          style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+          style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
         >
           추가하기
         </button>
@@ -449,7 +449,7 @@ function StorageButton({
         active ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
       }`}
       style={{
-        backgroundColor: active ? '#CDFF00' : undefined,
+        backgroundColor: active ? 'var(--accent)' : undefined,
         fontWeight: active ? 600 : 500,
       }}
     >

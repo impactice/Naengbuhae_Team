@@ -124,7 +124,7 @@ export default function Home() {
         <Link to="/add-ingredient">
           <button
             className="w-full rounded-xl py-4 flex items-center justify-center gap-2"
-            style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+            style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
           >
             <Plus className="w-5 h-5" />
             식재료 추가하기
@@ -205,7 +205,7 @@ export default function Home() {
               <button
                 className="mt-4 px-6 py-2 rounded-lg text-sm"
                 style={{
-                  backgroundColor: '#CDFF00',
+                  backgroundColor: 'var(--accent)',
                   fontWeight: 600,
                 }}
               >

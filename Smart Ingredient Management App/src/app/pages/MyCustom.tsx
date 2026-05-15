@@ -127,7 +127,7 @@ export default function MyCustom() {
           <h1 className="text-2xl mb-1" style={{ fontWeight: 700 }}>나의 맞춤</h1>
           <p className="text-sm text-gray-500">지금은 비로그인 상태예요</p>
         </div>
-        <div className="mx-5 mt-2 p-5 rounded-2xl" style={{ background: 'linear-gradient(135deg, #CDFF00, #B8E600)' }}>
+        <div className="mx-5 mt-2 p-5 rounded-2xl bg-gradient-to-br from-accent to-accent-deep">
           <h2 className="font-bold text-base">로그인하면 더 많은 기능을 사용할 수 있어요</h2>
           <p className="mt-1 text-xs text-gray-800 leading-relaxed">
             가족과 냉장고 공유 / 식단 추천 / 알림 등<br />
@@ -237,11 +237,11 @@ export default function MyCustom() {
         <div className="px-5 pt-5">
           <button
             onClick={() => navigate('/profile/complete')}
-            className="w-full bg-gradient-to-br from-[#CDFF00] to-[#b8e600] rounded-2xl p-5 text-left hover:shadow-lg transition-all"
+            className="w-full bg-gradient-to-br from-accent to-accent-deep rounded-2xl p-5 text-left hover:shadow-lg transition-all"
           >
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-5 h-5 text-[#CDFF00]" />
+                <Sparkles className="w-5 h-5 text-accent" />
               </div>
               <div className="flex-1">
                 <h3 className="font-bold mb-1">정보 입력 마저하기</h3>
@@ -268,7 +268,7 @@ export default function MyCustom() {
             title="회원 정보 수정"
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#CDFF00] rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
                 <User className="w-6 h-6" />
               </div>
               <div>
@@ -321,7 +321,7 @@ export default function MyCustom() {
         <div className="px-5 pb-5">
           <div className="bg-black text-white rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-2">
-              <Flame className="w-5 h-5 text-[#CDFF00]" />
+              <Flame className="w-5 h-5 text-accent" />
               <h3 className="font-semibold">일일 권장 칼로리</h3>
             </div>
             <p className="text-3xl font-bold mb-2">{profile.recommendedCalories.toLocaleString()} kcal</p>
@@ -448,7 +448,7 @@ export default function MyCustom() {
         <div className="grid grid-cols-2 gap-3">
           <Link
             to="/recipes"
-            className="bg-gradient-to-br from-[#CDFF00] to-[#b8e600] rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-gradient-to-br from-accent to-accent-deep rounded-xl p-4 hover:shadow-lg transition-all"
           >
             <ChefHat className="w-8 h-8 mb-2" />
             <p className="font-semibold mb-1">맞춤 레시피</p>

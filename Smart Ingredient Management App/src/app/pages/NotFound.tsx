@@ -15,7 +15,7 @@ export default function NotFound() {
         <Link to="/">
           <button
             className="px-6 py-3 rounded-xl"
-            style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+            style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
           >
             홈으로 돌아가기
           </button>

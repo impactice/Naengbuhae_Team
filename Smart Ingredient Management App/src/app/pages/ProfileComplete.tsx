@@ -189,7 +189,7 @@ export default function ProfileComplete() {
                   onChange={handleChange}
                   placeholder="홍길동"
                   className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                    errors.name ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                    errors.name ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -242,7 +242,7 @@ export default function ProfileComplete() {
                     value={formData.birthYear}
                     onChange={handleChange}
                     className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                      errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                      errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
                     <option value="">년</option>
@@ -257,7 +257,7 @@ export default function ProfileComplete() {
                     value={formData.birthMonth}
                     onChange={handleChange}
                     className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                      errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                      errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
                     <option value="">월</option>
@@ -272,7 +272,7 @@ export default function ProfileComplete() {
                     value={formData.birthDay}
                     onChange={handleChange}
                     className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                      errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                      errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   >
                     <option value="">일</option>
@@ -296,7 +296,7 @@ export default function ProfileComplete() {
                     onChange={handleChange}
                     placeholder="170"
                     className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                      errors.height ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                      errors.height ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
                   {errors.height && <p className="mt-1 text-sm text-red-600">{errors.height}</p>}
@@ -310,7 +310,7 @@ export default function ProfileComplete() {
                     onChange={handleChange}
                     placeholder="65"
                     className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                      errors.weight ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                      errors.weight ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                     }`}
                   />
                   {errors.weight && <p className="mt-1 text-sm text-red-600">{errors.weight}</p>}
@@ -329,7 +329,7 @@ export default function ProfileComplete() {
                   value={formData.activityLevel}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                    errors.activityLevel ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                    errors.activityLevel ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 >
                   <option value="">선택해주세요</option>
@@ -349,7 +349,7 @@ export default function ProfileComplete() {
                   value={formData.dietGoal}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
-                    errors.dietGoal ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
+                    errors.dietGoal ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-accent'
                   }`}
                 >
                   <option value="">선택해주세요</option>
@@ -371,7 +371,7 @@ export default function ProfileComplete() {
                   onChange={handleChange}
                   placeholder="예: 땅콩, 해산물, 유제품"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all resize-none"
                 />
               </div>
             </div>

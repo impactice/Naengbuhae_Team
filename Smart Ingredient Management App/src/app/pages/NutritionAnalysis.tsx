@@ -121,7 +121,7 @@ export default function NutritionAnalysis() {
           <p className="text-gray-400">등록된 식재료가 없습니다</p>
           <Link
             to="/add-ingredient"
-            className="inline-block mt-4 px-6 py-3 bg-[#CDFF00] rounded-xl font-semibold hover:bg-[#b8e600] transition-colors"
+            className="inline-block mt-4 px-6 py-3 bg-accent hover:bg-accent-deep rounded-xl font-semibold transition-colors"
           >
             식재료 추가하기
           </Link>
@@ -130,7 +130,7 @@ export default function NutritionAnalysis() {
         <>
           {/* 전체 영양 요약 */}
           <div className="px-5 py-5">
-            <div className="bg-gradient-to-br from-[#CDFF00] to-[#b8e600] rounded-2xl p-5">
+            <div className="bg-gradient-to-br from-accent to-accent-deep rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-5 h-5" />
                 <h2 className="font-semibold">전체 식재료 영양 정보</h2>
@@ -206,7 +206,7 @@ export default function NutritionAnalysis() {
                   <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="calories" fill="#CDFF00" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="calories" fill="var(--accent)" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

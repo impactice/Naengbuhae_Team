@@ -171,7 +171,7 @@ export default function Ingredients() {
             <Link to="/add-ingredient" className="flex-1">
               <button
                 className="w-full rounded-xl py-4 flex items-center justify-center gap-2"
-                style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
               >
                 <Plus className="w-5 h-5" />
                 식재료 추가하기
@@ -351,7 +351,7 @@ export default function Ingredients() {
                   className={`rounded-xl p-4 relative group transition-colors ${
                     selectionMode
                       ? isSelected
-                        ? 'bg-green-50 dark:bg-green-900/30 border-2 border-[#CDFF00] cursor-pointer'
+                        ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent cursor-pointer'
                         : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer'
                       : isHighlighted
                       ? 'bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-300 dark:border-yellow-700 ring-2 ring-yellow-200 dark:ring-yellow-800/50'
@@ -364,7 +364,7 @@ export default function Ingredients() {
                         <div
                           className={`w-5 h-5 rounded-md flex items-center justify-center border-2 ${
                             isSelected
-                              ? 'bg-[#CDFF00] border-[#CDFF00]'
+                              ? 'bg-accent border-accent'
                               : 'bg-white border-gray-300'
                           }`}
                         >

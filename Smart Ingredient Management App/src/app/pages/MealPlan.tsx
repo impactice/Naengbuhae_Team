@@ -138,7 +138,7 @@ export default function MealPlan() {
               selectedDays === 1 ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
             }`}
             style={{
-              backgroundColor: selectedDays === 1 ? '#CDFF00' : undefined,
+              backgroundColor: selectedDays === 1 ? 'var(--accent)' : undefined,
               fontWeight: selectedDays === 1 ? 600 : 500,
             }}
           >
@@ -150,7 +150,7 @@ export default function MealPlan() {
               selectedDays === 3 ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
             }`}
             style={{
-              backgroundColor: selectedDays === 3 ? '#CDFF00' : undefined,
+              backgroundColor: selectedDays === 3 ? 'var(--accent)' : undefined,
               fontWeight: selectedDays === 3 ? 600 : 500,
             }}
           >
@@ -162,7 +162,7 @@ export default function MealPlan() {
               selectedDays === 7 ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
             }`}
             style={{
-              backgroundColor: selectedDays === 7 ? '#CDFF00' : undefined,
+              backgroundColor: selectedDays === 7 ? 'var(--accent)' : undefined,
               fontWeight: selectedDays === 7 ? 600 : 500,
             }}
           >
@@ -235,9 +235,9 @@ export default function MealPlan() {
                 <Line 
                   type="monotone" 
                   dataKey="칼로리" 
-                  stroke="#CDFF00" 
+                  stroke="var(--accent)"
                   strokeWidth={3}
-                  dot={{ fill: '#CDFF00', r: 4 }}
+                  dot={{ fill: 'var(--accent)', r: 4 }}
                 />
                 <Line 
                   type="monotone" 

@@ -196,7 +196,7 @@ export default function AddByReceipt() {
           <button
             onClick={pickFile}
             className="px-6 py-3 rounded-xl"
-            style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+            style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
           >
             영수증 촬영/선택
           </button>
@@ -294,7 +294,7 @@ export default function AddByReceipt() {
             onClick={saveAll}
             disabled={saving}
             className="w-full py-4 rounded-xl disabled:opacity-60"
-            style={{ backgroundColor: '#CDFF00', fontWeight: 700 }}
+            style={{ backgroundColor: 'var(--accent)', fontWeight: 700 }}
           >
             {saving ? '저장 중...' : `선택한 ${selectedCount}개 추가하기`}
           </button>

@@ -193,7 +193,7 @@ export default function ShoppingList() {
             <button
               onClick={() => setShowAddForm(true)}
               className="flex-1 rounded-xl py-4 flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+              style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
             >
               <Plus className="w-5 h-5" />
               항목 추가하기
@@ -247,7 +247,7 @@ export default function ShoppingList() {
               <button
                 type="submit"
                 className="flex-1 py-3 rounded-xl"
-                style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+                style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
               >
                 추가
               </button>
@@ -322,14 +322,14 @@ export default function ShoppingList() {
                       className={`rounded-xl p-4 flex items-center gap-3 transition-colors ${
                         selectionMode
                           ? isSelected
-                            ? 'bg-green-50 dark:bg-green-900/30 border-2 border-[#CDFF00] cursor-pointer'
+                            ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent cursor-pointer'
                             : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer'
                           : 'bg-gray-50 dark:bg-gray-800'
                       }`}
                     >
                       {selectionMode ? (
                         <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 flex-shrink-0 ${
-                          isSelected ? 'bg-[#CDFF00] border-[#CDFF00]' : 'bg-white border-gray-300'
+                          isSelected ? 'bg-accent border-accent' : 'bg-white border-gray-300'
                         }`}>
                           {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
                         </div>
@@ -359,7 +359,7 @@ export default function ShoppingList() {
                           <button
                             onClick={() => handleTransfer(item.id, item.name)}
                             disabled={transferringIds.includes(item.id)}
-                            className="px-3 py-2 text-xs rounded-lg bg-[#CDFF00] hover:bg-[#b8e600] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            className="px-3 py-2 text-xs rounded-lg bg-accent hover:bg-accent-deep transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             style={{ fontWeight: 600 }}
                           >
                             {transferringIds.includes(item.id) ? '이관 중...' : '냉장고 이관'}
@@ -389,14 +389,14 @@ export default function ShoppingList() {
                       className={`rounded-xl p-4 flex items-center gap-3 transition-colors ${
                         selectionMode
                           ? isSelected
-                            ? 'bg-green-50 dark:bg-green-900/30 border-2 border-[#CDFF00] cursor-pointer'
+                            ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent cursor-pointer'
                             : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer opacity-60'
                           : 'bg-gray-50 dark:bg-gray-800 opacity-60'
                       }`}
                     >
                       {selectionMode ? (
                         <div className={`w-5 h-5 rounded-md flex items-center justify-center border-2 flex-shrink-0 ${
-                          isSelected ? 'bg-[#CDFF00] border-[#CDFF00]' : 'bg-white border-gray-300'
+                          isSelected ? 'bg-accent border-accent' : 'bg-white border-gray-300'
                         }`}>
                           {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
                         </div>
@@ -404,7 +404,7 @@ export default function ShoppingList() {
                         <button
                           onClick={() => toggleShoppingItem(item.id)}
                           className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center"
-                          style={{ backgroundColor: '#CDFF00' }}
+                          style={{ backgroundColor: 'var(--accent)' }}
                         >
                           <Check className="w-4 h-4" />
                         </button>

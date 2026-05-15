@@ -77,7 +77,7 @@ export default function RecipeDetail() {
           <button
             onClick={() => navigate('/recipes')}
             className="px-6 py-3 rounded-xl"
-            style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+            style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
           >
             목록으로 돌아가기
           </button>
@@ -133,7 +133,7 @@ export default function RecipeDetail() {
                 onClick={handleBulkAdd}
                 disabled={adding}
                 className="flex-1 py-3 rounded-xl text-sm disabled:opacity-50"
-                style={{ backgroundColor: '#CDFF00', fontWeight: 700 }}
+                style={{ backgroundColor: 'var(--accent)', fontWeight: 700 }}
               >
                 {adding ? '추가 중...' : '장보기에 추가'}
               </button>
@@ -173,7 +173,7 @@ export default function RecipeDetail() {
               style={{
                 backgroundColor:
                   match.matchRate >= 100
-                    ? '#CDFF00'
+                    ? 'var(--accent)'
                     : match.matchRate >= 50
                     ? '#FFD60A40'
                     : '#FF3B3040',
@@ -280,7 +280,7 @@ export default function RecipeDetail() {
               <div
                 className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs"
                 style={{
-                  backgroundColor: '#CDFF00',
+                  backgroundColor: 'var(--accent)',
                   fontWeight: 600,
                 }}
               >
@@ -354,7 +354,7 @@ export default function RecipeDetail() {
           <Link to="/shopping-list" className="flex-1">
             <button
               className="w-full py-4 rounded-xl"
-              style={{ backgroundColor: '#CDFF00', fontWeight: 600 }}
+              style={{ backgroundColor: 'var(--accent)', fontWeight: 600 }}
             >
               장보기 리스트 보기
             </button>

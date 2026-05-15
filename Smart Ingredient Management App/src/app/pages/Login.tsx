@@ -115,7 +115,7 @@ export default function Login() {
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })
               }
-              className="w-full px-4 py-4 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] transition-all"
+              className="w-full px-4 py-4 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
             />
           </div>
 
@@ -127,7 +127,7 @@ export default function Login() {
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full px-4 py-4 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] transition-all pr-12"
+              className="w-full px-4 py-4 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all pr-12"
             />
             <button
               type="button"
@@ -236,7 +236,7 @@ export default function Login() {
           <Link
             to="/signup"
             className="font-semibold hover:underline"
-            style={{ color: '#CDFF00', textShadow: '0 0 1px rgba(0,0,0,0.3)' }}
+            style={{ color: 'var(--accent)', textShadow: '0 0 1px rgba(0,0,0,0.3)' }}
           >
             회원가입
           </Link>
