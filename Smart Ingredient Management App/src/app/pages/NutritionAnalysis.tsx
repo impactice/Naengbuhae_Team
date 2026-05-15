@@ -104,7 +104,7 @@ export default function NutritionAnalysis() {
   if (isGuest()) return <GuestBlocked feature="영양 분석" />;
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
       {/* 헤더 */}
       <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-4 flex items-center z-10">
         <Link to="/my-custom" className="p-2 -ml-2 hover:bg-gray-50 rounded-lg transition-colors">

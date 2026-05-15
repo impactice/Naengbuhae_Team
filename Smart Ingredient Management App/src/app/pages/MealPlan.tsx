@@ -104,7 +104,7 @@ export default function MealPlan() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <p className="text-gray-500">식단 데이터를 불러오는 중...</p>
       </div>
     );
@@ -113,7 +113,7 @@ export default function MealPlan() {
   if (isGuest()) return <GuestBlocked feature="식단 계획" />;
 
   return (
-    <div className="min-h-screen bg-white pb-4">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-4">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4">
         <div className="flex items-center gap-3 mb-1">

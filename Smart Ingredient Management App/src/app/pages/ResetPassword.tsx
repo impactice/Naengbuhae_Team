@@ -47,7 +47,7 @@ export default function ResetPassword() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
+      <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center items-center px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-xl mb-2" style={{ fontWeight: 700 }}>잘못된 링크</h1>
@@ -62,7 +62,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center px-4">
+    <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center items-center px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         {!done ? (
           <>

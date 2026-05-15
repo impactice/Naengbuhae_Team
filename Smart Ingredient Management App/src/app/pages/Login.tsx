@@ -92,8 +92,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-      <div className="w-full max-w-md bg-white min-h-screen shadow-xl flex flex-col">
+    <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center items-center">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl flex flex-col">
         <div className="flex-1 flex flex-col justify-center px-6 py-12">
           {/* 로고/타이틀 영역 */}
           <div className="mb-12">

@@ -265,8 +265,8 @@ export default function SignUp() {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center">
-      <div className="w-full max-w-md bg-white min-h-screen shadow-xl">
+    <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl">
         {/* 헤더 */}
         <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-4 flex items-center z-10">
           <button

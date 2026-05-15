@@ -3,7 +3,7 @@ import { AlertCircle } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-5">
+    <div className="min-h-screen bg-white dark:bg-gray-900 dark:text-gray-100 flex items-center justify-center px-5">
       <div className="text-center">
         <AlertCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
         <h1 className="text-2xl mb-2" style={{ fontWeight: 700 }}>

@@ -158,7 +158,7 @@ export default function AddByReceipt() {
   if (isGuest()) return <GuestBlocked feature="영수증 인식" />;
 
   return (
-    <div className="min-h-screen bg-white pb-40">
+    <div className="min-h-screen bg-white dark:bg-gray-900 pb-40">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
