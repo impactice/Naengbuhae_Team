@@ -173,7 +173,7 @@ export default function ShoppingList() {
             <button
               type="button"
               onClick={selectAll}
-              className="flex-1 py-3 rounded-xl bg-gray-100 text-sm"
+              className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-sm"
               style={{ fontWeight: 600 }}
             >
               전체 선택 ({shoppingList.length})
@@ -202,7 +202,7 @@ export default function ShoppingList() {
               type="button"
               onClick={enterSelectionMode}
               disabled={shoppingList.length === 0}
-              className="rounded-xl py-4 px-4 bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="rounded-xl py-4 px-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="선택"
             >
               <CheckSquare className="w-5 h-5 text-gray-700" />
@@ -216,7 +216,7 @@ export default function ShoppingList() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="상품 이름"
-                className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-black"
+                className="w-full px-4 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
                 autoFocus
               />
             </div>
@@ -226,14 +226,14 @@ export default function ShoppingList() {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="1"
-                className="flex-1 px-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-black"
+                className="flex-1 px-4 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
                 min="0"
                 step="0.1"
               />
               <select
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
-                className="w-24 px-4 py-3 bg-white rounded-xl border border-gray-200 focus:outline-none focus:border-black"
+                className="w-24 px-4 py-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
               >
                 <option value="개">개</option>
                 <option value="g">g</option>
@@ -259,7 +259,7 @@ export default function ShoppingList() {
                   setQuantity('1');
                   setUnit('개');
                 }}
-                className="flex-1 py-3 bg-gray-100 rounded-xl"
+                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl"
                 style={{ fontWeight: 600 }}
               >
                 취소
@@ -323,8 +323,8 @@ export default function ShoppingList() {
                         selectionMode
                           ? isSelected
                             ? 'bg-green-50 dark:bg-green-900/30 border-2 border-[#CDFF00] cursor-pointer'
-                            : 'bg-gray-50 border-2 border-transparent cursor-pointer'
-                          : 'bg-gray-50'
+                            : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer'
+                          : 'bg-gray-50 dark:bg-gray-800'
                       }`}
                     >
                       {selectionMode ? (
@@ -390,8 +390,8 @@ export default function ShoppingList() {
                         selectionMode
                           ? isSelected
                             ? 'bg-green-50 dark:bg-green-900/30 border-2 border-[#CDFF00] cursor-pointer'
-                            : 'bg-gray-50 border-2 border-transparent cursor-pointer opacity-60'
-                          : 'bg-gray-50 opacity-60'
+                            : 'bg-gray-50 dark:bg-gray-800 border-2 border-transparent cursor-pointer opacity-60'
+                          : 'bg-gray-50 dark:bg-gray-800 opacity-60'
                       }`}
                     >
                       {selectionMode ? (

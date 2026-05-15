@@ -268,10 +268,10 @@ export default function SignUp() {
     <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center">
       <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 min-h-screen shadow-xl">
         {/* 헤더 */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-4 flex items-center z-10">
+        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-4 flex items-center z-10">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 hover:bg-gray-50 rounded-lg transition-colors"
+            className="p-2 -ml-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -294,7 +294,7 @@ export default function SignUp() {
 
           {/* 전체 에러 메시지 */}
           {errors.submit && (
-            <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 text-sm">
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-800/50 rounded-xl text-red-700 dark:text-red-300 text-sm">
               {errors.submit}
             </div>
           )}
@@ -313,7 +313,7 @@ export default function SignUp() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="홍길동"
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                     errors.name ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                   }`}
                 />
@@ -334,8 +334,8 @@ export default function SignUp() {
                       formData.gender === '남'
                         ? 'bg-black text-white'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 text-gray-600'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
                     남성
@@ -350,8 +350,8 @@ export default function SignUp() {
                       formData.gender === '여'
                         ? 'bg-black text-white'
                         : errors.gender
-                        ? 'border-2 border-red-500 bg-gray-50 text-gray-600'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        ? 'border-2 border-red-500 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300'
+                        : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
                     여성
@@ -368,7 +368,7 @@ export default function SignUp() {
                     name="birthYear"
                     value={formData.birthYear}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   >
@@ -383,7 +383,7 @@ export default function SignUp() {
                     name="birthMonth"
                     value={formData.birthMonth}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   >
@@ -398,7 +398,7 @@ export default function SignUp() {
                     name="birthDay"
                     value={formData.birthDay}
                     onChange={handleChange}
-                    className={`px-3 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`px-3 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.birthDate ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   >
@@ -423,7 +423,7 @@ export default function SignUp() {
                     value={formData.height}
                     onChange={handleChange}
                     placeholder="170"
-                    className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.height ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   />
@@ -437,7 +437,7 @@ export default function SignUp() {
                     value={formData.weight}
                     onChange={handleChange}
                     placeholder="65"
-                    className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                       errors.weight ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   />
@@ -457,7 +457,7 @@ export default function SignUp() {
                   name="activityLevel"
                   value={formData.activityLevel}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                     errors.activityLevel ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                   }`}
                 >
@@ -478,7 +478,7 @@ export default function SignUp() {
                   name="dietGoal"
                   value={formData.dietGoal}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                     errors.dietGoal ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                   }`}
                 >
@@ -502,7 +502,7 @@ export default function SignUp() {
                   onChange={handleChange}
                   placeholder="예: 땅콩, 해산물, 유제품"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] transition-all resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] transition-all resize-none"
                 />
               </div>
             </div>
@@ -522,12 +522,12 @@ export default function SignUp() {
                     onChange={handleChange}
                     placeholder="example@email.com"
                     disabled={verification.verifiedEmail === formData.email.trim() && !!verification.verifiedEmail}
-                    className={`flex-1 px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all disabled:opacity-60 ${
+                    className={`flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all disabled:opacity-60 ${
                       errors.email ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   />
                   {verification.verifiedEmail === formData.email.trim() && verification.verifiedEmail ? (
-                    <span className="px-4 py-3 bg-green-50 text-green-700 rounded-xl text-sm font-semibold flex items-center gap-1">
+                    <span className="px-4 py-3 bg-green-50 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-xl text-sm font-semibold flex items-center gap-1">
                       <Check className="w-4 h-4" /> 인증완료
                     </span>
                   ) : (
@@ -553,7 +553,7 @@ export default function SignUp() {
                       value={verification.code}
                       onChange={(e) => setVerification(v => ({ ...v, code: e.target.value.replace(/\D/g, '') }))}
                       placeholder="6자리 인증번호"
-                      className="flex-1 px-4 py-3 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] tracking-widest"
+                      className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CDFF00] tracking-widest"
                     />
                     <button
                       type="button"
@@ -580,7 +580,7 @@ export default function SignUp() {
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="영문, 숫자 조합 6자 이상"
-                  className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all ${
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all ${
                     errors.username ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                   }`}
                 />
@@ -597,7 +597,7 @@ export default function SignUp() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="영문, 숫자, 특수문자 조합 8자 이상"
-                    className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all pr-12 ${
+                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all pr-12 ${
                       errors.password ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   />
@@ -623,7 +623,7 @@ export default function SignUp() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="비밀번호를 다시 입력해주세요"
-                    className={`w-full px-4 py-3 bg-gray-50 rounded-xl focus:outline-none transition-all pr-12 ${
+                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl focus:outline-none transition-all pr-12 ${
                       errors.confirmPassword ? 'border-2 border-red-500' : 'focus:ring-2 focus:ring-[#CDFF00]'
                     }`}
                   />

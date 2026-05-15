@@ -115,7 +115,7 @@ export default function NotificationCenter() {
                 onClick={() => onTap(item)}
                 className={`w-full text-left rounded-xl p-4 border transition-colors ${
                   item.read
-                    ? 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                    ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                     : 'bg-lime-50 dark:bg-lime-900/30 border-lime-200 dark:border-lime-800/50 hover:bg-lime-100 dark:hover:bg-lime-900/40'
                 }`}
               >

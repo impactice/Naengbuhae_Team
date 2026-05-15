@@ -123,7 +123,7 @@ export default function RecipeDetail() {
                 type="button"
                 onClick={dismissDialog}
                 disabled={adding}
-                className="flex-1 py-3 bg-gray-100 rounded-xl text-sm disabled:opacity-50"
+                className="flex-1 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl text-sm disabled:opacity-50"
                 style={{ fontWeight: 600 }}
               >
                 괜찮아요
@@ -153,7 +153,7 @@ export default function RecipeDetail() {
         <button
           type="button"
           onClick={() => void toggleFavorite(recipe.id)}
-          className="p-1.5 rounded-lg hover:bg-gray-100"
+          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
           aria-label="즐겨찾기"
         >
           <Heart
@@ -253,7 +253,7 @@ export default function RecipeDetail() {
                         ingredient.unit
                       )
                     }
-                    className="ml-2 p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="ml-2 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
                   >
                     <Plus className="w-4 h-4 text-gray-600" />
                   </button>
@@ -339,13 +339,13 @@ export default function RecipeDetail() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-5">
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-5">
         <div className="max-w-screen-sm mx-auto flex gap-2">
           {missingNotInList.length > 0 && (
             <button
               onClick={handleBulkAdd}
               disabled={adding}
-              className="flex-1 py-4 bg-gray-100 rounded-xl disabled:opacity-50"
+              className="flex-1 py-4 bg-gray-100 dark:bg-gray-800 rounded-xl disabled:opacity-50"
               style={{ fontWeight: 600 }}
             >
               {adding ? '추가 중...' : `부족한 재료 ${missingNotInList.length}개 추가`}

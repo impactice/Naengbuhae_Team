@@ -48,7 +48,7 @@ export default function ResetPassword() {
   if (!token) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center items-center px-4">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl shadow-xl p-8 text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-xl mb-2" style={{ fontWeight: 700 }}>잘못된 링크</h1>
           <p className="text-sm text-gray-500 mb-6">토큰이 없거나 유효하지 않습니다.</p>
@@ -63,7 +63,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-black flex justify-center items-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl shadow-xl p-8">
         {!done ? (
           <>
             <h1 className="text-2xl mb-2" style={{ fontWeight: 700 }}>새 비밀번호 설정</h1>
@@ -79,7 +79,7 @@ export default function ResetPassword() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="새 비밀번호"
                   autoFocus
-                  className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:border-black pr-12"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black pr-12"
                 />
                 <button
                   type="button"
@@ -95,7 +95,7 @@ export default function ResetPassword() {
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="비밀번호 확인"
-                className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:border-black"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-black"
               />
 
               {error && (
@@ -114,7 +114,7 @@ export default function ResetPassword() {
           </>
         ) : (
           <div className="text-center">
-            <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-14 h-14 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-7 h-7 text-green-600" />
             </div>
             <h1 className="text-xl mb-2" style={{ fontWeight: 700 }}>비밀번호가 변경되었습니다</h1>
