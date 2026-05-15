@@ -157,7 +157,7 @@ export default function MyCustom() {
                 }}
                 className="w-full flex items-center gap-3 p-4 mb-2 bg-gray-50 rounded-xl text-left"
               >
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
                   <Icon className="w-5 h-5 text-gray-400" />
                 </div>
                 <div className="flex-1">
@@ -371,12 +371,12 @@ export default function MyCustom() {
           onClick={() => setUnread(0)}
           className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
             <Bell className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <p className="font-semibold">알림</p>
-            <p className="text-xs text-gray-500">받은 알림 내역 (가족 활동 / 멤버 변경)</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">받은 알림 내역 (가족 활동 / 멤버 변경)</p>
           </div>
           {unread > 0 && (
             <span
@@ -396,12 +396,12 @@ export default function MyCustom() {
           to="/fridges"
           className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
             <Refrigerator className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <p className="font-semibold">냉장고 관리</p>
-            <p className="text-xs text-gray-500">가족 공유, 초대 코드, 김치냉장고 추가 등</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">가족 공유, 초대 코드, 김치냉장고 추가 등</p>
           </div>
           <ChevronRight className="w-5 h-5 text-gray-400" />
         </Link>
@@ -413,12 +413,12 @@ export default function MyCustom() {
           to="/family-activity"
           className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
             <Users className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <p className="font-semibold">가족 활동</p>
-            <p className="text-xs text-gray-500">멤버별 추가/소비 + 자주 사는 식재료 TOP</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">멤버별 추가/소비 + 자주 사는 식재료 TOP</p>
           </div>
           <ChevronRight className="w-5 h-5 text-gray-400" />
         </Link>

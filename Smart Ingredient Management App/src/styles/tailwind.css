@@ -9,7 +9,7 @@
 
 /* 브랜드 액센트 색 (식재료 추가 버튼 등 primary 색)
    라이트: 형광 라임 #CDFF00 (브랜드)
-   다크: 채도/명도 낮춘 라임 #A3CC0E — 어두운 배경에서 눈피로 감소
+   다크: 형광 라임이 너무 눈아파서 차분한 청록 #7BCAD5로 — 어두운 배경에 잘 어울림
    사용처: bg-accent / text-accent / border-accent (Tailwind 유틸) 또는
    inline 스타일에서 var(--accent) */
 @theme {
@@ -23,10 +23,10 @@
 }
 
 .dark {
-  --accent: #A3CC0E;
-  --accent-deep: #8FB300;
-  --color-accent: #A3CC0E;
-  --color-accent-deep: #8FB300;
+  --accent: #7BCAD5;
+  --accent-deep: #5EAFBE;
+  --color-accent: #7BCAD5;
+  --color-accent-deep: #5EAFBE;
 }
 
 /* Tailwind v4는 button 기본 커서를 default로 리셋함 → 클릭 가능 요소에 포인터 복원
