@@ -116,7 +116,7 @@ export default function NotificationCenter() {
                 className={`w-full text-left rounded-xl p-4 border transition-colors ${
                   item.read
                     ? 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-                    : 'bg-lime-50 border-lime-200 hover:bg-lime-100'
+                    : 'bg-lime-50 dark:bg-lime-900/30 border-lime-200 dark:border-lime-800/50 hover:bg-lime-100 dark:hover:bg-lime-900/40'
                 }`}
               >
                 <div className="flex items-start gap-3">

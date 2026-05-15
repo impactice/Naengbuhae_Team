@@ -56,7 +56,7 @@ export default function Priority() {
       {/* 상태 그래프 — 도넛으로 비율, 옆 stat box로 개수 */}
       {ingredients.length > 0 && (
         <div className="px-5 pb-4">
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-5 border border-purple-100 dark:border-purple-800/50">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-purple-600" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
@@ -99,9 +99,9 @@ export default function Priority() {
                 {categoryData.map((c) => {
                   const pct = ingredients.length === 0 ? 0 : Math.round((c.value / ingredients.length) * 100);
                   const bg =
-                    c.name === '위험' ? 'bg-red-50'
-                    : c.name === '주의' ? 'bg-yellow-50'
-                    : 'bg-green-50';
+                    c.name === '위험' ? 'bg-red-50 dark:bg-red-900/30'
+                    : c.name === '주의' ? 'bg-yellow-50 dark:bg-yellow-900/30'
+                    : 'bg-green-50 dark:bg-green-900/30';
                   return (
                     <div key={c.name} className={`${bg} rounded-lg p-2 text-center min-w-[80px]`}>
                       <div className="flex items-center justify-center gap-1.5 text-xs text-gray-600">
@@ -122,7 +122,7 @@ export default function Priority() {
 
       {/* 우선순위 요약 */}
       <div className="px-5 pb-6">
-        <div className="bg-red-50 rounded-xl p-4 border border-red-100">
+        <div className="bg-red-50 dark:bg-red-900/30 rounded-xl p-4 border border-red-100 dark:border-red-800/50">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -296,7 +296,7 @@ function PriorityCard({
         </div>
         <button
           onClick={() => onDelete(ingredient.id, ingredient.name)}
-          className="ml-3 p-2 hover:bg-red-50 rounded-lg transition-colors"
+          className="ml-3 p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
         >
           <Trash2 className="w-5 h-5 text-red-500" />
         </button>

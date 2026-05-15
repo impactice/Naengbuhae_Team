@@ -53,15 +53,15 @@ export default function Home() {
       {/* 식재료 상태 대시보드 */}
       {totalItems > 0 && (
         <div className="px-5 pb-4">
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-5 border border-purple-100 dark:border-purple-800/50">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-lg mb-1" style={{ fontWeight: 600 }}>
                   식재료 상태
                 </h2>
-                <p className="text-xs text-gray-600">현재 냉장고 상태를 확인하세요</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">현재 냉장고 상태를 확인하세요</p>
               </div>
-              <TrendingUp className="w-5 h-5 text-purple-600" />
+              <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-300" />
             </div>
             
             <div className="flex items-center gap-4">
@@ -87,7 +87,7 @@ export default function Home() {
               {/* 통계 */}
               <div className="flex-1 space-y-2">
                 {dangerItems.length > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg">
+                  <div className="flex items-center justify-between py-2 px-3 bg-red-50 dark:bg-red-900/30 rounded-lg">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-red-500" />
                       <span className="text-sm" style={{ fontWeight: 600 }}>위험</span>
@@ -96,7 +96,7 @@ export default function Home() {
                   </div>
                 )}
                 {warningItems.length > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 bg-yellow-50 rounded-lg">
+                  <div className="flex items-center justify-between py-2 px-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-yellow-500" />
                       <span className="text-sm" style={{ fontWeight: 600 }}>주의</span>
@@ -105,7 +105,7 @@ export default function Home() {
                   </div>
                 )}
                 {safeItems.length > 0 && (
-                  <div className="flex items-center justify-between py-2 px-3 bg-green-50 rounded-lg">
+                  <div className="flex items-center justify-between py-2 px-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-green-500" />
                       <span className="text-sm" style={{ fontWeight: 600 }}>안전</span>
@@ -136,23 +136,23 @@ export default function Home() {
       <div className="px-5 pb-4">
         <div className="grid grid-cols-2 gap-3">
           <Link to="/recipes">
-            <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-200 relative overflow-hidden">
-              <ChefHat className="w-6 h-6 text-orange-600 mb-2" />
+            <div className="bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-900/30 dark:to-yellow-900/30 rounded-xl p-4 border border-orange-200 dark:border-orange-800/50 relative overflow-hidden">
+              <ChefHat className="w-6 h-6 text-orange-600 dark:text-orange-300 mb-2" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
                 레시피 추천
               </h3>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                 보유 재료로 요리하기
               </p>
             </div>
           </Link>
           <Link to="/meal-plan">
-            <div className="bg-gradient-to-br from-green-50 to-lime-50 rounded-xl p-4 border border-green-200 relative overflow-hidden">
-              <Calendar className="w-6 h-6 text-green-600 mb-2" />
+            <div className="bg-gradient-to-br from-green-50 to-lime-50 dark:from-green-900/30 dark:to-lime-900/30 rounded-xl p-4 border border-green-200 dark:border-green-800/50 relative overflow-hidden">
+              <Calendar className="w-6 h-6 text-green-600 dark:text-green-300 mb-2" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
                 식단 추천
               </h3>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                 균형잡힌 식단 구성
               </p>
             </div>
@@ -163,16 +163,16 @@ export default function Home() {
       {/* 유통기한 임박 알림 */}
       {(dangerItems.length > 0 || warningItems.length > 0) && (
         <div className="px-5 pb-4">
-          <div className="bg-red-50 rounded-xl p-4 border border-red-100 relative overflow-hidden">
+          <div className="bg-red-50 dark:bg-red-900/30 rounded-xl p-4 border border-red-100 dark:border-red-800/50 relative overflow-hidden">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <h3 className="text-sm" style={{ fontWeight: 600 }}>
                   {dangerItems.length > 0
                     ? `유통기한이 지난 식재료가 ${dangerItems.length}개 있어요`
                     : `유통기한이 임박한 식재료가 ${warningItems.length}개 있어요`}
                 </h3>
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                   빨리 소비하거나 정리해 주세요
                 </p>
               </div>

@@ -442,7 +442,7 @@ export default function Recipes() {
 
       {/* 재료 부족 안내 */}
       {ingredients.length === 0 && (
-        <div className="mx-5 mb-4 bg-yellow-50 rounded-xl p-4 border border-yellow-100">
+        <div className="mx-5 mb-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-xl p-4 border border-yellow-100 dark:border-yellow-800/50">
           <p className="text-sm" style={{ fontWeight: 600 }}>
             등록된 식재료가 없습니다
           </p>

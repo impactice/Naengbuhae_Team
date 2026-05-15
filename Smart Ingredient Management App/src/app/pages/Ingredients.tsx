@@ -179,7 +179,7 @@ export default function Ingredients() {
             </Link>
             <Link to="/nutrition">
               <button
-                className="rounded-xl py-4 px-4 flex items-center justify-center bg-gradient-to-br from-green-50 to-white border-2 border-green-200 hover:shadow-md transition-all"
+                className="rounded-xl py-4 px-4 flex items-center justify-center bg-gradient-to-br from-green-50 to-white dark:from-green-900/30 dark:to-gray-800 border-2 border-green-200 dark:border-green-800/50 hover:shadow-md transition-all"
                 title="영양 분석"
               >
                 <Sparkles className="w-5 h-5 text-green-600" />
@@ -303,7 +303,7 @@ export default function Ingredients() {
           onClick={() => setShowExpiredOnly((v) => !v)}
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-colors ${
             showExpiredOnly
-              ? 'bg-red-50 border-red-200 text-red-600'
+              ? 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-300'
               : 'bg-gray-100 border-transparent text-gray-600 hover:bg-gray-200'
           }`}
           style={{ fontWeight: showExpiredOnly ? 600 : 500 }}
@@ -351,10 +351,10 @@ export default function Ingredients() {
                   className={`rounded-xl p-4 relative group transition-colors ${
                     selectionMode
                       ? isSelected
-                        ? 'bg-green-50 border-2 border-[#CDFF00] cursor-pointer'
+                        ? 'bg-green-50 dark:bg-green-900/30 border-2 border-[#CDFF00] cursor-pointer'
                         : 'bg-gray-50 border-2 border-transparent cursor-pointer'
                       : isHighlighted
-                      ? 'bg-yellow-50 border-2 border-yellow-300 ring-2 ring-yellow-200'
+                      ? 'bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-300 dark:border-yellow-700 ring-2 ring-yellow-200 dark:ring-yellow-800/50'
                       : 'bg-gray-50'
                   }`}
                 >
@@ -389,7 +389,7 @@ export default function Ingredients() {
                         </span>
                         {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
                           <span
-                            className="px-2 py-0.5 rounded text-xs flex items-center gap-1 bg-red-100 text-red-700"
+                            className="px-2 py-0.5 rounded text-xs flex items-center gap-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
                             style={{ fontWeight: 600 }}
                             title={`알레르기: ${ingredient.allergyWarnings.join(', ')}`}
                           >
@@ -428,7 +428,7 @@ export default function Ingredients() {
                     {!selectionMode && (
                       <button
                         onClick={() => handleDelete(ingredient.id, ingredient.name)}
-                        className="ml-3 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        className="ml-3 p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-5 h-5 text-red-500" />
                       </button>

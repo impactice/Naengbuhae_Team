@@ -427,15 +427,15 @@ export default function MyCustom() {
       {/* 알레르기 정보 */}
       {profile.allergies && (
         <div className="px-5 pb-5">
-          <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-5">
+          <div className="bg-red-50 dark:bg-red-900/30 border-2 border-red-200 dark:border-red-800/50 rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
-              <h3 className="font-semibold text-red-900">알레르기 주의</h3>
+              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <h3 className="font-semibold text-red-900 dark:text-red-200">알레르기 주의</h3>
             </div>
-            <p className="text-red-800 leading-relaxed">
+            <p className="text-red-800 dark:text-red-300 leading-relaxed">
               {profile.allergies}
             </p>
-            <p className="text-xs text-red-600 mt-3">
+            <p className="text-xs text-red-600 dark:text-red-400 mt-3">
               ⚠️ 레시피 추천 시 해당 식재료는 제외됩니다
             </p>
           </div>
@@ -459,7 +459,7 @@ export default function MyCustom() {
 
           <Link
             to="/meal-plan"
-            className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/30 dark:to-gray-800 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 hover:shadow-lg transition-all"
           >
             <Calendar className="w-8 h-8 mb-2 text-blue-600" />
             <p className="font-semibold mb-1">식단 계획</p>
@@ -470,7 +470,7 @@ export default function MyCustom() {
 
           <Link
             to="/priority"
-            className="bg-gradient-to-br from-orange-50 to-white border border-orange-200 rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-gradient-to-br from-orange-50 to-white dark:from-orange-900/30 dark:to-gray-800 border border-orange-200 dark:border-orange-800/50 rounded-xl p-4 hover:shadow-lg transition-all"
           >
             <TrendingUp className="w-8 h-8 mb-2 text-orange-600" />
             <p className="font-semibold mb-1">소비 우선순위</p>
@@ -481,7 +481,7 @@ export default function MyCustom() {
 
           <Link
             to="/nutrition"
-            className="bg-gradient-to-br from-green-50 to-white border border-green-200 rounded-xl p-4 hover:shadow-lg transition-all"
+            className="bg-gradient-to-br from-green-50 to-white dark:from-green-900/30 dark:to-gray-800 border border-green-200 dark:border-green-800/50 rounded-xl p-4 hover:shadow-lg transition-all"
           >
             <Heart className="w-8 h-8 mb-2 text-green-600" />
             <p className="font-semibold mb-1">영양 분석</p>

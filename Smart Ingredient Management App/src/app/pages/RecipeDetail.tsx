@@ -233,7 +233,7 @@ export default function RecipeDetail() {
                         {ingredient.name}
                       </span>
                       {ingredient.required && (
-                        <span className="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-xs" style={{ fontWeight: 600 }}>
+                        <span className="px-1.5 py-0.5 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 rounded text-xs" style={{ fontWeight: 600 }}>
                           필수
                         </span>
                       )}
