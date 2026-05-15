@@ -1,7 +1,7 @@
 import { useIngredients } from '../hooks/useIngredients';
 import { calculateDDay, formatDDay, getExpiryStatus, getStatusColor } from '../utils/date';
 import { AlertCircle, Package, Trash2, TrendingUp } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import FridgeSelector from '../components/FridgeSelector';
 
 export default function Priority() {
@@ -53,7 +53,7 @@ export default function Priority() {
         </p>
       </div>
 
-      {/* 상태 그래프 */}
+      {/* 상태 그래프 — 도넛으로 비율, 옆 stat box로 개수 */}
       {ingredients.length > 0 && (
         <div className="px-5 pb-4">
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-100">
@@ -64,48 +64,56 @@ export default function Priority() {
               </h3>
             </div>
             <div className="flex items-center gap-4">
-              {/* 막대 그래프 */}
-              <div className="flex-1">
+              {/* 도넛 차트 + 가운데 총 개수 */}
+              <div className="flex-1 relative">
                 <ResponsiveContainer width="100%" height={150}>
-                  <BarChart data={categoryData}>
-                    <XAxis 
-                      dataKey="name" 
-                      tick={{ fontSize: 12 }}
-                      stroke="#9ca3af"
-                    />
-                    <YAxis 
-                      tick={{ fontSize: 12 }}
-                      stroke="#9ca3af"
-                    />
-                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                      {categoryData.map((entry, index) => (
-                        <Cell key={`bar-cell-${entry.name}-${index}`} fill={entry.color} />
+                  <PieChart>
+                    <Pie
+                      data={categoryData.filter((d) => d.value > 0)}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={42}
+                      outerRadius={62}
+                      paddingAngle={2}
+                      stroke="none"
+                    >
+                      {categoryData.filter((d) => d.value > 0).map((entry) => (
+                        <Cell key={`pie-${entry.name}`} fill={entry.color} />
                       ))}
-                    </Bar>
-                  </BarChart>
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
                 </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <p className="text-2xl" style={{ fontWeight: 700 }}>
+                    {ingredients.length}
+                  </p>
+                  <p className="text-xs text-gray-500">개</p>
+                </div>
               </div>
 
-              {/* 통계 요약 */}
+              {/* 통계 요약 — 개수 + % */}
               <div className="flex-shrink-0 space-y-2">
-                <div className="bg-red-50 rounded-lg p-2 text-center min-w-[70px]">
-                  <p className="text-xs text-gray-600">위험</p>
-                  <p className="text-xl" style={{ fontWeight: 700 }}>
-                    {dangerItems.length}
-                  </p>
-                </div>
-                <div className="bg-yellow-50 rounded-lg p-2 text-center min-w-[70px]">
-                  <p className="text-xs text-gray-600">주의</p>
-                  <p className="text-xl" style={{ fontWeight: 700 }}>
-                    {warningItems.length}
-                  </p>
-                </div>
-                <div className="bg-green-50 rounded-lg p-2 text-center min-w-[70px]">
-                  <p className="text-xs text-gray-600">안전</p>
-                  <p className="text-xl" style={{ fontWeight: 700 }}>
-                    {safeItems.length}
-                  </p>
-                </div>
+                {categoryData.map((c) => {
+                  const pct = ingredients.length === 0 ? 0 : Math.round((c.value / ingredients.length) * 100);
+                  const bg =
+                    c.name === '위험' ? 'bg-red-50'
+                    : c.name === '주의' ? 'bg-yellow-50'
+                    : 'bg-green-50';
+                  return (
+                    <div key={c.name} className={`${bg} rounded-lg p-2 text-center min-w-[80px]`}>
+                      <div className="flex items-center justify-center gap-1.5 text-xs text-gray-600">
+                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.color }} />
+                        {c.name}
+                      </div>
+                      <p className="text-lg leading-tight" style={{ fontWeight: 700 }}>
+                        {c.value} <span className="text-xs text-gray-500" style={{ fontWeight: 500 }}>· {pct}%</span>
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
