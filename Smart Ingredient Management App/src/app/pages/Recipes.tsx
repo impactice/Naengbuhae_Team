@@ -475,7 +475,7 @@ export default function Recipes() {
                 key={match.recipe.id}
                 to={`/recipe/${match.recipe.id}`}
               >
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 transition-colors">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   <div className="flex items-start justify-between mb-3 gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -515,7 +515,7 @@ export default function Recipes() {
                         e.stopPropagation();
                         void toggleFavorite(match.recipe.id);
                       }}
-                      className="p-1.5 rounded-lg hover:bg-white"
+                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-700"
                       aria-label="즐겨찾기"
                     >
                       <Heart

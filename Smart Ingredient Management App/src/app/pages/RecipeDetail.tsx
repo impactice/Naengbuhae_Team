@@ -98,7 +98,7 @@ export default function RecipeDetail() {
       {/* 진입 시 자동 다이얼로그 — 부족한 재료가 있을 때 한 번만 묻기 */}
       {askDialog && recipe && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+          <div className="bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl w-full max-w-md shadow-xl">
             <div className="px-5 pt-5 pb-3">
               <div className="flex items-center gap-2 mb-2">
                 <ShoppingCart className="w-5 h-5 text-lime-700" />
