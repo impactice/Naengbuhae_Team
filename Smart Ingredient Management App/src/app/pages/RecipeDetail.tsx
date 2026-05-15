@@ -2,8 +2,8 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { useIngredients, useShoppingList } from '../hooks/useIngredients';
 import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
-import { ArrowLeft, Clock, Users, Plus, Check } from 'lucide-react';
-import { useMemo } from 'react';
+import { ArrowLeft, Clock, Users, Plus, Check, ShoppingCart } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
 
@@ -12,7 +12,7 @@ export default function RecipeDetail() {
   const navigate = useNavigate();
   const { ingredients } = useIngredients();
   const { recipes, loading } = useRecipes();
-  const { shoppingList, addShoppingItem } = useShoppingList();
+  const { shoppingList, addShoppingItem, bulkAddShoppingItems } = useShoppingList();
 
   const recipe = recipes.find((r) => r.id === id);
 
@@ -21,6 +21,45 @@ export default function RecipeDetail() {
     const matches = matchRecipesWithIngredients([recipe], ingredients);
     return matches[0];
   }, [recipe, ingredients]);
+
+  // 진입 시 부족한 재료가 있고, 아직 장보기에 안 들어간 항목이 있으면 다이얼로그 자동 노출.
+  // 한 세션 동안 같은 레시피를 다시 봐도 안 묻도록 sessionStorage에 기록.
+  const missingNotInList = useMemo(() => {
+    if (!recipe || !match) return [];
+    return match.missingIngredients
+      .map((name) => recipe.ingredients.find((i) => i.name === name))
+      .filter((i): i is NonNullable<typeof i> => !!i)
+      .filter((i) => !shoppingList.some((s) => s.name === i.name));
+  }, [recipe, match, shoppingList]);
+
+  const [askDialog, setAskDialog] = useState(false);
+  const [adding, setAdding] = useState(false);
+
+  useEffect(() => {
+    if (!recipe) return;
+    if (missingNotInList.length === 0) return;
+    if (sessionStorage.getItem(`recipe-ask-${recipe.id}`) === 'done') return;
+    setAskDialog(true);
+  }, [recipe, missingNotInList.length]);
+
+  const dismissDialog = () => {
+    if (recipe) sessionStorage.setItem(`recipe-ask-${recipe.id}`, 'done');
+    setAskDialog(false);
+  };
+
+  const handleBulkAdd = async () => {
+    if (adding) return;
+    setAdding(true);
+    try {
+      await bulkAddShoppingItems(
+        missingNotInList.map((i) => ({ name: i.name, quantity: i.quantity, unit: i.unit })),
+      );
+      dismissDialog();
+      alert(`${missingNotInList.length}개 재료를 장보기 리스트에 추가했어요`);
+    } finally {
+      setAdding(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -56,6 +95,53 @@ export default function RecipeDetail() {
 
   return (
     <div className="min-h-screen bg-white pb-20">
+      {/* 진입 시 자동 다이얼로그 — 부족한 재료가 있을 때 한 번만 묻기 */}
+      {askDialog && recipe && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+            <div className="px-5 pt-5 pb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <ShoppingCart className="w-5 h-5 text-lime-700" />
+                <h3 className="text-base" style={{ fontWeight: 700 }}>
+                  부족한 재료 {missingNotInList.length}개가 있어요
+                </h3>
+              </div>
+              <p className="text-sm text-gray-600">장보기 리스트에 한 번에 추가할까요?</p>
+            </div>
+            <div className="px-5 pb-3 max-h-48 overflow-y-auto">
+              <div className="bg-gray-50 rounded-xl p-3 space-y-1.5">
+                {missingNotInList.map((i) => (
+                  <div key={i.name} className="flex items-center justify-between text-sm">
+                    <span style={{ fontWeight: 600 }}>{i.name}</span>
+                    <span className="text-gray-500 text-xs">{i.quantity}{i.unit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="px-5 pb-5 flex gap-2">
+              <button
+                type="button"
+                onClick={dismissDialog}
+                disabled={adding}
+                className="flex-1 py-3 bg-gray-100 rounded-xl text-sm disabled:opacity-50"
+                style={{ fontWeight: 600 }}
+              >
+                괜찮아요
+              </button>
+              <button
+                type="button"
+                onClick={handleBulkAdd}
+                disabled={adding}
+                className="flex-1 py-3 rounded-xl text-sm disabled:opacity-50"
+                style={{ backgroundColor: '#CDFF00', fontWeight: 700 }}
+              >
+                {adding ? '추가 중...' : '장보기에 추가'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
@@ -244,21 +330,14 @@ export default function RecipeDetail() {
       {/* 하단 버튼 */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-5">
         <div className="max-w-screen-sm mx-auto flex gap-2">
-          {match.missingIngredients.length > 0 && (
+          {missingNotInList.length > 0 && (
             <button
-              onClick={() => {
-                match.missingIngredients.forEach((name) => {
-                  const ing = recipe.ingredients.find((i) => i.name === name);
-                  if (ing) {
-                    addShoppingItem(ing.name, ing.quantity, ing.unit);
-                  }
-                });
-                alert('부족한 재료를 장보기 리스트에 추가했습니다');
-              }}
-              className="flex-1 py-4 bg-gray-100 rounded-xl"
+              onClick={handleBulkAdd}
+              disabled={adding}
+              className="flex-1 py-4 bg-gray-100 rounded-xl disabled:opacity-50"
               style={{ fontWeight: 600 }}
             >
-              부족한 재료 추가
+              {adding ? '추가 중...' : `부족한 재료 ${missingNotInList.length}개 추가`}
             </button>
           )}
           <Link to="/shopping-list" className="flex-1">

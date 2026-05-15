@@ -74,6 +74,8 @@ export function useShoppingList() {
     loading,
     addShoppingItem: (name: string, quantity: number, unit: string) =>
       ingredientStore.addShoppingItem(name, quantity, unit),
+    bulkAddShoppingItems: (items: { name: string; quantity: number; unit: string }[]) =>
+      ingredientStore.bulkAddShoppingItems(items),
     toggleShoppingItem: (id: string) => ingredientStore.toggleShoppingItem(id),
     deleteShoppingItem: (id: string) => ingredientStore.deleteShoppingItem(id),
     bulkDeleteShoppingItems: (ids: string[]) => ingredientStore.bulkDeleteShoppingItems(ids),

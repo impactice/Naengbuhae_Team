@@ -324,6 +324,28 @@ class IngredientStore {
     }
   }
 
+  // 장보기 일괄 추가 — 레시피 상세 "부족한 재료 한 번에 담기"용.
+  // 백엔드가 같은 이름 중복은 자동으로 건너뛰고 실제 추가된 개수를 반환.
+  async bulkAddShoppingItems(items: { name: string; quantity: number; unit: string }[]): Promise<void> {
+    if (items.length === 0) return;
+    try {
+      const response = await apiFetch('/api/shopping-list/bulk-add', {
+        method: 'POST',
+        body: JSON.stringify({ items }),
+      });
+      if (response.ok) {
+        await this.fetchShoppingList();
+      } else {
+        const errorText = await response.text();
+        throw new Error(`장보기 일괄 추가 실패: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('장보기 일괄 추가 오류:', error);
+      alert('일괄 추가 중 오류가 발생했습니다.');
+      throw error;
+    }
+  }
+
   // 장보기 일괄 삭제. 본인 소유 항목만 서버에서 삭제, 그 외 id는 무시.
   async bulkDeleteShoppingItems(ids: string[]): Promise<number> {
     if (ids.length === 0) return 0;
