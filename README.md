@@ -8,28 +8,72 @@
 
 ## 🆕 이번 작업 정리 (2026-05-15)
 
-**비로그인 게스트 모드 + 회원가입 인라인 이메일 인증.**
+### 1) 비로그인 게스트 모드
 
-게스트 모드:
-1. **"로그인 없이 둘러보기"** — `Login.tsx` 로그인 버튼 바로 아래에 작은 버튼. 토큰 없이 `/`로 진입
-2. **`utils/guestMode.ts`** — `isGuest()` / `setGuest()` / `clearGuest()` (localStorage 플래그)
-3. **`store/localIngredientStore.ts`** — 로컬 식재료 CRUD, id는 `local-N` 문자열로 발급해 서버 id와 충돌 회피
-4. **`ingredientStore` / `fridgeStore` 분기** — `isGuest()` 검사 후 로컬 또는 `/api/ingredients`로 자동 분기
-5. **`components/GuestBlocked.tsx`** — 잠금 페이지 공통 안내. NotificationCenter / FamilyActivity / FridgeManagement / MealPlan / Recipes / RecipeDetail / NutritionAnalysis / ShoppingList / AddByReceipt 진입 시 표시
-6. **MyCustom 게스트 변형** — `/user/me` 호출 없이 가입/로그인 CTA + 잠금 기능 미리보기 표시
-7. **로그인 / OAuth 콜백 시 마이그레이션** — `utils/ingredientMigration.ts`의 `promptAndMigrate`가 `/api/ingredients/import` 호출
+토큰 없이도 식재료 관리만 쓸 수 있게, 가입은 의향 있는 사람만.
 
-회원가입 인라인 이메일 인증 (`SignUp.tsx`):
-1. 이메일 옆 "**인증번호 받기**" 버튼 → 6자리 코드 메일 발송
-2. 코드 입력 + "**확인**" → 검증 통과 시 "인증완료" 뱃지 표시 (이메일 입력칸도 disabled)
-3. 이메일을 바꾸면 `handleChange`에서 인증 상태 자동 무효화
-4. 가입 유효성 검사에 `verification.verifiedEmail === formData.email.trim()` 추가
+- **진입**: `Login.tsx` 로그인 버튼 바로 아래 작은 텍스트 버튼 "로그인 없이 둘러보기"
+- **`utils/guestMode.ts`**: `isGuest()` / `setGuest()` / `clearGuest()` (localStorage 플래그)
+- **`store/localIngredientStore.ts`**: 로컬 식재료 CRUD. id는 `local-N` 문자열로 발급해 서버 id와 충돌 회피
+- **자동 분기**: `ingredientStore` / `fridgeStore`가 `isGuest()` 검사 후 로컬 또는 `/api/ingredients`로 라우팅 — 호출자(`useIngredients` 등)는 변경 없음
+- **공통 잠금 화면 `components/GuestBlocked.tsx`**: NotificationCenter / FamilyActivity / FridgeManagement / MealPlan / Recipes / RecipeDetail / NutritionAnalysis / ShoppingList / AddByReceipt 진입 시 표시
+- **MyCustom 게스트 변형**: `/user/me` 호출 없이 가입/로그인 CTA + 잠금 기능 미리보기
+- **마이그레이션**: 로그인/OAuth 콜백 시 `utils/ingredientMigration.ts`의 `promptAndMigrate`가 `/api/ingredients/import` 호출
 
-로그인 화면 UX 개선 (`Login.tsx`):
-1. "로그인 없이 둘러보기"를 **로그인 버튼 바로 아래**로 이동
-2. 미인증 사용자 응답 시 **노란 배너 + "메일 다시 받기"** 노출
+### 2) 회원가입 인라인 이메일 인증 (`SignUp.tsx`)
 
-기타:
+매직 링크 → 6자리 코드 인라인 입력 방식.
+
+- 이메일 옆 "**인증번호 받기**" → 6자리 코드 메일 발송
+- 코드 입력 + "**확인**" → 검증 통과 시 "인증완료" 뱃지 표시 (이메일 입력칸도 disabled)
+- 이메일을 바꾸면 `handleChange`에서 인증 상태 자동 무효화
+- 가입 유효성 검사에 `verification.verifiedEmail === formData.email.trim()` 가드 추가
+- 백엔드: `POST /user/email/send-code`, `POST /user/email/verify-code`
+
+### 3) 회원가입 후 username 자동 채우기
+
+가입 성공 → `navigate('/login', { state: { username } })` → Login의 `formData.username` 초기값으로 자동 세팅 (`useLocation().state`로 읽음). 사용자는 비번만 치면 됨.
+
+### 4) 비밀번호 변경 (`/change-password`)
+
+- `pages/ChangePassword.tsx`: 현재 비번 + 새 비번(확인) → `POST /user/me/password`
+- `routes.ts`에 `change-password` 등록 (Root 하위라 로그인 가드됨)
+- MyCustom의 회원 탈퇴 위에 진입 버튼, `profile.provider === 'LOCAL'`일 때만 노출
+- `userStore.UserProfile`에 `provider` 필드 추가
+
+### 5) 식재료 / 장보기 다중 선택 일괄 삭제
+
+- 두 페이지 모두 같은 패턴: 우측 `CheckSquare` 버튼으로 선택 모드 진입, 카드 클릭으로 토글, 상단 액션 바에서 "전체 선택 + N개 삭제"
+- `ingredientStore.bulkDeleteIngredients(ids)` — 게스트면 로컬 순차, 로그인이면 `/api/ingredients/bulk-delete`
+- `ingredientStore.bulkDeleteShoppingItems(ids)` — `/api/shopping-list/bulk-delete`
+- `useIngredients` / `useShoppingList` 훅에 노출
+
+### 6) 알림 탭 → 정확한 식재료 카드로 강조
+
+`NotificationCenter` onTap이 `"ingredient:{id}"` 패턴 인식:
+
+- `/ingredients?highlight={id}`로 navigate
+- `Ingredients.tsx`가 `useSearchParams`로 `highlight` 읽어 해당 카드에 ref 설정
+- 진입 직후 `scrollIntoView` + 노란 ring으로 2.6초간 강조 후 fade-out
+
+### 7) 가족 활동 통계 차트 시각화 (`FamilyActivity.tsx`)
+
+`recharts` 사용 (`MealPlan`, `NutritionAnalysis`와 동일).
+
+- **멤버별 활동**: `BarChart` + Bar 2개 — 한 멤버당 추가(녹색) / 비움(주황) 두 막대
+- **자주 추가/비운 식재료 TOP5**: `PieChart` + 색깔 범례 5단계 (`PIE_COLORS` / `PIE_COLORS_ORANGE`)
+- 차트 아래 기존 멤버 행 / 랭크 리스트(progress bar)는 그대로 유지
+
+### 8) 죽은 매직 링크 흔적 정리
+
+코드 기반 가입 인증으로 전환되며 안 쓰이는 코드 제거:
+
+- `pages/VerifyEmail.tsx` 파일 + `routes.ts`의 `/verify-email` 라우트 삭제
+- `Login.tsx`의 `pendingVerification` 상태 + `handleResendVerification` + 노란 배너 제거
+- `MyCustom.tsx`의 `EmailVerificationBanner` 함수 + `emailVerified` 분기 제거
+
+### 9) 기타
+
 - `main.tsx`에서 MSW dev 모킹 import 제거 (`msw` 패키지 미설치 + 백엔드 연동 완료 상태)
 
 ---
