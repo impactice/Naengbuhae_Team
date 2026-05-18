@@ -10,19 +10,34 @@
 
 ### 디자인 / 색상
 
-**"나의 맞춤" 기능 아이콘 색 복구**
-- 외주 다크모드 적용 시 4개 카드 아이콘을 전부 하늘색(`text-accent`)으로 통일했던 걸 원래의 distinct 색으로 되돌림
+**기능 아이콘 색 복구**
+- 다크모드 적용 시 아이콘을 전부 하늘색(`text-accent`)으로 통일했던 걸 distinct 색으로 되돌림
 - `MyCustom.tsx` — 맞춤 레시피=액센트, 식단 계획=`text-blue-500`, 소비 우선순위=`text-orange-500`, 영양 분석=`text-green-500`
+- `Home.tsx` — 레시피 추천=액센트, 식단 추천(Calendar) `text-accent`→`text-blue-500` (나의 맞춤과 일치)
 
-**홈 기능 카드 색을 "나의 맞춤"과 통일**
-- `Home.tsx` — 레시피 추천(ChefHat)=액센트(유지), 식단 추천(Calendar) `text-accent` → `text-blue-500`로 "나의 맞춤 식단 계획"과 일치
+### 브랜드 / 로고
+
+**브랜드 로고**
+- `src/assets/logo_full.png`(아이콘+워드마크 락업), `logo_icon.png`(아이콘 단독) — 투명 배경본
+- 로그인 화면: "스마트 냉장고" 텍스트 → 풀 로고. 폼 너비 꽉 채움(`w-full`), 로고-폼 간격 `mb-12`→`mb-6`
+
+**카카오 버튼 심볼**
+- 빈 갈색 원 → 카카오 말풍선 심볼만(`kakao_symbol.png`, 배경 투명). 버튼 bg `#FEE500`과 자연스럽게 녹아듦. 안 쓰는 `kakao.png` 제거
+
+### 로그인 화면 정리
+
+- 입력칸 테두리 가독성: 아이디/비밀번호 → `bg-card border-2 border-border-strong` 통일 (비번칸은 border 자체가 없었음)
+- 소셜 버튼: 가운데 정렬 유지, 카카오 심볼 크게(`w-10`), 구글 아이콘 위치 미세 보정(`mr-2.5`)
 
 ### 계정 관리
 
 **비밀번호 변경 위치 이동**
-- MyCustom 하단(회원 탈퇴 바로 위) → 회원 카드 탭 시 열리는 프로필 수정 화면(`ProfileComplete`, `/profile/complete`) 하단으로 이동
-- 수정 모드 + `profile.provider === 'LOCAL'`일 때만 노출 (조건은 기존 그대로)
-- MyCustom 계정 관리 영역엔 이제 **회원 탈퇴만** 남음
+- MyCustom 하단(회원 탈퇴 위) → 회원 카드 탭 시 프로필 수정(`ProfileComplete`, `/profile/complete`) 하단으로
+- 수정 모드 + `profile.provider === 'LOCAL'`일 때만 노출. MyCustom엔 회원 탈퇴만 남음
+
+### 기타
+
+- 기본 테마 = 라이트 확인 (`themeMode.ts` 저장값 없으면 light, `index.html` dark 클래스 없음)
 
 ---
 
