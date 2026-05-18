@@ -5,6 +5,7 @@ import { saveAuth } from '../utils/apiClient';
 import { setGuest, clearGuest } from '../utils/guestMode';
 import { promptAndMigrate } from '../utils/ingredientMigration';
 import kakaoLogo from '../../assets/kakao.png';
+import logoFull from '../../assets/logo_full.png';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -96,14 +97,11 @@ export default function Login() {
     <div className="min-h-screen bg-background flex justify-center items-center">
       <div className="w-full max-w-md bg-background text-foreground min-h-screen shadow-xl flex flex-col">
         <div className="flex-1 flex flex-col justify-center px-6 py-12">
-          {/* 로고/타이틀 영역 */}
-          <div className="mb-12">
-            <h1 className="text-3xl mb-2" style={{ fontWeight: 700 }}>
-              스마트 냉장고
-            </h1>
-            <p className="text-muted-foreground">
-              신선한 식재료 관리의 시작
-            </p>
+          {/* 로고 영역 — 로고 자체 배경이 흰색이라 흰 플레이트로 의도적 처리 */}
+          <div className="mb-12 flex justify-center">
+            <div className="bg-white rounded-2xl px-5 py-4">
+              <img src={logoFull} alt="Naengbuhae" className="h-20 w-auto" />
+            </div>
           </div>
 
         {/* 로그인 폼 */}
