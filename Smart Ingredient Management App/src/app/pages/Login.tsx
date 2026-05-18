@@ -197,7 +197,7 @@ export default function Login() {
             onClick={() => handleSocialLogin('kakao')}
             className="w-full py-4 bg-[#FEE500] text-black rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-[#fdd835] transition-colors"
           >
-            <img src={kakaoSymbol} alt="" className="w-5 h-5" />
+            <img src={kakaoSymbol} alt="" className="w-10 h-10" />
             카카오로 시작하기
           </button>
 
