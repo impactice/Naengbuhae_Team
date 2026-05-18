@@ -185,29 +185,27 @@ export default function Login() {
         <div className="space-y-3">
           <button
             onClick={() => handleSocialLogin('naver')}
-            className="relative w-full py-4 bg-[#03C75A] text-white rounded-xl font-semibold flex items-center justify-center hover:bg-[#02b351] transition-colors"
+            className="w-full py-4 bg-[#03C75A] text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-[#02b351] transition-colors"
           >
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center">
-              <span className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-[#03C75A] text-sm" style={{ fontWeight: 700 }}>N</span>
-            </span>
+            <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+              <span className="text-[#03C75A] text-xs" style={{ fontWeight: 700 }}>N</span>
+            </div>
             네이버로 시작하기
           </button>
 
           <button
             onClick={() => handleSocialLogin('kakao')}
-            className="relative w-full py-4 bg-[#FEE500] text-black rounded-xl font-semibold flex items-center justify-center hover:bg-[#fdd835] transition-colors"
+            className="w-full py-4 bg-[#FEE500] text-black rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-[#fdd835] transition-colors"
           >
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center">
-              <img src={kakaoSymbol} alt="" className="w-6 h-6" />
-            </span>
+            <img src={kakaoSymbol} alt="" className="w-10 h-10" />
             카카오로 시작하기
           </button>
 
           <button
             onClick={() => handleSocialLogin('google')}
-            className="relative w-full py-4 bg-card border-2 border-border text-foreground rounded-xl font-semibold flex items-center justify-center hover:bg-secondary transition-colors"
+            className="w-full py-4 bg-card border-2 border-border text-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-secondary transition-colors"
           >
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
