@@ -83,11 +83,12 @@ export default function Root() {
         )}
 
         {/* 메인 콘텐츠 */}
-        <main className="flex-1 pb-20 overflow-y-auto">
+        <main className={`flex-1 overflow-y-auto ${location.pathname.startsWith('/recipe/') ? '' : 'pb-20'}`}>
           <Outlet />
         </main>
 
-        {/* 하단 네비게이션 */}
+        {/* 하단 네비게이션 — 레시피 상세에서는 숨김 */}
+        {!location.pathname.startsWith('/recipe/') && (
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-background border-t border-border">
           <div className="flex justify-around items-center h-16">
             {navItems.map((item) => {
@@ -114,6 +115,7 @@ export default function Root() {
             })}
           </div>
         </nav>
+        )}
       </div>
     </div>
   );

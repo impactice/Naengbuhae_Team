@@ -129,27 +129,76 @@ function AIRecommendModal({
         </div>
 
         {/* 스텝 인디케이터 */}
-        <div className="flex items-center gap-2 px-5 pb-3">
-          <div
-            className="flex items-center justify-center w-6 h-6 rounded-full text-xs"
-            style={{
-              backgroundColor: step >= 1 ? 'var(--accent)' : '#F3F4F6',
-              fontWeight: 700,
-              color: step >= 1 ? '#000' : '#9CA3AF',
-            }}
-          >
-            1
+        <div className="px-5 pb-4">
+          <div className="flex items-center gap-1">
+            {/* STEP 1 */}
+            <div className="flex items-center gap-2 flex-1">
+              <div
+                className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs"
+                style={{
+                  backgroundColor: step >= 1 ? 'var(--accent)' : '#F3F4F6',
+                  fontWeight: 700,
+                  color: step >= 1 ? '#1A3300' : '#9CA3AF',
+                }}
+              >
+                {isDone || step > 1 ? <Check className="w-4 h-4" style={{ color: '#1A3300' }} /> : '1'}
+              </div>
+              <div>
+                <p
+                  className="text-xs leading-tight"
+                  style={{
+                    fontWeight: step === 1 ? 700 : 500,
+                    color: step >= 1 ? 'var(--foreground)' : '#9CA3AF',
+                  }}
+                >
+                  식재료 선택
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-tight">사용할 재료 고르기</p>
+              </div>
+            </div>
+
+            {/* 연결선 */}
+            <div
+              className="w-8 h-0.5 rounded-full flex-shrink-0"
+              style={{ backgroundColor: step >= 2 ? 'var(--accent)' : '#E5E7EB' }}
+            />
+
+            {/* STEP 2 */}
+            <div className="flex items-center gap-2 flex-1 justify-end">
+              <div>
+                <p
+                  className="text-xs leading-tight text-right"
+                  style={{
+                    fontWeight: step === 2 ? 700 : 500,
+                    color: step >= 2 ? 'var(--foreground)' : '#9CA3AF',
+                  }}
+                >
+                  스타일 선택
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-tight text-right">요리 스타일 고르기</p>
+              </div>
+              <div
+                className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs"
+                style={{
+                  backgroundColor: step >= 2 ? 'var(--accent)' : '#F3F4F6',
+                  fontWeight: 700,
+                  color: step >= 2 ? '#1A3300' : '#9CA3AF',
+                }}
+              >
+                {isDone ? <Check className="w-4 h-4" style={{ color: '#1A3300' }} /> : '2'}
+              </div>
+            </div>
           </div>
-          <div className="flex-1 h-0.5 rounded-full" style={{ backgroundColor: step >= 2 ? 'var(--accent)' : '#E5E7EB' }} />
-          <div
-            className="flex items-center justify-center w-6 h-6 rounded-full text-xs"
-            style={{
-              backgroundColor: step >= 2 ? 'var(--accent)' : '#F3F4F6',
-              fontWeight: 700,
-              color: step >= 2 ? '#000' : '#9CA3AF',
-            }}
-          >
-            2
+
+          {/* 진행 바 */}
+          <div className="mt-3 h-1 bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                backgroundColor: 'var(--accent)',
+                width: isDone ? '100%' : step === 1 ? '25%' : '75%',
+              }}
+            />
           </div>
         </div>
 
@@ -399,10 +448,9 @@ export default function Recipes() {
         </p>
       </div>
 
-      {/* 필터 + AI 추천 버튼 */}
+      {/* 필터 + AI 추천 버튼 — 2×2 그리드로 균등 배치 */}
       <div className="px-5 pb-4">
-        <div className="flex items-center gap-2">
-          {/* 기존 필터 버튼들 */}
+        <div className="grid grid-cols-2 gap-2">
           <FilterButton
             active={filterMode === 'all'}
             onClick={() => setFilterMode('all')}
@@ -423,10 +471,10 @@ export default function Recipes() {
             즐겨찾기
           </FilterButton>
 
-          {/* AI 추천 버튼 — 필터 버튼 오른쪽에 자연스럽게 배치 */}
+          {/* AI 추천 버튼 */}
           <button
             onClick={() => setShowAIModal(true)}
-            className="ml-auto flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all active:scale-95 whitespace-nowrap"
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all active:scale-95"
             style={{
               background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%)',
               fontWeight: 700,
@@ -602,7 +650,7 @@ function FilterButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap ${
+      className={`w-full px-4 py-2 rounded-lg text-sm ${
         active ? 'text-black' : 'bg-secondary text-muted-foreground'
       }`}
       style={{

@@ -18,6 +18,8 @@ export default function Ingredients() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+  // 상세 모달용
+  const [detailIngredient, setDetailIngredient] = useState<typeof ingredients[0] | null>(null);
 
   // 알림 센터에서 ?highlight=:id로 진입 시 해당 카드 스크롤 + 잠깐 강조.
   const [searchParams] = useSearchParams();
@@ -331,7 +333,7 @@ export default function Ingredients() {
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
             {sorted.map((ingredient) => {
               const daysLeft = calculateDDay(ingredient.expirationDate);
               const status = getExpiryStatus(daysLeft);
@@ -347,99 +349,216 @@ export default function Ingredients() {
                 <div
                   key={ingredient.id}
                   ref={highlightId === ingredient.id ? highlightRef : undefined}
-                  onClick={selectionMode ? () => toggleSelection(ingredient.id) : undefined}
-                  className={`rounded-xl p-4 relative group transition-colors ${
+                  onClick={selectionMode
+                    ? () => toggleSelection(ingredient.id)
+                    : () => setDetailIngredient(ingredient)}
+                  className={`rounded-xl p-3 relative cursor-pointer transition-colors ${
                     selectionMode
                       ? isSelected
-                        ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent cursor-pointer'
-                        : 'bg-card border border-border border-2 border-transparent cursor-pointer'
+                        ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent'
+                        : 'bg-card border border-border border-2 border-transparent'
                       : isHighlighted
                       ? 'bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-300 dark:border-yellow-700 ring-2 ring-yellow-200 dark:ring-yellow-800/50'
-                      : 'bg-card border border-border'
+                      : 'bg-card border border-border hover:bg-secondary'
                   }`}
                 >
-                  <div className="flex items-start justify-between">
-                    {selectionMode && (
-                      <div className="mr-3 mt-1 flex-shrink-0">
-                        <div
-                          className={`w-5 h-5 rounded-md flex items-center justify-center border-2 ${
-                            isSelected
-                              ? 'bg-accent border-accent'
-                              : 'bg-white border-gray-300'
-                          }`}
-                        >
-                          {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-base" style={{ fontWeight: 600 }}>
-                          {ingredient.name}
-                        </h3>
-                        <span
-                          className="px-2 py-0.5 rounded text-xs"
-                          style={{
-                            backgroundColor: `${statusColor}20`,
-                            color: statusColor,
-                            fontWeight: 600,
-                          }}
-                        >
-                          {formatDDay(daysLeft)}
-                        </span>
-                        {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
-                          <span
-                            className="px-2 py-0.5 rounded text-xs flex items-center gap-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
-                            style={{ fontWeight: 600 }}
-                            title={`알레르기: ${ingredient.allergyWarnings.join(', ')}`}
-                          >
-                            <AlertTriangle className="w-3 h-3" />
-                            알레르기 {ingredient.allergyWarnings.join(', ')}
-                          </span>
-                        )}
-                      </div>
-                      <div className="mt-2 space-y-1">
-                        <p className="text-sm text-muted-foreground">
-                          수량: {ingredient.quantity}
-                          {ingredient.unit}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          분류: {getCategoryLabel(ingredient.category)} ·{' '}
-                          {getStorageLabel(ingredient.storage)}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          유통기한:{' '}
-                          {ingredient.expirationDate.toLocaleDateString('ko-KR')}
-                        </p>
-                        {/* 영양 정보 추가 */}
-                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border">
-                          <span className="text-xs px-2 py-1 bg-background rounded-md font-medium">
-                            {Math.round(nutrition.calories * factor)}kcal
-                          </span>
-                          <span className="text-xs px-2 py-1 bg-background rounded-md">
-                            단백질 {Math.round(nutrition.protein * factor)}g
-                          </span>
-                          <span className="text-xs px-2 py-1 bg-background rounded-md">
-                            탄수화물 {Math.round(nutrition.carbs * factor)}g
-                          </span>
-                        </div>
+                  {/* 선택 모드 체크박스 */}
+                  {selectionMode && (
+                    <div className="absolute top-2 right-2">
+                      <div
+                        className={`w-5 h-5 rounded-md flex items-center justify-center border-2 ${
+                          isSelected
+                            ? 'bg-accent border-accent'
+                            : 'bg-white border-gray-300'
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
                       </div>
                     </div>
-                    {!selectionMode && (
-                      <button
-                        onClick={() => handleDelete(ingredient.id, ingredient.name)}
-                        className="ml-3 p-2 hover:bg-secondary rounded-lg transition-colors"
+                  )}
+
+                  {/* 식재료 이름 + 유통기한 태그 */}
+                  <div className="mb-2">
+                    <h3 className="text-sm truncate" style={{ fontWeight: 700 }}>
+                      {ingredient.name}
+                    </h3>
+                    <span
+                      className="inline-block mt-1 px-1.5 py-0.5 rounded text-xs"
+                      style={{
+                        backgroundColor: `${statusColor}20`,
+                        color: statusColor,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {formatDDay(daysLeft)}
+                    </span>
+                    {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
+                      <span
+                        className="ml-1 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
+                        style={{ fontWeight: 600 }}
                       >
-                        <Trash2 className="w-5 h-5 text-red-500" />
-                      </button>
+                        <AlertTriangle className="w-3 h-3" />
+                      </span>
                     )}
                   </div>
+
+                  {/* 유통기한 날짜 */}
+                  <p className="text-xs text-muted-foreground mb-2">
+                    {ingredient.expirationDate.toLocaleDateString('ko-KR')}
+                  </p>
+
+                  {/* 영양 정보 */}
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-xs px-1.5 py-0.5 bg-background rounded font-medium">
+                      {Math.round(nutrition.calories * factor)}kcal
+                    </span>
+                    <span className="text-xs px-1.5 py-0.5 bg-background rounded">
+                      단{Math.round(nutrition.protein * factor)}g
+                    </span>
+                    <span className="text-xs px-1.5 py-0.5 bg-background rounded">
+                      탄{Math.round(nutrition.carbs * factor)}g
+                    </span>
+                  </div>
+
+                  {/* 삭제 버튼 (선택 모드 아닐 때만) */}
+                  {!selectionMode && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(ingredient.id, ingredient.name);
+                      }}
+                      className="absolute top-2 right-2 p-1.5 hover:bg-secondary rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </button>
+                  )}
                 </div>
               );
             })}
           </div>
         )}
       </div>
+
+      {/* 상세 모달 */}
+      {detailIngredient && (() => {
+        const ing = detailIngredient;
+        const daysLeft = calculateDDay(ing.expirationDate);
+        const status = getExpiryStatus(daysLeft);
+        const statusColor = getStatusColor(status);
+        const nutrition = nutritionDatabase[ing.name] || nutritionDatabase['default'];
+        const factor = ing.quantity / 100;
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-end justify-center"
+            style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
+            onClick={() => setDetailIngredient(null)}
+          >
+            <div
+              className="w-full max-w-md bg-background text-foreground rounded-t-3xl"
+              style={{ maxHeight: '80vh', overflowY: 'auto' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* 핸들 바 */}
+              <div className="flex justify-center pt-3 pb-1">
+                <div className="w-10 h-1 bg-secondary rounded-full" />
+              </div>
+
+              {/* 헤더 */}
+              <div className="flex items-center justify-between px-5 py-3">
+                <h2 className="text-lg" style={{ fontWeight: 700 }}>{ing.name}</h2>
+                <button
+                  onClick={() => setDetailIngredient(null)}
+                  className="p-1.5 hover:bg-secondary rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5 text-muted-foreground" />
+                </button>
+              </div>
+
+              {/* 본문 */}
+              <div className="px-5 pb-8 space-y-3">
+                {/* 상태 태그 */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span
+                    className="px-2 py-0.5 rounded text-xs"
+                    style={{
+                      backgroundColor: `${statusColor}20`,
+                      color: statusColor,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {formatDDay(daysLeft)}
+                  </span>
+                  {ing.allergyWarnings && ing.allergyWarnings.length > 0 && (
+                    <span
+                      className="px-2 py-0.5 rounded text-xs flex items-center gap-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
+                      style={{ fontWeight: 600 }}
+                    >
+                      <AlertTriangle className="w-3 h-3" />
+                      알레르기 {ing.allergyWarnings.join(', ')}
+                    </span>
+                  )}
+                </div>
+
+                {/* 정보 로우 */}
+                <div className="bg-secondary rounded-xl p-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">수량</span>
+                    <span style={{ fontWeight: 600 }}>{ing.quantity}{ing.unit}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">분류</span>
+                    <span style={{ fontWeight: 600 }}>{getCategoryLabel(ing.category)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">보관 방법</span>
+                    <span style={{ fontWeight: 600 }}>{getStorageLabel(ing.storage)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">유통기한</span>
+                    <span style={{ fontWeight: 600 }}>{ing.expirationDate.toLocaleDateString('ko-KR')}</span>
+                  </div>
+                </div>
+
+                {/* 영양 정보 */}
+                <div className="bg-secondary rounded-xl p-4">
+                  <p className="text-xs text-muted-foreground mb-3" style={{ fontWeight: 600 }}>영양 정보 ({ing.quantity}{ing.unit} 기준)</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-background rounded-lg p-3 text-center">
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.calories * factor)}</p>
+                      <p className="text-xs text-muted-foreground">kcal</p>
+                    </div>
+                    <div className="bg-background rounded-lg p-3 text-center">
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.protein * factor)}g</p>
+                      <p className="text-xs text-muted-foreground">단백질</p>
+                    </div>
+                    <div className="bg-background rounded-lg p-3 text-center">
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.carbs * factor)}g</p>
+                      <p className="text-xs text-muted-foreground">탄수화물</p>
+                    </div>
+                    <div className="bg-background rounded-lg p-3 text-center">
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.fat * factor)}g</p>
+                      <p className="text-xs text-muted-foreground">지방</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 삭제 버튼 */}
+                <button
+                  onClick={() => {
+                    handleDelete(ing.id, ing.name);
+                    setDetailIngredient(null);
+                  }}
+                  className="w-full py-3 rounded-xl flex items-center justify-center gap-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm"
+                  style={{ fontWeight: 600 }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  식재료 삭제
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

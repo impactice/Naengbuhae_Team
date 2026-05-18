@@ -94,7 +94,7 @@ export default function RecipeDetail() {
   if (isGuest()) return <GuestBlocked feature="레시피 상세" />;
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-4">
       {/* 진입 시 자동 다이얼로그 — 부족한 재료가 있을 때 한 번만 묻기 */}
       {askDialog && recipe && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
@@ -340,13 +340,13 @@ export default function RecipeDetail() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-gray-200 dark:border-gray-800 p-5">
-        <div className="max-w-screen-sm mx-auto flex gap-2">
+      <div className="sticky bottom-0 bg-background border-t border-border px-4 py-3">
+        <div className="flex gap-2">
           {missingNotInList.length > 0 && (
             <button
               onClick={handleBulkAdd}
               disabled={adding}
-              className="flex-1 py-4 bg-secondary rounded-xl disabled:opacity-50"
+              className="flex-1 py-3 bg-secondary rounded-xl text-sm disabled:opacity-50"
               style={{ fontWeight: 600 }}
             >
               {adding ? '추가 중...' : `부족한 재료 ${missingNotInList.length}개 추가`}
@@ -354,7 +354,7 @@ export default function RecipeDetail() {
           )}
           <Link to="/shopping-list" className="flex-1">
             <button
-              className="w-full py-4 rounded-xl"
+              className="w-full py-3 rounded-xl text-sm"
               style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
             >
               장보기 리스트 보기
