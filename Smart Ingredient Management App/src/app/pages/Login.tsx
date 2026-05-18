@@ -98,7 +98,7 @@ export default function Login() {
       <div className="w-full max-w-md bg-background text-foreground min-h-screen shadow-xl flex flex-col">
         <div className="flex-1 flex flex-col justify-center px-6 py-12">
           {/* 로고 영역 — 배경 투명 PNG */}
-          <div className="mb-12 flex justify-center">
+          <div className="mb-6 flex justify-center">
             <img src={logoFull} alt="Naengbuhae" className="w-full h-auto" />
           </div>
 
@@ -112,7 +112,7 @@ export default function Login() {
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })
               }
-              className="w-full px-4 py-4 bg-card border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+              className="w-full px-4 py-4 bg-card border-2 border-border-strong rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all"
             />
           </div>
 
@@ -124,7 +124,7 @@ export default function Login() {
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full px-4 py-4 bg-input-background rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all pr-12"
+              className="w-full px-4 py-4 bg-card border-2 border-border-strong rounded-xl focus:outline-none focus:ring-2 focus:ring-accent transition-all pr-12"
             />
             <button
               type="button"
