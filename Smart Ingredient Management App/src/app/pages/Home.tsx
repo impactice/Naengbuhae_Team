@@ -149,7 +149,7 @@ export default function Home() {
           </Link>
           <Link to="/meal-plan">
             <div className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-colors">
-              <Calendar className="w-6 h-6 text-accent mb-2" />
+              <Calendar className="w-6 h-6 text-blue-500 mb-2" />
               <h3 className="text-sm" style={{ fontWeight: 600 }}>
                 식단 추천
               </h3>

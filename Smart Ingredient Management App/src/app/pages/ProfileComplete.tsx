@@ -383,6 +383,17 @@ export default function ProfileComplete() {
             >
               {submitting ? (isEditMode ? '수정 중...' : '저장 중...') : (isEditMode ? '수정하기' : '저장하기')}
             </button>
+
+            {/* 비밀번호 변경: 수정 모드 + LOCAL 가입자만 (소셜 계정은 비번이 없음) */}
+            {isEditMode && profile?.provider === 'LOCAL' && (
+              <button
+                type="button"
+                onClick={() => navigate('/change-password')}
+                className="w-full py-3 mt-3 text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+              >
+                비밀번호 변경
+              </button>
+            )}
           </form>
         </div>
       </div>

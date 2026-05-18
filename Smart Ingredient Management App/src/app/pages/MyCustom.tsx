@@ -461,7 +461,7 @@ export default function MyCustom() {
             to="/meal-plan"
             className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <Calendar className="w-8 h-8 mb-2 text-accent" />
+            <Calendar className="w-8 h-8 mb-2 text-blue-500" />
             <p className="font-semibold mb-1">식단 계획</p>
             <p className="text-xs text-muted-foreground">
               주간/월간<br />식단 관리
@@ -472,7 +472,7 @@ export default function MyCustom() {
             to="/priority"
             className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <TrendingUp className="w-8 h-8 mb-2 text-accent" />
+            <TrendingUp className="w-8 h-8 mb-2 text-orange-500" />
             <p className="font-semibold mb-1">소비 우선순위</p>
             <p className="text-xs text-muted-foreground">
               유통기한 기반<br />우선 소비 추천
@@ -483,7 +483,7 @@ export default function MyCustom() {
             to="/nutrition"
             className="bg-card border border-border rounded-xl p-4 hover:border-border-strong transition-all"
           >
-            <Heart className="w-8 h-8 mb-2 text-accent" />
+            <Heart className="w-8 h-8 mb-2 text-green-500" />
             <p className="font-semibold mb-1">영양 분석</p>
             <p className="text-xs text-muted-foreground">
               식재료별<br />영양성분 확인
@@ -569,17 +569,8 @@ export default function MyCustom() {
         </div>
       </div>
 
-      {/* 계정 관리: LOCAL 가입자만 비밀번호 변경 가능 (소셜 계정은 비번이 없음) + 회원 탈퇴 */}
+      {/* 계정 관리: 회원 탈퇴 (비밀번호 변경은 프로필 수정 화면으로 이동) */}
       <div className="px-5 pt-4 pb-8 border-t border-border mt-4 space-y-1">
-        {profile.provider === 'LOCAL' && (
-          <button
-            type="button"
-            onClick={() => navigate('/change-password')}
-            className="w-full py-3 text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
-          >
-            비밀번호 변경
-          </button>
-        )}
         <button
           type="button"
           onClick={handleDeleteAccount}
