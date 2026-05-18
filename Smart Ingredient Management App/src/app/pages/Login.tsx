@@ -99,7 +99,7 @@ export default function Login() {
         <div className="flex-1 flex flex-col justify-center px-6 py-12">
           {/* 로고 영역 — 배경 투명 PNG */}
           <div className="mb-12 flex justify-center">
-            <img src={logoFull} alt="Naengbuhae" className="h-28 w-auto" />
+            <img src={logoFull} alt="Naengbuhae" className="h-44 w-auto" />
           </div>
 
         {/* 로그인 폼 */}
