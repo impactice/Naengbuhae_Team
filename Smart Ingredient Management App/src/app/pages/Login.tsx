@@ -97,11 +97,9 @@ export default function Login() {
     <div className="min-h-screen bg-background flex justify-center items-center">
       <div className="w-full max-w-md bg-background text-foreground min-h-screen shadow-xl flex flex-col">
         <div className="flex-1 flex flex-col justify-center px-6 py-12">
-          {/* 로고 영역 — 로고 자체 배경이 흰색이라 흰 플레이트로 의도적 처리 */}
+          {/* 로고 영역 — 배경 투명 PNG */}
           <div className="mb-12 flex justify-center">
-            <div className="bg-white rounded-2xl px-5 py-4">
-              <img src={logoFull} alt="Naengbuhae" className="h-20 w-auto" />
-            </div>
+            <img src={logoFull} alt="Naengbuhae" className="h-28 w-auto" />
           </div>
 
         {/* 로그인 폼 */}
