@@ -125,14 +125,16 @@ export default function ShoppingList() {
 
   const handleTransfer = async (id: string, name: string) => {
     if (transferringIds.includes(id)) return;
+    // 구매했는지 확인 — 실수 클릭 방지. 확정 시 냉장고로 이동.
+    if (!confirm(`${name} 구매하셨나요?\n냉장고로 옮길게요.`)) return;
     setTransferringIds((prev) => [...prev, id]);
 
     try {
       await transferShoppingItemToIngredient(id);
-      alert(`${name}을(를) 냉장고로 이관했습니다`);
+      alert(`${name}을(를) 냉장고에 추가했어요`);
     } catch (error) {
       console.error('이관 실패:', error);
-      alert('냉장고 이관에 실패했습니다. 백엔드 API 경로를 확인해주세요.');
+      alert('냉장고 추가에 실패했습니다. 백엔드 API 경로를 확인해주세요.');
     } finally {
       setTransferringIds((prev) => prev.filter((itemId) => itemId !== id));
     }
@@ -359,10 +361,11 @@ export default function ShoppingList() {
                           <button
                             onClick={() => handleTransfer(item.id, item.name)}
                             disabled={transferringIds.includes(item.id)}
+                            title="구매 완료! 냉장고에 추가하기"
                             className="px-3 py-2 text-xs rounded-lg bg-accent hover:bg-accent-deep transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             style={{ fontWeight: 600 }}
                           >
-                            {transferringIds.includes(item.id) ? '이관 중...' : '냉장고 이관'}
+                            {transferringIds.includes(item.id) ? '추가 중...' : '냉장고에 추가'}
                           </button>
                         </>
                       )}
