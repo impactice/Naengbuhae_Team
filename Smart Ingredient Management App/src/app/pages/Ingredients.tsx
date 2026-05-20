@@ -349,7 +349,7 @@ export default function Ingredients() {
                   onClick={selectionMode
                     ? () => toggleSelection(ingredient.id)
                     : () => setDetailIngredient(ingredient)}
-                  className={`rounded-xl p-3 relative cursor-pointer transition-colors ${
+                  className={`rounded-xl p-3 cursor-pointer transition-colors flex items-center gap-2.5 ${
                     selectionMode
                       ? isSelected
                         ? 'bg-green-50 dark:bg-green-900/30 border-2 border-accent'
@@ -359,16 +359,42 @@ export default function Ingredients() {
                       : 'bg-card border border-border hover:bg-secondary'
                   }`}
                 >
-                  {/* 우상단 액션 — 선택 모드면 체크박스, 아니면 삭제 */}
+                  {/* 왼쪽: D-day 뱃지 (세로 가운데) */}
+                  <span
+                    className="flex-shrink-0 px-1.5 py-0.5 rounded text-xs"
+                    style={{ backgroundColor: `${statusColor}20`, color: statusColor, fontWeight: 600 }}
+                  >
+                    {formatDDay(daysLeft)}
+                  </span>
+
+                  {/* 중간: 이름 + 정보 */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-sm line-clamp-1 leading-tight flex-1 min-w-0" style={{ fontWeight: 700 }} title={ingredient.name}>
+                        {ingredient.name}
+                      </h3>
+                      {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
+                        <span
+                          className="flex-shrink-0 inline-flex items-center px-1 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
+                          title={`알레르기: ${ingredient.allergyWarnings.join(', ')}`}
+                        >
+                          <AlertTriangle className="w-3 h-3" />
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-0.5 text-xs text-muted-foreground truncate">
+                      {ingredient.expirationDate.toLocaleDateString('ko-KR')} · {Math.round(nutrition.calories)}kcal/100g · 단{Math.round(nutrition.protein)}g · 탄{Math.round(nutrition.carbs)}g
+                    </p>
+                  </div>
+
+                  {/* 오른쪽: 삭제 / 체크박스 (세로 가운데, flex items-center로 자동 정렬) */}
                   {selectionMode ? (
-                    <div className="absolute top-2.5 right-2.5">
-                      <div
-                        className={`w-5 h-5 rounded-md flex items-center justify-center border-2 ${
-                          isSelected ? 'bg-accent border-accent' : 'bg-white border-gray-300'
-                        }`}
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
-                      </div>
+                    <div
+                      className={`flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center border-2 ${
+                        isSelected ? 'bg-accent border-accent' : 'bg-white border-gray-300'
+                      }`}
+                    >
+                      {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
                     </div>
                   ) : (
                     <button
@@ -376,37 +402,11 @@ export default function Ingredients() {
                         e.stopPropagation();
                         handleDelete(ingredient.id, ingredient.name);
                       }}
-                      className="absolute top-1.5 right-1.5 p-1.5 hover:bg-secondary rounded-lg transition-colors"
+                      className="flex-shrink-0 p-1.5 hover:bg-secondary rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </button>
                   )}
-
-                  {/* 이름 — 한 줄 + 우상단 액션 자리 pr-8 */}
-                  <h3 className="text-sm pr-8 line-clamp-1 leading-tight" style={{ fontWeight: 700 }} title={ingredient.name}>
-                    {ingredient.name}
-                  </h3>
-
-                  {/* 정보 한 줄: D-day · 날짜 · 영양 (gap dot separator) */}
-                  <div className="mt-1.5 flex items-center gap-1.5 text-xs pr-8 min-w-0">
-                    <span
-                      className="flex-shrink-0 px-1.5 py-0.5 rounded"
-                      style={{ backgroundColor: `${statusColor}20`, color: statusColor, fontWeight: 600 }}
-                    >
-                      {formatDDay(daysLeft)}
-                    </span>
-                    {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
-                      <span
-                        className="flex-shrink-0 inline-flex items-center px-1 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
-                        title={`알레르기: ${ingredient.allergyWarnings.join(', ')}`}
-                      >
-                        <AlertTriangle className="w-3 h-3" />
-                      </span>
-                    )}
-                    <span className="text-muted-foreground truncate min-w-0">
-                      {ingredient.expirationDate.toLocaleDateString('ko-KR')} · {Math.round(nutrition.calories)}kcal/100g · 단{Math.round(nutrition.protein)}g · 탄{Math.round(nutrition.carbs)}g
-                    </span>
-                  </div>
                 </div>
               );
             })}
