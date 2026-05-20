@@ -305,6 +305,26 @@ class IngredientStore {
     }
   }
 
+  // 장보기 항목 수량 업데이트 — [-/+] 카운터에서 호출
+  async updateShoppingItemQuantity(id: string, quantity: number): Promise<void> {
+    try {
+      const response = await apiFetch(`/api/shopping-list/${id}/quantity`, {
+        method: 'PATCH',
+        body: JSON.stringify({ quantity }),
+      });
+      if (response.ok) {
+        await this.fetchShoppingList();
+      } else {
+        const errorText = await response.text();
+        throw new Error(errorText || '수량 변경 실패');
+      }
+    } catch (error) {
+      console.error('수량 변경 오류:', error);
+      alert('수량 변경 중 오류가 발생했습니다.');
+      throw error;
+    }
+  }
+
   // 장보기 항목 삭제
   async deleteShoppingItem(id: string): Promise<void> {
     try {

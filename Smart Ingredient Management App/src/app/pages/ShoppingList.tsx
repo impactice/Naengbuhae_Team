@@ -15,6 +15,7 @@ export default function ShoppingList() {
   const {
     shoppingList, addShoppingItem, toggleShoppingItem, deleteShoppingItem,
     bulkDeleteShoppingItems, transferShoppingItemToIngredient,
+    updateShoppingItemQuantity,
   } = useShoppingList();
   const [showAddForm, setShowAddForm] = useState(false);
   const [name, setName] = useState('');
@@ -121,6 +122,20 @@ export default function ShoppingList() {
     } finally {
       setDeleting(false);
     }
+  };
+
+  // [-/+] 카운터 — 1에서 - 누르면 삭제 confirm, + 누르면 quantity + 1.
+  // 단위가 g/ml 같이 큰 수일 수도 있어 step은 1 고정 (필요 시 long-press로 늘릴 수 있음).
+  const handleDecrement = async (item: typeof shoppingList[number]) => {
+    if (item.quantity <= 1) {
+      if (!confirm(`${item.name}을(를) 삭제하시겠습니까?`)) return;
+      await deleteShoppingItem(item.id);
+      return;
+    }
+    await updateShoppingItemQuantity(item.id, item.quantity - 1);
+  };
+  const handleIncrement = async (item: typeof shoppingList[number]) => {
+    await updateShoppingItemQuantity(item.id, item.quantity + 1);
   };
 
   const handleTransfer = async (id: string, name: string) => {
@@ -341,14 +356,37 @@ export default function ShoppingList() {
                           className="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 hover:border-lime-500 transition-colors"
                         />
                       )}
-                      <div className="flex-1">
-                        <h3 className="text-base" style={{ fontWeight: 600 }}>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base truncate" style={{ fontWeight: 600 }}>
                           {item.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {item.quantity}
-                          {item.unit}
-                        </p>
+                        {/* [-] 1 [+] 카운터 — 1에서 -누르면 삭제 confirm */}
+                        {!selectionMode && (
+                          <div className="mt-1 inline-flex items-center gap-1 bg-background border border-border rounded-lg overflow-hidden">
+                            <button
+                              type="button"
+                              onClick={() => handleDecrement(item)}
+                              className="w-7 h-7 flex items-center justify-center hover:bg-secondary transition-colors"
+                              aria-label="수량 감소"
+                            >
+                              −
+                            </button>
+                            <span className="px-2 text-sm font-medium min-w-[2.5rem] text-center">
+                              {item.quantity}{item.unit}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleIncrement(item)}
+                              className="w-7 h-7 flex items-center justify-center hover:bg-secondary transition-colors"
+                              aria-label="수량 증가"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                        {selectionMode && (
+                          <p className="text-sm text-muted-foreground">{item.quantity}{item.unit}</p>
+                        )}
                       </div>
                       {!selectionMode && (
                         <>

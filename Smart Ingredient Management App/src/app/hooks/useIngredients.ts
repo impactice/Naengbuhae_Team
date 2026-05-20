@@ -77,6 +77,8 @@ export function useShoppingList() {
     bulkAddShoppingItems: (items: { name: string; quantity: number; unit: string }[]) =>
       ingredientStore.bulkAddShoppingItems(items),
     toggleShoppingItem: (id: string) => ingredientStore.toggleShoppingItem(id),
+    updateShoppingItemQuantity: (id: string, quantity: number) =>
+      ingredientStore.updateShoppingItemQuantity(id, quantity),
     deleteShoppingItem: (id: string) => ingredientStore.deleteShoppingItem(id),
     bulkDeleteShoppingItems: (ids: string[]) => ingredientStore.bulkDeleteShoppingItems(ids),
     transferShoppingItemToIngredient: (id: string) =>
