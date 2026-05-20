@@ -377,9 +377,9 @@ export default function Ingredients() {
                     </div>
                   )}
 
-                  {/* 식재료 이름 + 유통기한 태그 */}
-                  <div className="mb-2">
-                    <h3 className="text-sm truncate" style={{ fontWeight: 700 }}>
+                  {/* 식재료 이름 + 유통기한 태그 — 우상단 삭제 버튼 자리 피해서 pr-8, 2줄까지 허용 */}
+                  <div className="mb-2 pr-8">
+                    <h3 className="text-sm line-clamp-2 leading-tight" style={{ fontWeight: 700 }} title={ingredient.name}>
                       {ingredient.name}
                     </h3>
                     <span
