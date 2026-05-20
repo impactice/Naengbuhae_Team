@@ -5,6 +5,7 @@ import { ArrowLeft, Sparkles, ChevronRight, Check } from 'lucide-react';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
 import { apiFetch } from '../utils/apiClient';
+import { saveAiRecipes, type SavedAiRecipe } from '../store/aiRecipeStore';
 
 // AI 추천 응답 항목 — POST /api/recipes/ai-recommendations 응답 (capstone-ai /api/recommend 프록시).
 export interface AiRecipeResult {
@@ -37,7 +38,8 @@ export default function AiRecommend() {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<AiRecipeResult[] | null>(null);
+  // 결과는 저장된 형태(id 포함)로 보관 — 상세 페이지가 즐겨찾기 토글하려면 id 필요.
+  const [results, setResults] = useState<SavedAiRecipe[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   if (isGuest()) return <GuestBlocked feature="AI 레시피 추천" />;
@@ -73,7 +75,10 @@ export default function AiRecommend() {
         return;
       }
       const data = (await res.json()) as AiRecipeResult[];
-      setResults(data ?? []);
+      // localStorage에 저장 → 메인 Recipes 페이지에서도 노출. saveAiRecipes는 prepend 후 전체 반환.
+      const allSaved = saveAiRecipes(data ?? []);
+      // 이번 호출로 새로 저장된 N개만 결과 화면에 보여줌 (앞 N개)
+      setResults(allSaved.slice(0, (data ?? []).length));
     } catch {
       setError('서버 연결 실패');
     } finally {
@@ -81,8 +86,8 @@ export default function AiRecommend() {
     }
   };
 
-  const openDetail = (rec: AiRecipeResult) => {
-    navigate('/ai-recipe-detail', { state: { recipe: rec } });
+  const openDetail = (rec: SavedAiRecipe) => {
+    navigate('/ai-recipe-detail', { state: { recipeId: rec.id } });
   };
 
   return (

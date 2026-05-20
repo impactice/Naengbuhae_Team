@@ -1,11 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { useRecipes } from '../hooks/useRecipes';
 import { matchRecipesWithIngredients, getDifficultyLabel } from '../utils/recipeMatch';
 import { Link, useNavigate } from 'react-router';
-import { ChefHat, Clock, Users, ArrowLeft, Sparkles, Heart } from 'lucide-react';
+import { ChefHat, Clock, Users, ArrowLeft, Sparkles, Heart, ChevronRight, X } from 'lucide-react';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
+import {
+  getAllAiRecipes,
+  removeAiRecipe,
+  type SavedAiRecipe,
+} from '../store/aiRecipeStore';
 
 // 메인 Recipes 페이지.
 // AI 추천은 모달이 아니라 별도 페이지(/ai-recommend)로 이동 — 결과 카드 클릭 시 /ai-recipe-detail로
@@ -15,6 +20,19 @@ export default function Recipes() {
   const { recipes, loading, toggleFavorite } = useRecipes();
   const [filterMode, setFilterMode] = useState<'all' | 'makeable' | 'favorites'>('all');
   const navigate = useNavigate();
+
+  // localStorage에 저장된 AI 추천 결과들 — 메인 페이지에서도 노출.
+  // 페이지 mount 시 한 번 읽고 삭제 액션 시 갱신.
+  const [aiRecipes, setAiRecipes] = useState<SavedAiRecipe[]>([]);
+  useEffect(() => {
+    setAiRecipes(getAllAiRecipes());
+  }, []);
+
+  const handleRemoveAi = (id: string) => {
+    if (!confirm('이 AI 추천을 삭제할까요?')) return;
+    removeAiRecipe(id);
+    setAiRecipes(getAllAiRecipes());
+  };
 
   const matches = useMemo(
     () => matchRecipesWithIngredients(recipes, ingredients),
@@ -86,6 +104,53 @@ export default function Recipes() {
           </button>
         </div>
       </div>
+
+      {/* AI 추천 레시피 — localStorage에 저장된 것들 (한 번 받으면 안 사라짐) */}
+      {aiRecipes.length > 0 && (
+        <div className="px-5 pb-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4" style={{ color: '#7A9600' }} />
+            <h2 className="text-sm font-bold">AI 추천 레시피 ({aiRecipes.length})</h2>
+          </div>
+          <div className="space-y-2">
+            {aiRecipes.map((rec) => (
+              <div
+                key={rec.id}
+                className="bg-card border border-border rounded-xl p-3 flex items-center gap-2 hover:bg-secondary transition-colors"
+              >
+                <button
+                  type="button"
+                  onClick={() => navigate('/ai-recipe-detail', { state: { recipeId: rec.id } })}
+                  className="flex-1 text-left flex items-center gap-2"
+                >
+                  <span
+                    className="flex-shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px]"
+                    style={{ backgroundColor: 'var(--accent)', color: '#1A3300', fontWeight: 700 }}
+                  >
+                    <Sparkles className="w-2.5 h-2.5" />
+                    AI
+                  </span>
+                  <span className="flex-1 text-sm" style={{ fontWeight: 600 }}>
+                    {rec.dish_name}
+                  </span>
+                  {rec.favorite && (
+                    <Heart className="w-4 h-4 text-red-500 flex-shrink-0" fill="currentColor" />
+                  )}
+                  <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveAi(rec.id)}
+                  className="p-1.5 rounded-lg hover:bg-secondary transition-colors"
+                  aria-label="삭제"
+                >
+                  <X className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 재료 부족 안내 */}
       {ingredients.length === 0 && (

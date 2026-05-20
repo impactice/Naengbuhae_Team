@@ -1,20 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router';
-import { ArrowLeft, Plus, ShoppingCart, Sparkles } from 'lucide-react';
+import { ArrowLeft, Plus, ShoppingCart, Sparkles, Heart } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
-import type { AiRecipeResult } from './AiRecommend';
+import {
+  getAiRecipe,
+  toggleAiRecipeFavorite,
+  type SavedAiRecipe,
+} from '../store/aiRecipeStore';
 
-// AI 추천 결과 단일 상세 — router state로 recipe 데이터 전달받음.
-// 기존 RecipeDetail.tsx와 유사한 레이아웃 (헤더 + 정보 카드 + 필요한 재료 + 액션 + 효능/팁).
-// 단 AI 응답엔 quantity/unit/step 등 정보가 없어 layout이 부분적으로 다름.
+// AI 추천 결과 단일 상세 — router state로 recipeId만 전달받아 localStorage에서 조회.
+// 즐겨찾기 토글 가능. AI 응답엔 quantity/unit/step 없어 일부 섹션만 표시.
 export default function AiRecipeDetail() {
   const navigate = useNavigate();
   const location = useLocation();
-  const recipe = (location.state as { recipe?: AiRecipeResult } | null)?.recipe;
+  const recipeId = (location.state as { recipeId?: string } | null)?.recipeId;
 
+  const [recipe, setRecipe] = useState<SavedAiRecipe | null>(null);
   const [adding, setAdding] = useState(false);
+
+  useEffect(() => {
+    if (!recipeId) return;
+    setRecipe(getAiRecipe(recipeId));
+  }, [recipeId]);
 
   if (isGuest()) return <GuestBlocked feature="AI 레시피 상세" />;
 
@@ -35,14 +44,18 @@ export default function AiRecipeDetail() {
     );
   }
 
-  // "신선한 채소 (루꼴라, 시금치 등): 활용법..." 같은 자유 형식에서 이름만 추출.
   const parseName = (text: string): string => text.split(/[:\(（]/)[0].trim();
-  // 콜론 뒤 활용법.
   const parseDetail = (text: string): string =>
     text.includes(':') ? text.substring(text.indexOf(':') + 1).trim() : '';
 
+  const handleToggleFavorite = () => {
+    if (!recipe) return;
+    const updated = toggleAiRecipeFavorite(recipe.id);
+    if (updated) setRecipe(updated);
+  };
+
   const handleBulkAdd = async () => {
-    if (adding) return;
+    if (adding || !recipe) return;
     const items = (recipe.additional_ingredients ?? [])
       .map(parseName)
       .filter((n) => n.length > 0)
@@ -74,7 +87,7 @@ export default function AiRecipeDetail() {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      {/* 헤더 */}
+      {/* 헤더 + 즐겨찾기 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
           <ArrowLeft className="w-6 h-6" />
@@ -82,9 +95,20 @@ export default function AiRecipeDetail() {
         <h1 className="text-2xl flex-1" style={{ fontWeight: 700 }}>
           {recipe.dish_name}
         </h1>
+        <button
+          type="button"
+          onClick={handleToggleFavorite}
+          className="p-1.5 rounded-lg hover:bg-secondary"
+          aria-label="즐겨찾기"
+        >
+          <Heart
+            className={`w-6 h-6 ${recipe.favorite ? 'text-red-500' : 'text-muted-foreground'}`}
+            fill={recipe.favorite ? 'currentColor' : 'none'}
+          />
+        </button>
       </div>
 
-      {/* 기본 정보 카드 — AI 추천 뱃지 */}
+      {/* AI 추천 뱃지 */}
       <div className="px-5 pb-4">
         <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-2">
           <span
@@ -111,10 +135,7 @@ export default function AiRecipeDetail() {
               const name = parseName(text);
               const detail = parseDetail(text);
               return (
-                <div
-                  key={i}
-                  className="bg-card border border-border rounded-xl p-4"
-                >
+                <div key={i} className="bg-card border border-border rounded-xl p-4">
                   <p className="text-sm" style={{ fontWeight: 600 }}>{name}</p>
                   {detail && (
                     <p className="text-xs text-muted-foreground mt-1">{detail}</p>
@@ -124,7 +145,6 @@ export default function AiRecipeDetail() {
             })}
           </div>
 
-          {/* 액션 버튼 — 재료 바로 밑에 배치 (RecipeDetail과 동일 패턴) */}
           <div className="flex gap-2 mt-4">
             <button
               onClick={handleBulkAdd}
@@ -133,9 +153,7 @@ export default function AiRecipeDetail() {
               style={{ fontWeight: 600 }}
             >
               <Plus className="w-4 h-4" />
-              {adding
-                ? '추가 중...'
-                : `재료 ${recipe.additional_ingredients.length}개 장보기에 추가`}
+              {adding ? '추가 중...' : `재료 ${recipe.additional_ingredients.length}개 장보기에 추가`}
             </button>
             <Link to="/shopping-list" className="flex-1">
               <button
@@ -150,7 +168,6 @@ export default function AiRecipeDetail() {
         </div>
       )}
 
-      {/* 효능 / 추천 이유 */}
       {recipe.health_benefits && (
         <div className="px-5 pb-6">
           <h2 className="text-lg mb-3" style={{ fontWeight: 600 }}>
@@ -162,7 +179,6 @@ export default function AiRecipeDetail() {
         </div>
       )}
 
-      {/* 조리 팁 */}
       {recipe.recipe_tip && (
         <div className="px-5 pb-6">
           <h2 className="text-lg mb-3" style={{ fontWeight: 600 }}>
