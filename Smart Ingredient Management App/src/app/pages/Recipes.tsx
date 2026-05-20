@@ -6,6 +6,15 @@ import { Link } from 'react-router';
 import { ChefHat, Clock, Users, ArrowLeft, Sparkles, X, ChevronRight, Check, Heart } from 'lucide-react';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
+import { apiFetch } from '../utils/apiClient';
+
+// AI 추천 응답 항목 — POST /api/recipes/ai-recommendations 응답 (백엔드가 AI 서버 응답 그대로 전달).
+interface AiRecipeResult {
+  dish_name: string;
+  additional_ingredients: string[];
+  health_benefits: string;
+  recipe_tip: string;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 요리 스타일 옵션 목록
@@ -47,6 +56,8 @@ function AIRecommendModal({
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  const [aiResults, setAiResults] = useState<AiRecipeResult[] | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   const toggleIngredient = (name: string) => {
     setSelectedIngredients((prev) =>
@@ -60,39 +71,38 @@ function AIRecommendModal({
     );
   };
 
-  // ─────────────────────────────────────────────
-  // TODO: 실제 백엔드 AI 추천 API 연동 시 이 함수를 수정하세요.
-  //   현재: 가짜 2초 딜레이 후 성공 처리
-  //   연동 후 예시:
-  //     const res = await apiFetch('/recipe/ai-recommend', {
-  //       method: 'POST',
-  //       body: JSON.stringify({ ingredients: selectedIngredients, styles: selectedStyles }),
-  //     });
-  //     const data = await res.json();
-  //     // data.recipes 를 상위 컴포넌트로 전달하거나 navigate('/recipes?ai=1') 등
-  // ─────────────────────────────────────────────
+  // POST /api/recipes/ai-recommendations — capstone-ai /api/recommend 프록시.
+  // 사용자 선택 식재료/스타일을 전달하면 3개 요리 추천이 옴.
+  // Gemini 부하/한도 상황에 따라 1~2분 걸릴 수 있음 (UI에 "1~3분 소요" 안내).
   const sendToBackend = async () => {
     setIsLoading(true);
+    setAiError(null);
+    setAiResults(null);
     try {
-      console.log('[AI 추천 요청]', {
-        ingredients: selectedIngredients,
-        styles: selectedStyles,
-      });
+      // 스타일 id('korean') → 라벨('한식')로 변환해서 AI 서버가 알아보기 쉽게
+      const styleLabels = selectedStyles
+        .map((id) => CUISINE_STYLES.find((s) => s.id === id)?.label ?? id);
 
-      // TODO: 아래 fetch를 실제 엔드포인트로 교체 (현재는 백엔드 없이 개발 중이므로 mock)
-      await fetch('http://localhost:8080/recipe/ai-recommend', {
+      const res = await apiFetch('/api/recipes/ai-recommendations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ingredients: selectedIngredients,
-          cuisineStyles: selectedStyles,
+          styles: styleLabels,
         }),
-      }).catch(() => {
-        // 백엔드 없어도 UI 흐름 확인 가능하도록 에러 무시 (개발용)
-        // TODO: 실제 연동 시 이 catch 제거하고 에러 처리 추가
       });
 
+      if (!res.ok) {
+        const msg = res.status === 503 ? 'AI 서버에 연결할 수 없습니다.'
+          : res.status === 429 ? '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.'
+          : `추천 실패 (${res.status})`;
+        setAiError(msg);
+        return;
+      }
+      const data = (await res.json()) as AiRecipeResult[];
+      setAiResults(data ?? []);
       setIsDone(true);
+    } catch {
+      setAiError('서버 연결 실패');
     } finally {
       setIsLoading(false);
     }
@@ -314,72 +324,98 @@ function AIRecommendModal({
             </div>
 
             {/* 하단 버튼 */}
-            <div className="px-5 py-4 border-t border-gray-100 flex gap-2">
-              <button
-                onClick={() => setStep(1)}
-                className="py-4 px-5 rounded-xl text-sm bg-secondary text-muted-foreground transition-colors hover:opacity-80"
-                style={{ fontWeight: 600 }}
-              >
-                이전
-              </button>
-              <button
-                onClick={sendToBackend}
-                disabled={isLoading}
-                className="flex-1 py-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-all"
-                style={{
-                  backgroundColor: 'var(--accent)',
-                  fontWeight: 700,
-                  color: '#000',
-                  opacity: isLoading ? 0.7 : 1,
-                }}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    AI 분석 중...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    AI 추천 받기
-                  </>
-                )}
-              </button>
+            <div className="px-5 py-4 border-t border-gray-100">
+              <p className="text-xs text-amber-600 dark:text-amber-400 mb-2 text-center">
+                ⏱️ AI 분석은 <strong>1~3분</strong> 정도 걸려요. 잠시만 기다려주세요.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setStep(1)}
+                  disabled={isLoading}
+                  className="py-4 px-5 rounded-xl text-sm bg-secondary text-muted-foreground transition-colors hover:opacity-80 disabled:opacity-50"
+                  style={{ fontWeight: 600 }}
+                >
+                  이전
+                </button>
+                <button
+                  onClick={sendToBackend}
+                  disabled={isLoading || selectedIngredients.length === 0}
+                  className="flex-1 py-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-all"
+                  style={{
+                    backgroundColor: 'var(--accent)',
+                    fontWeight: 700,
+                    color: '#000',
+                    opacity: (isLoading || selectedIngredients.length === 0) ? 0.7 : 1,
+                  }}
+                >
+                  {isLoading ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      AI 분석 중... (최대 3분)
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      AI 추천 받기
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}
 
         {/* ── 완료 상태 ── */}
         {isDone && (
-          <div className="flex flex-col items-center justify-center flex-1 px-5 pb-10">
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-              style={{ backgroundColor: '#CDFF0030' }}
-            >
-              <Sparkles className="w-8 h-8" style={{ color: '#7A9600' }} />
+          <div className="flex-1 overflow-y-auto px-5 pb-6">
+            <div className="flex items-center gap-2 mb-3 mt-1">
+              <Sparkles className="w-5 h-5" style={{ color: '#7A9600' }} />
+              <span className="text-base" style={{ fontWeight: 700 }}>AI 추천 결과</span>
             </div>
-            <p className="text-base text-center" style={{ fontWeight: 700 }}>
-              AI 추천 요청을 전송했어요!
-            </p>
-            <p className="text-sm text-muted-foreground text-center mt-1">
-              {/* TODO: 백엔드 연동 후 실제 추천 결과 표시 로직으로 교체 */}
-              백엔드 연동 후 추천 결과가 여기에 표시됩니다
-            </p>
-            <div className="mt-4 px-4 py-3 bg-card border border-border rounded-xl w-full">
-              <p className="text-xs text-muted-foreground mb-1" style={{ fontWeight: 600 }}>전송된 데이터</p>
-              <p className="text-xs text-muted-foreground">식재료: {selectedIngredients.join(', ')}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                스타일: {selectedStyles.length > 0
-                  ? CUISINE_STYLES.filter((c) => selectedStyles.includes(c.id)).map((c) => c.label).join(', ')
-                  : '전체'}
-              </p>
-            </div>
+            {aiResults && aiResults.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-6">추천 결과가 없습니다. 다시 시도해주세요.</p>
+            )}
+            {aiResults && aiResults.length > 0 && (
+              <div className="space-y-3">
+                {aiResults.map((rec, i) => (
+                  <div key={i} className="bg-card border border-border rounded-xl p-4">
+                    <h4 className="font-bold text-base mb-2">{rec.dish_name}</h4>
+                    {rec.additional_ingredients && rec.additional_ingredients.length > 0 && (
+                      <p className="text-xs text-muted-foreground mb-2">
+                        <span className="font-semibold">추가 재료: </span>
+                        {rec.additional_ingredients.join(', ')}
+                      </p>
+                    )}
+                    {rec.health_benefits && (
+                      <p className="text-sm leading-relaxed mb-2">{rec.health_benefits}</p>
+                    )}
+                    {rec.recipe_tip && (
+                      <p className="text-xs text-muted-foreground italic">💡 {rec.recipe_tip}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
             <button
               onClick={onClose}
               className="mt-5 w-full py-4 rounded-xl text-sm"
               style={{ backgroundColor: 'var(--accent)', fontWeight: 700 }}
             >
               확인
+            </button>
+          </div>
+        )}
+        {aiError && !isLoading && (
+          <div className="px-5 pb-6">
+            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-xl p-4">
+              <p className="text-sm text-red-700 dark:text-red-300" style={{ fontWeight: 600 }}>{aiError}</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="mt-3 w-full py-3 rounded-xl text-sm bg-secondary"
+              style={{ fontWeight: 600 }}
+            >
+              닫기
             </button>
           </div>
         )}

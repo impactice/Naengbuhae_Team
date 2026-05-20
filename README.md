@@ -49,6 +49,17 @@
 - 결과는 카드 아래 인라인으로 펼침 — `dish_name` + 추가 재료 + 효능 + 조리 팁
 - 동시에 한 카드만 추천 받기(`recommendingIdx`) — UX/Rate 보호
 
+### AI 추천 모달 백엔드 결합 (`/api/recipes/ai-recommendations`)
+
+AI 담당자가 `Recipes.tsx`에 만들어둔 AI 추천 모달이 mock fetch(`/recipe/ai-recommend`) 상태로 죽어있었음. 실제 백엔드 endpoint로 결합.
+
+- mock fetch → `apiFetch('/api/recipes/ai-recommendations', POST, JSON)` 교체
+- 스타일 id(`'korean'`)를 라벨(`'한식'`)로 변환해서 백엔드에 전달
+- 모달의 `isDone` 블록 placeholder를 실제 추천 결과 카드로 교체 — dish_name + 추가 재료 + 효능 + 조리 팁 (3개)
+- 에러 상태 분기 추가 (503/429/그 외)
+- "AI 분석 1~3분 소요" amber 안내 + 로딩 라벨 "AI 분석 중... (최대 3분)"
+- 식재료 0개면 버튼 disabled
+
 ### AI 영양 검색/추천 — "1~3분 소요" 안내 + 그대로 노출
 
 AI 서버 응답이 평균 1-2분 걸리는데(공공데이터 3페이지 + Gemini 2회), 정확도 위해 줄이기 어렵다는 게 담당자 의견. 발표용 별도 페이지 안 만들고 그냥 **"오래 걸리는 기능"으로 노출**하기로.
