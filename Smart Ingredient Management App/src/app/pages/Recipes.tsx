@@ -58,6 +58,45 @@ function AIRecommendModal({
   const [isDone, setIsDone] = useState(false);
   const [aiResults, setAiResults] = useState<AiRecipeResult[] | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
+  // 결과 리스트 ↔ 단일 상세 화면 토글. null이면 리스트, 인덱스면 그 상세.
+  const [selectedRecipeIdx, setSelectedRecipeIdx] = useState<number | null>(null);
+  const [addingToShopping, setAddingToShopping] = useState(false);
+
+  // AI 응답 ingredient 텍스트("신선한 채소 (루꼴라, 시금치 등): 활용법..." 같이 자유 형식)에서
+  // 장보기 항목 name으로 쓸 앞부분만 추출. ":" 또는 "(" 앞까지.
+  const parseIngredientName = (text: string): string => {
+    return text.split(/[:\(（]/)[0].trim();
+  };
+
+  const handleAddToShopping = async (rec: AiRecipeResult) => {
+    if (addingToShopping) return;
+    const items = rec.additional_ingredients
+      .map(parseIngredientName)
+      .filter((n) => n.length > 0)
+      .map((name) => ({ name, quantity: 1, unit: '개' }));
+    if (items.length === 0) {
+      alert('추가할 재료가 없어요.');
+      return;
+    }
+    if (!confirm(`재료 ${items.length}개를 장보기 리스트에 추가할까요?\n\n${items.map((i) => `· ${i.name}`).join('\n')}`)) return;
+
+    setAddingToShopping(true);
+    try {
+      const res = await apiFetch('/api/shopping-list/bulk-add', {
+        method: 'POST',
+        body: JSON.stringify({ items }),
+      });
+      if (res.ok) {
+        alert(`장보기에 ${items.length}개 항목을 추가했어요!`);
+      } else {
+        alert(`추가 실패 (${res.status})`);
+      }
+    } catch {
+      alert('서버 연결 실패');
+    } finally {
+      setAddingToShopping(false);
+    }
+  };
 
   const toggleIngredient = (name: string) => {
     setSelectedIngredients((prev) =>
@@ -78,6 +117,7 @@ function AIRecommendModal({
     setIsLoading(true);
     setAiError(null);
     setAiResults(null);
+    setSelectedRecipeIdx(null);
     try {
       // 스타일 id('korean') → 라벨('한식')로 변환해서 AI 서버가 알아보기 쉽게
       const styleLabels = selectedStyles
@@ -366,7 +406,7 @@ function AIRecommendModal({
         )}
 
         {/* ── 완료 상태 ── */}
-        {isDone && (
+        {isDone && selectedRecipeIdx === null && (
           <div className="flex-1 overflow-y-auto px-5 pb-6">
             <div className="flex items-center gap-2 mb-3 mt-1">
               <Sparkles className="w-5 h-5" style={{ color: '#7A9600' }} />
@@ -378,21 +418,26 @@ function AIRecommendModal({
             {aiResults && aiResults.length > 0 && (
               <div className="space-y-3">
                 {aiResults.map((rec, i) => (
-                  <div key={i} className="bg-card border border-border rounded-xl p-4">
-                    <h4 className="font-bold text-base mb-2">{rec.dish_name}</h4>
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setSelectedRecipeIdx(i)}
+                    className="w-full bg-card border border-border rounded-xl p-4 text-left hover:border-border-strong hover:bg-secondary/30 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-bold text-base flex-1">{rec.dish_name}</h4>
+                      <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                    </div>
                     {rec.additional_ingredients && rec.additional_ingredients.length > 0 && (
-                      <p className="text-xs text-muted-foreground mb-2">
+                      <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
                         <span className="font-semibold">추가 재료: </span>
-                        {rec.additional_ingredients.join(', ')}
+                        {rec.additional_ingredients.map(parseIngredientName).join(', ')}
                       </p>
                     )}
                     {rec.health_benefits && (
-                      <p className="text-sm leading-relaxed mb-2">{rec.health_benefits}</p>
+                      <p className="text-sm leading-relaxed mt-2 line-clamp-2">{rec.health_benefits}</p>
                     )}
-                    {rec.recipe_tip && (
-                      <p className="text-xs text-muted-foreground italic">💡 {rec.recipe_tip}</p>
-                    )}
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -405,6 +450,91 @@ function AIRecommendModal({
             </button>
           </div>
         )}
+        {isDone && selectedRecipeIdx !== null && aiResults && aiResults[selectedRecipeIdx] && (() => {
+          const rec = aiResults[selectedRecipeIdx];
+          return (
+            <div className="flex-1 overflow-y-auto pb-6">
+              {/* 헤더 — back 버튼 + 제목 */}
+              <div className="sticky top-0 bg-background border-b border-border px-4 py-3 flex items-center gap-2 z-10">
+                <button
+                  onClick={() => setSelectedRecipeIdx(null)}
+                  className="p-1.5 -ml-1 hover:bg-secondary rounded-lg transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <h3 className="text-base flex-1 truncate" style={{ fontWeight: 700 }}>{rec.dish_name}</h3>
+              </div>
+
+              <div className="px-5 pt-4 space-y-5">
+                {/* AI 추천 뱃지 */}
+                <div className="flex items-center gap-2">
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs"
+                    style={{ backgroundColor: 'var(--accent)', color: '#1A3300', fontWeight: 700 }}
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    AI 추천
+                  </span>
+                </div>
+
+                {/* 필요한 재료 */}
+                {rec.additional_ingredients && rec.additional_ingredients.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold text-sm mb-2">필요한 재료</h4>
+                    <div className="space-y-2">
+                      {rec.additional_ingredients.map((text, j) => (
+                        <div key={j} className="bg-card border border-border rounded-lg px-3 py-2.5">
+                          <p className="text-sm font-medium">{parseIngredientName(text)}</p>
+                          {text.includes(':') && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {text.split(':').slice(1).join(':').trim()}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {/* 장보기에 추가 버튼 */}
+                    <button
+                      type="button"
+                      onClick={() => handleAddToShopping(rec)}
+                      disabled={addingToShopping}
+                      className="w-full mt-3 py-3 rounded-xl text-sm flex items-center justify-center gap-2 bg-secondary hover:bg-secondary/80 transition-colors disabled:opacity-50"
+                      style={{ fontWeight: 600 }}
+                    >
+                      {addingToShopping ? '추가 중...' : `없는 재료 ${rec.additional_ingredients.length}개 장보기에 추가`}
+                    </button>
+                  </div>
+                )}
+
+                {/* 효능 / 추천 이유 */}
+                {rec.health_benefits && (
+                  <div>
+                    <h4 className="font-semibold text-sm mb-2">효능 / 추천 이유</h4>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{rec.health_benefits}</p>
+                  </div>
+                )}
+
+                {/* 조리 팁 */}
+                {rec.recipe_tip && (
+                  <div>
+                    <h4 className="font-semibold text-sm mb-2">조리 팁</h4>
+                    <div className="bg-card border border-border rounded-lg p-3">
+                      <p className="text-sm leading-relaxed">💡 {rec.recipe_tip}</p>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => setSelectedRecipeIdx(null)}
+                  className="w-full py-3 rounded-xl text-sm bg-secondary"
+                  style={{ fontWeight: 600 }}
+                >
+                  ← 추천 목록으로
+                </button>
+              </div>
+            </div>
+          );
+        })()}
         {aiError && !isLoading && (
           <div className="px-5 pb-6">
             <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-xl p-4">
