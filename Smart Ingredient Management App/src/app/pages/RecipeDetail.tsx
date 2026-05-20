@@ -197,7 +197,7 @@ export default function RecipeDetail() {
         </div>
       </div>
 
-      {/* 재료 */}
+      {/* 재료 + 액션 버튼들 (눈에 잘 띄게 재료 바로 밑으로 이동) */}
       <div className="px-5 pb-6">
         <h2 className="text-lg mb-3" style={{ fontWeight: 600 }}>
           필요한 재료
@@ -253,9 +253,11 @@ export default function RecipeDetail() {
                         ingredient.unit
                       )
                     }
-                    className="ml-2 p-2 hover:opacity-80 rounded-lg transition-colors"
+                    className="ml-2 px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 bg-secondary hover:opacity-80 transition-colors"
+                    style={{ fontWeight: 600 }}
                   >
-                    <Plus className="w-4 h-4 text-muted-foreground" />
+                    <Plus className="w-3.5 h-3.5" />
+                    장보기 추가
                   </button>
                 )}
                 {inShoppingList && (
@@ -266,6 +268,31 @@ export default function RecipeDetail() {
               </div>
             );
           })}
+        </div>
+
+        {/* 재료 액션 버튼 — 부족한 재료 일괄 추가 + 장보기 보기.
+            sticky 하단에 있던 걸 재료 바로 밑으로 옮김 (눈에 잘 띄게). */}
+        <div className="flex gap-2 mt-4">
+          {missingNotInList.length > 0 && (
+            <button
+              onClick={handleBulkAdd}
+              disabled={adding}
+              className="flex-1 py-3 bg-secondary rounded-xl text-sm disabled:opacity-50 flex items-center justify-center gap-1.5"
+              style={{ fontWeight: 600 }}
+            >
+              <Plus className="w-4 h-4" />
+              {adding ? '추가 중...' : `부족한 재료 ${missingNotInList.length}개 추가`}
+            </button>
+          )}
+          <Link to="/shopping-list" className="flex-1">
+            <button
+              className="w-full py-3 rounded-xl text-sm flex items-center justify-center gap-1.5"
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
+            >
+              <ShoppingCart className="w-4 h-4" />
+              장보기 리스트 보기
+            </button>
+          </Link>
         </div>
       </div>
 
@@ -339,29 +366,6 @@ export default function RecipeDetail() {
         </div>
       </div>
 
-      {/* 하단 버튼 */}
-      <div className="sticky bottom-0 bg-background border-t border-border px-4 py-3">
-        <div className="flex gap-2">
-          {missingNotInList.length > 0 && (
-            <button
-              onClick={handleBulkAdd}
-              disabled={adding}
-              className="flex-1 py-3 bg-secondary rounded-xl text-sm disabled:opacity-50"
-              style={{ fontWeight: 600 }}
-            >
-              {adding ? '추가 중...' : `부족한 재료 ${missingNotInList.length}개 추가`}
-            </button>
-          )}
-          <Link to="/shopping-list" className="flex-1">
-            <button
-              className="w-full py-3 rounded-xl text-sm"
-              style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 600 }}
-            >
-              장보기 리스트 보기
-            </button>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }
