@@ -86,7 +86,7 @@ export default function AiRecommend() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-8">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* 헤더 */}
       <div className="px-5 pt-6 pb-4 flex items-center gap-3">
         <Link to="/recipes" className="p-1">
@@ -265,7 +265,8 @@ export default function AiRecommend() {
               </div>
             )}
           </div>
-          <div className="px-5 pt-2">
+          {/* 다음 버튼 — mt-auto로 페이지 하단(BottomNav 바로 위)으로 밀어 고정 */}
+          <div className="mt-auto bg-background border-t border-border px-5 py-3">
             <button
               onClick={() => setStep(2)}
               disabled={selectedIngredients.length === 0}
@@ -326,7 +327,8 @@ export default function AiRecommend() {
               })}
             </div>
           </div>
-          <div className="px-5 pt-2 space-y-2">
+          {/* 액션 영역 — mt-auto로 페이지 하단(BottomNav 바로 위)으로 밀어 고정 */}
+          <div className="mt-auto bg-background border-t border-border px-5 py-3 space-y-2">
             <p className="text-xs text-amber-600 dark:text-amber-400 text-center">
               ⏱️ AI 분석은 <strong>1~3분</strong> 정도 걸려요. 잠시만 기다려주세요.
             </p>
