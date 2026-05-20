@@ -27,6 +27,11 @@ interface AiRecipeRecommend {
   recipe_tip: string;
 }
 
+// AI 영양 검색/추천 섹션 노출 플래그.
+// AI 서버가 Gemini 무료 20/day 한도라 빨리 차고, retry 도느라 1분 hang됨 → UX 망함.
+// 담당자가 Tier 1 billing 등록 + retry 끊으면 true로 복귀.
+const AI_NUTRITION_ENABLED = false;
+
 // 식재료별 영양 정보 데이터베이스 (100g 기준)
 const nutritionDatabase: Record<string, {
   calories: number;
@@ -437,7 +442,10 @@ export default function NutritionAnalysis() {
         </>
       )}
 
-      {/* AI 영양 검색 — capstone-ai /analyze 프록시. 빈 상태든 아니든 노출. */}
+      {/* AI 영양 검색 — capstone-ai /analyze 프록시. 빈 상태든 아니든 노출.
+          ⚠️ TEMP DISABLED (2026-05-20): AI 서버가 Gemini 무료 한도(20/day) 초과 + 8번 retry로 1분 hang.
+          담당자가 Tier 1 billing 등록 + retry 끊으면 AI_NUTRITION_ENABLED = true 로 복귀. */}
+      {AI_NUTRITION_ENABLED && (
       <div className="px-5 pb-8">
         <h3 className="font-semibold mb-3">다른 음식 영양 검색</h3>
         <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
@@ -562,6 +570,7 @@ export default function NutritionAnalysis() {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
