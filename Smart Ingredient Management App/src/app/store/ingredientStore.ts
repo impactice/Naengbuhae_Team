@@ -306,18 +306,24 @@ class IngredientStore {
   }
 
   // 장보기 항목 수량 업데이트 — [-/+] 카운터에서 호출
+  // refetch 안 하고 cache의 해당 항목만 patch — 정렬 흔들리지 않게 (추가 순서 유지)
   async updateShoppingItemQuantity(id: string, quantity: number): Promise<void> {
     try {
       const response = await apiFetch(`/api/shopping-list/${id}/quantity`, {
         method: 'PATCH',
         body: JSON.stringify({ quantity }),
       });
-      if (response.ok) {
-        await this.fetchShoppingList();
-      } else {
+      if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || '수량 변경 실패');
       }
+      // 백엔드가 응답으로 갱신된 항목 반환 → 그 quantity로 cache 항목만 패치 (순서 유지)
+      const updated = await response.json();
+      const newQty = (updated?.quantity as number) ?? quantity;
+      this.shoppingListCache = this.shoppingListCache.map((it) =>
+        it.id === id ? { ...it, quantity: newQty } : it,
+      );
+      this.notifyListeners();
     } catch (error) {
       console.error('수량 변경 오류:', error);
       alert('수량 변경 중 오류가 발생했습니다.');

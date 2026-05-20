@@ -5,6 +5,7 @@ import { isGuest } from '../utils/guestMode';
 import { fridgeStore } from '../store/fridgeStore';
 import { apiFetch } from '../utils/apiClient';
 import GuestBlocked from '../components/GuestBlocked';
+import type { ShoppingItem } from '../types/ingredient';
 
 interface Suggestion {
   name: string;
@@ -360,29 +361,22 @@ export default function ShoppingList() {
                         <h3 className="text-base truncate" style={{ fontWeight: 600 }}>
                           {item.name}
                         </h3>
-                        {/* [-] 1 [+] 카운터 — 1에서 -누르면 삭제 confirm */}
+                        {/* [-] [숫자 input] [+] 카운터 — 키보드 직접 수정 가능. 1에서 -누르면 삭제 confirm */}
                         {!selectionMode && (
-                          <div className="mt-1 inline-flex items-center gap-1 bg-background border border-border rounded-lg overflow-hidden">
-                            <button
-                              type="button"
-                              onClick={() => handleDecrement(item)}
-                              className="w-7 h-7 flex items-center justify-center hover:bg-secondary transition-colors"
-                              aria-label="수량 감소"
-                            >
-                              −
-                            </button>
-                            <span className="px-2 text-sm font-medium min-w-[2.5rem] text-center">
-                              {item.quantity}{item.unit}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => handleIncrement(item)}
-                              className="w-7 h-7 flex items-center justify-center hover:bg-secondary transition-colors"
-                              aria-label="수량 증가"
-                            >
-                              +
-                            </button>
-                          </div>
+                          <QuantityCounter
+                            item={item}
+                            onDecrement={() => handleDecrement(item)}
+                            onIncrement={() => handleIncrement(item)}
+                            onCommit={(newQty) => {
+                              if (newQty <= 0) {
+                                if (!confirm(`${item.name}을(를) 삭제하시겠습니까?`)) return;
+                                void deleteShoppingItem(item.id);
+                                return;
+                              }
+                              if (newQty === item.quantity) return;
+                              void updateShoppingItemQuantity(item.id, newQty);
+                            }}
+                          />
                         )}
                         {selectionMode && (
                           <p className="text-sm text-muted-foreground">{item.quantity}{item.unit}</p>
@@ -478,6 +472,69 @@ export default function ShoppingList() {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+// 장보기 항목 수량 카운터 — [-] [숫자 input] [unit] [+]
+// 키보드로 직접 입력 가능, Enter/Blur 시 commit. 0 이하면 삭제 confirm.
+function QuantityCounter({
+  item,
+  onDecrement,
+  onIncrement,
+  onCommit,
+}: {
+  item: ShoppingItem;
+  onDecrement: () => void;
+  onIncrement: () => void;
+  onCommit: (newQty: number) => void;
+}) {
+  const [draft, setDraft] = useState(String(item.quantity));
+  // 외부에서 item.quantity 바뀌면 draft 동기화
+  useEffect(() => {
+    setDraft(String(item.quantity));
+  }, [item.quantity]);
+
+  const commit = () => {
+    const parsed = parseFloat(draft);
+    if (isNaN(parsed)) {
+      setDraft(String(item.quantity));
+      return;
+    }
+    onCommit(parsed);
+  };
+
+  return (
+    <div className="mt-1 inline-flex items-center gap-1 bg-background border border-border rounded-lg overflow-hidden">
+      <button
+        type="button"
+        onClick={onDecrement}
+        className="w-7 h-7 flex items-center justify-center hover:bg-secondary transition-colors"
+        aria-label="수량 감소"
+      >
+        −
+      </button>
+      <input
+        type="number"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+        }}
+        className="w-12 text-center bg-transparent text-sm font-medium border-0 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        min="0"
+        step="any"
+      />
+      <span className="text-xs text-muted-foreground pr-1.5">{item.unit}</span>
+      <button
+        type="button"
+        onClick={onIncrement}
+        className="w-7 h-7 flex items-center justify-center hover:bg-secondary transition-colors"
+        aria-label="수량 증가"
+      >
+        +
+      </button>
     </div>
   );
 }
