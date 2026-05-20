@@ -28,9 +28,9 @@ interface AiRecipeRecommend {
 }
 
 // AI 영양 검색/추천 섹션 노출 플래그.
-// AI 서버가 Gemini 무료 20/day 한도라 빨리 차고, retry 도느라 1분 hang됨 → UX 망함.
-// 담당자가 Tier 1 billing 등록 + retry 끊으면 true로 복귀.
-const AI_NUTRITION_ENABLED = false;
+// AI 서버 응답이 평균 1-2분 걸림 (공공데이터 3페이지 + Gemini 2회 + SDK retry).
+// 일반 사용자도 보이지만 "시간 걸린다" 안내로 커버. 발표/시연용으로도 그대로 동작.
+const AI_NUTRITION_ENABLED = true;
 
 // 식재료별 영양 정보 데이터베이스 (100g 기준)
 const nutritionDatabase: Record<string, {
@@ -452,6 +452,9 @@ export default function NutritionAnalysis() {
           <p className="text-xs text-muted-foreground">
             음식 이름이나 사진으로 영양 정보를 검색해보세요 (AI 분석, 100g 기준)
           </p>
+          <p className="text-xs text-amber-600 dark:text-amber-400">
+            ⏱️ AI 분석은 정확도를 위해 공공데이터 + Gemini를 거쳐서 <strong>1~3분 정도 소요</strong>됩니다. 잠시만 기다려주세요.
+          </p>
           <div className="flex gap-2">
             <input
               type="text"
@@ -492,7 +495,7 @@ export default function NutritionAnalysis() {
             }}
           />
           {analyzing && (
-            <p className="text-xs text-muted-foreground text-center">AI가 분석 중입니다...</p>
+            <p className="text-xs text-muted-foreground text-center">AI가 분석 중입니다... (최대 3분)</p>
           )}
           {aiError && (
             <p className="text-xs text-red-500 dark:text-red-400">{aiError}</p>
