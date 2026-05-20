@@ -113,7 +113,7 @@ function AIRecommendModal({
     <div
       className="fixed inset-0 z-50 flex items-end justify-center"
       style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={() => { /* 바깥 클릭으로는 닫히지 않게 — Gemini 한도 한정이라 실수로 결과 날리면 손해 큼. X 버튼으로만 */ }}
     >
       {/* 모달 바디 — 하단 시트 스타일 */}
       <div
