@@ -8,6 +8,8 @@ import Priority from "./pages/Priority";
 import ShoppingList from "./pages/ShoppingList";
 import Recipes from "./pages/Recipes";
 import RecipeDetail from "./pages/RecipeDetail";
+import AiRecommend from "./pages/AiRecommend";
+import AiRecipeDetail from "./pages/AiRecipeDetail";
 import MealPlan from "./pages/MealPlan";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -60,6 +62,8 @@ export const router = createBrowserRouter([
       { path: "nutrition", Component: NutritionAnalysis },
       { path: "recipes", Component: Recipes },
       { path: "recipe/:id", Component: RecipeDetail },
+      { path: "ai-recommend", Component: AiRecommend },
+      { path: "ai-recipe-detail", Component: AiRecipeDetail },
       { path: "meal-plan", Component: MealPlan },
       { path: "*", Component: NotFound },
     ],
