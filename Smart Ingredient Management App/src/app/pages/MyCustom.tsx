@@ -268,8 +268,8 @@ export default function MyCustom() {
             title="회원 정보 수정"
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
-                <User className="w-6 h-6" />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: '#CDFF00' }}>
+                <User className="w-6 h-6 text-black" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold">{profile.name}</h2>
