@@ -333,14 +333,11 @@ export default function Ingredients() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
             {sorted.map((ingredient) => {
               const daysLeft = calculateDDay(ingredient.expirationDate);
               const status = getExpiryStatus(daysLeft);
               const statusColor = getStatusColor(status);
-
-              // 영양 정보 (100g 기준). 장보기 이관 항목은 quantity=1(개/팩)이라 factor 적용 시 0으로
-              // 떨어졌음 — 단위 변환이 정확하지 않은 상황에서 factor 빼고 100g 기준으로 표시 통일.
               const nutrition = nutritionDatabase[ingredient.name] || nutritionDatabase['default'];
 
               const isSelected = selectedIds.has(ingredient.id);
@@ -362,76 +359,54 @@ export default function Ingredients() {
                       : 'bg-card border border-border hover:bg-secondary'
                   }`}
                 >
-                  {/* 선택 모드 체크박스 */}
-                  {selectionMode && (
-                    <div className="absolute top-2 right-2">
+                  {/* 우상단 액션 — 선택 모드면 체크박스, 아니면 삭제 */}
+                  {selectionMode ? (
+                    <div className="absolute top-2.5 right-2.5">
                       <div
                         className={`w-5 h-5 rounded-md flex items-center justify-center border-2 ${
-                          isSelected
-                            ? 'bg-accent border-accent'
-                            : 'bg-white border-gray-300'
+                          isSelected ? 'bg-accent border-accent' : 'bg-white border-gray-300'
                         }`}
                       >
                         {isSelected && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
                       </div>
                     </div>
-                  )}
-
-                  {/* 식재료 이름 + 유통기한 태그 — 우상단 삭제 버튼 자리 피해서 pr-8, 2줄까지 허용 */}
-                  <div className="mb-2 pr-8">
-                    <h3 className="text-sm line-clamp-2 leading-tight" style={{ fontWeight: 700 }} title={ingredient.name}>
-                      {ingredient.name}
-                    </h3>
-                    <span
-                      className="inline-block mt-1 px-1.5 py-0.5 rounded text-xs"
-                      style={{
-                        backgroundColor: `${statusColor}20`,
-                        color: statusColor,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {formatDDay(daysLeft)}
-                    </span>
-                    {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
-                      <span
-                        className="ml-1 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
-                        style={{ fontWeight: 600 }}
-                      >
-                        <AlertTriangle className="w-3 h-3" />
-                      </span>
-                    )}
-                  </div>
-
-                  {/* 유통기한 날짜 */}
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {ingredient.expirationDate.toLocaleDateString('ko-KR')}
-                  </p>
-
-                  {/* 영양 정보 (100g 기준) */}
-                  <div className="flex flex-wrap gap-1">
-                    <span className="text-xs px-1.5 py-0.5 bg-background rounded font-medium">
-                      {Math.round(nutrition.calories)}kcal/100g
-                    </span>
-                    <span className="text-xs px-1.5 py-0.5 bg-background rounded">
-                      단{Math.round(nutrition.protein)}g
-                    </span>
-                    <span className="text-xs px-1.5 py-0.5 bg-background rounded">
-                      탄{Math.round(nutrition.carbs)}g
-                    </span>
-                  </div>
-
-                  {/* 삭제 버튼 (선택 모드 아닐 때만) */}
-                  {!selectionMode && (
+                  ) : (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDelete(ingredient.id, ingredient.name);
                       }}
-                      className="absolute top-2 right-2 p-1.5 hover:bg-secondary rounded-lg transition-colors"
+                      className="absolute top-1.5 right-1.5 p-1.5 hover:bg-secondary rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4 text-red-500" />
                     </button>
                   )}
+
+                  {/* 이름 — 한 줄 + 우상단 액션 자리 pr-8 */}
+                  <h3 className="text-sm pr-8 line-clamp-1 leading-tight" style={{ fontWeight: 700 }} title={ingredient.name}>
+                    {ingredient.name}
+                  </h3>
+
+                  {/* 정보 한 줄: D-day · 날짜 · 영양 (gap dot separator) */}
+                  <div className="mt-1.5 flex items-center gap-1.5 text-xs pr-8 min-w-0">
+                    <span
+                      className="flex-shrink-0 px-1.5 py-0.5 rounded"
+                      style={{ backgroundColor: `${statusColor}20`, color: statusColor, fontWeight: 600 }}
+                    >
+                      {formatDDay(daysLeft)}
+                    </span>
+                    {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
+                      <span
+                        className="flex-shrink-0 inline-flex items-center px-1 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
+                        title={`알레르기: ${ingredient.allergyWarnings.join(', ')}`}
+                      >
+                        <AlertTriangle className="w-3 h-3" />
+                      </span>
+                    )}
+                    <span className="text-muted-foreground truncate min-w-0">
+                      {ingredient.expirationDate.toLocaleDateString('ko-KR')} · {Math.round(nutrition.calories)}kcal/100g · 단{Math.round(nutrition.protein)}g · 탄{Math.round(nutrition.carbs)}g
+                    </span>
+                  </div>
                 </div>
               );
             })}
