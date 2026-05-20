@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useIngredients } from '../hooks/useIngredients';
 import { Link } from 'react-router';
-import { ChevronLeft, Sparkles, TrendingUp, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Sparkles, TrendingUp, AlertCircle, Search, Camera } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
+import { apiUpload } from '../utils/apiClient';
+
+// AI 서버(/api/nutrition/analyze) 응답 항목 — 100g 기준.
+// 백엔드는 capstone-ai의 응답을 snake_case 그대로 전달함.
+interface AiNutritionItem {
+  food_name: string;
+  cat?: string;
+  cal: number;
+  carbohydrate: number;
+  protein: number;
+  fat: number;
+  is_corrected?: string;
+}
 
 // 식재료별 영양 정보 데이터베이스 (100g 기준)
 const nutritionDatabase: Record<string, {
@@ -58,6 +71,50 @@ const nutritionDatabase: Record<string, {
 export default function NutritionAnalysis() {
   const { ingredients } = useIngredients();
   const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
+
+  // ── AI 영양 검색 (capstone-ai /analyze 프록시) ──
+  const [searchText, setSearchText] = useState('');
+  const [analyzing, setAnalyzing] = useState(false);
+  const [aiResults, setAiResults] = useState<AiNutritionItem[] | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const aiFileInputRef = useRef<HTMLInputElement>(null);
+
+  const runAnalyze = async (formData: FormData) => {
+    setAnalyzing(true);
+    setAiError(null);
+    setAiResults(null);
+    try {
+      const res = await apiUpload('/api/nutrition/analyze', formData);
+      if (!res.ok) {
+        // 503 = AI 서버 다운, 429 = rate limit
+        if (res.status === 503) setAiError('AI 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
+        else if (res.status === 429) setAiError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
+        else setAiError(`분석 실패 (${res.status})`);
+        return;
+      }
+      const data = await res.json();
+      setAiResults((data?.data as AiNutritionItem[]) ?? []);
+    } catch {
+      setAiError('서버 연결 실패');
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const handleAnalyzeText = () => {
+    const q = searchText.trim();
+    if (!q || analyzing) return;
+    const fd = new FormData();
+    fd.append('text', q);
+    runAnalyze(fd);
+  };
+
+  const handleAnalyzeImage = (file: File) => {
+    if (analyzing) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    runAnalyze(fd);
+  };
 
   // 전체 영양 통계
   const totalNutrition = ingredients.reduce((acc, ing) => {
@@ -328,6 +385,96 @@ export default function NutritionAnalysis() {
           </div>
         </>
       )}
+
+      {/* AI 영양 검색 — capstone-ai /analyze 프록시. 빈 상태든 아니든 노출. */}
+      <div className="px-5 pb-8">
+        <h3 className="font-semibold mb-3">다른 음식 영양 검색</h3>
+        <div className="bg-card border border-border rounded-2xl p-5 space-y-3">
+          <p className="text-xs text-muted-foreground">
+            음식 이름이나 사진으로 영양 정보를 검색해보세요 (AI 분석, 100g 기준)
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleAnalyzeText(); }}
+              placeholder="예: 김치찌개, 닭가슴살"
+              disabled={analyzing}
+              className="flex-1 px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm"
+            />
+            <button
+              type="button"
+              onClick={handleAnalyzeText}
+              disabled={analyzing || !searchText.trim()}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-50 flex items-center gap-1"
+            >
+              <Search className="w-4 h-4" /> 검색
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => aiFileInputRef.current?.click()}
+            disabled={analyzing}
+            className="w-full flex items-center justify-center gap-2 py-2 bg-secondary text-foreground rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors disabled:opacity-50"
+          >
+            <Camera className="w-4 h-4" />
+            사진으로 분석
+          </button>
+          <input
+            ref={aiFileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleAnalyzeImage(file);
+              e.target.value = '';
+            }}
+          />
+          {analyzing && (
+            <p className="text-xs text-muted-foreground text-center">AI가 분석 중입니다...</p>
+          )}
+          {aiError && (
+            <p className="text-xs text-red-500 dark:text-red-400">{aiError}</p>
+          )}
+          {aiResults && aiResults.length === 0 && (
+            <p className="text-xs text-muted-foreground text-center">분석 결과가 없습니다</p>
+          )}
+          {aiResults && aiResults.length > 0 && (
+            <div className="space-y-2 pt-1">
+              {aiResults.map((item, i) => (
+                <div key={i} className="bg-background border border-border rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="font-semibold text-sm">{item.food_name}</h4>
+                    {item.cat && (
+                      <span className="text-xs text-muted-foreground">({item.cat})</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-4 gap-2 text-xs">
+                    <div className="text-center">
+                      <p className="text-muted-foreground">kcal</p>
+                      <p className="font-bold">{Math.round(item.cal)}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-muted-foreground">단백질</p>
+                      <p className="font-bold">{Math.round(item.protein)}g</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-muted-foreground">탄수</p>
+                      <p className="font-bold">{Math.round(item.carbohydrate)}g</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-muted-foreground">지방</p>
+                      <p className="font-bold">{Math.round(item.fat)}g</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

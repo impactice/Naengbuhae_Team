@@ -31,6 +31,15 @@
 - `FamilyActivity.tsx`: `Stats.fridgeId: string`
 - `FridgeManagement.tsx`: `detailId` state `string | null`
 
+### AI 영양 검색 결합 (capstone-ai `/analyze` 프록시)
+
+백엔드에 추가된 `POST /api/nutrition/analyze`(외부 AI 서버 위임)를 영양 분석 화면에 결합. 보유 식재료 통계와는 별개 기능 — 음식 이름이나 사진으로 영양정보(kcal/단백질/탄수/지방)를 동적으로 조회.
+
+- `NutritionAnalysis.tsx`: 화면 하단에 "다른 음식 영양 검색" 섹션 추가 — 텍스트 입력 + 사진 업로드 두 옵션, 결과 카드 리스트(food_name / cat / kcal·단백질·탄수·지방)
+- `apiUpload('/api/nutrition/analyze', FormData)` 호출, 응답 `{data: [...]}` 그대로 매핑
+- 빈 식재료 상태에서도 노출 (등록 전에도 검색 가능)
+- 에러 분기: 503(AI 서버 다운) / 429(rate limit) 별도 메시지
+
 ---
 
 ## 이전 작업 정리 (2026-05-18)
