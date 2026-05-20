@@ -5,7 +5,7 @@ import { ChevronLeft, Sparkles, TrendingUp, AlertCircle, Search, Camera } from '
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { isGuest } from '../utils/guestMode';
 import GuestBlocked from '../components/GuestBlocked';
-import { apiUpload } from '../utils/apiClient';
+import { apiFetch, apiUpload } from '../utils/apiClient';
 
 // AI 서버(/api/nutrition/analyze) 응답 항목 — 100g 기준.
 // 백엔드는 capstone-ai의 응답을 snake_case 그대로 전달함.
@@ -17,6 +17,14 @@ interface AiNutritionItem {
   protein: number;
   fat: number;
   is_corrected?: string;
+}
+
+// /api/recipes/ai-for-food 응답 항목 — /fdmake 프록시 (단일 식재료 기반 추천).
+interface AiRecipeRecommend {
+  dish_name: string;
+  additional_ingredients: string[];
+  health_benefits: string;
+  recipe_tip: string;
 }
 
 // 식재료별 영양 정보 데이터베이스 (100g 기준)
@@ -79,10 +87,18 @@ export default function NutritionAnalysis() {
   const [aiError, setAiError] = useState<string | null>(null);
   const aiFileInputRef = useRef<HTMLInputElement>(null);
 
+  // 카드별 추천 상태 — 인덱스 키. /fdmake 응답을 인라인으로 펼침.
+  const [recommendingIdx, setRecommendingIdx] = useState<number | null>(null);
+  const [recommendations, setRecommendations] = useState<Record<number, AiRecipeRecommend[]>>({});
+  const [recommendError, setRecommendError] = useState<Record<number, string>>({});
+
   const runAnalyze = async (formData: FormData) => {
     setAnalyzing(true);
     setAiError(null);
     setAiResults(null);
+    // 새 검색 시 기존 추천도 초기화 (인덱스 기준이라 stale 매칭 방지)
+    setRecommendations({});
+    setRecommendError({});
     try {
       const res = await apiUpload('/api/nutrition/analyze', formData);
       if (!res.ok) {
@@ -98,6 +114,41 @@ export default function NutritionAnalysis() {
       setAiError('서버 연결 실패');
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  // /fdmake 호출 — 단일 식재료 + 영양정보 → 요리 3개 추천
+  const handleRecommend = async (idx: number, item: AiNutritionItem) => {
+    if (recommendingIdx !== null) return;
+    setRecommendingIdx(idx);
+    setRecommendError((prev) => { const next = { ...prev }; delete next[idx]; return next; });
+    try {
+      const res = await apiFetch('/api/recipes/ai-for-food', {
+        method: 'POST',
+        body: JSON.stringify({
+          food_name: item.food_name,
+          cat: item.cat ?? '',
+          nutrition_data: {
+            cal: item.cal,
+            carbohydrate: item.carbohydrate,
+            protein: item.protein,
+            fat: item.fat,
+          },
+        }),
+      });
+      if (!res.ok) {
+        const msg = res.status === 503 ? 'AI 서버에 연결할 수 없습니다.'
+          : res.status === 429 ? '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.'
+          : `추천 실패 (${res.status})`;
+        setRecommendError((prev) => ({ ...prev, [idx]: msg }));
+        return;
+      }
+      const data = (await res.json()) as AiRecipeRecommend[];
+      setRecommendations((prev) => ({ ...prev, [idx]: data ?? [] }));
+    } catch {
+      setRecommendError((prev) => ({ ...prev, [idx]: '서버 연결 실패' }));
+    } finally {
+      setRecommendingIdx(null);
     }
   };
 
@@ -469,6 +520,42 @@ export default function NutritionAnalysis() {
                       <p className="font-bold">{Math.round(item.fat)}g</p>
                     </div>
                   </div>
+                  {/* /fdmake — 이 재료로 요리 추천 */}
+                  <button
+                    type="button"
+                    onClick={() => handleRecommend(i, item)}
+                    disabled={recommendingIdx !== null}
+                    className="w-full mt-3 py-2 bg-secondary text-foreground rounded-lg text-xs font-semibold hover:bg-secondary/80 transition-colors disabled:opacity-50"
+                  >
+                    {recommendingIdx === i ? '추천 받는 중...' : '이 재료로 요리 추천'}
+                  </button>
+                  {recommendError[i] && (
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-2">{recommendError[i]}</p>
+                  )}
+                  {recommendations[i] && recommendations[i].length === 0 && (
+                    <p className="text-xs text-muted-foreground mt-2">추천 결과가 없습니다</p>
+                  )}
+                  {recommendations[i] && recommendations[i].length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {recommendations[i].map((rec, j) => (
+                        <div key={j} className="bg-card border border-border rounded-lg p-3">
+                          <h5 className="font-semibold text-sm mb-1">{rec.dish_name}</h5>
+                          {rec.additional_ingredients && rec.additional_ingredients.length > 0 && (
+                            <p className="text-xs text-muted-foreground mb-1">
+                              <span className="font-medium">추가 재료: </span>
+                              {rec.additional_ingredients.join(', ')}
+                            </p>
+                          )}
+                          {rec.health_benefits && (
+                            <p className="text-xs leading-relaxed mb-1">{rec.health_benefits}</p>
+                          )}
+                          {rec.recipe_tip && (
+                            <p className="text-xs text-muted-foreground italic">💡 {rec.recipe_tip}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
