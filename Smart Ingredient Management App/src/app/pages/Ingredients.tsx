@@ -367,12 +367,19 @@ export default function Ingredients() {
                     {formatDDay(daysLeft)}
                   </span>
 
-                  {/* 중간: 이름 + 정보 */}
+                  {/* 중간: 이름(+카테고리/보관 chip) + 정보 */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="text-sm line-clamp-1 leading-tight flex-1 min-w-0" style={{ fontWeight: 700 }} title={ingredient.name}>
+                      <h3 className="text-sm line-clamp-1 leading-tight min-w-0 flex-shrink" style={{ fontWeight: 700 }} title={ingredient.name}>
                         {ingredient.name}
                       </h3>
+                      {/* 카테고리 + 보관 chip */}
+                      <span className="flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] bg-secondary text-muted-foreground" style={{ fontWeight: 500 }}>
+                        {getCategoryLabel(ingredient.category)}
+                      </span>
+                      <span className="flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] bg-secondary text-muted-foreground" style={{ fontWeight: 600 }}>
+                        {getStorageLabel(ingredient.storage)}
+                      </span>
                       {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
                         <span
                           className="flex-shrink-0 inline-flex items-center px-1 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
