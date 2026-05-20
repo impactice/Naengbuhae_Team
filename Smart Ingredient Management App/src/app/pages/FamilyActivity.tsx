@@ -20,7 +20,7 @@ interface NameCount {
 }
 
 interface Stats {
-  fridgeId: number;
+  fridgeId: string;
   fridgeName: string;
   periodDays: number;
   members: MemberCount[];

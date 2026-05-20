@@ -9,7 +9,8 @@ export interface FridgeMember {
 }
 
 export interface Fridge {
-  id: number;
+  // 백엔드 Fridge id가 Long → UUID(문자열) 마이그레이션됨(IDOR 방어). 앱과 동일하게 string.
+  id: string;
   name: string;
   ownerUsername: string;
   isOwner: boolean;
@@ -23,13 +24,14 @@ const SELECTED_FRIDGE_KEY = 'selected_fridge_id';
 class FridgeStore {
   private listeners: Set<() => void> = new Set();
   private fridges: Fridge[] = [];
-  private selectedId: number | null = null;
+  private selectedId: string | null = null;
 
   constructor() {
-    // 초기 선택값 복원 (localStorage)
+    // 초기 선택값 복원 (localStorage). UUID 문자열이라 parseInt 금지 — raw 그대로.
+    // 과거 숫자(legacy) 저장값은 백엔드에 더 이상 매칭 안 되니 그대로 두고 fetch() 시 정리됨.
     if (typeof window !== 'undefined') {
       const raw = localStorage.getItem(SELECTED_FRIDGE_KEY);
-      if (raw) this.selectedId = parseInt(raw, 10);
+      if (raw) this.selectedId = raw;
     }
   }
 
@@ -50,22 +52,22 @@ class FridgeStore {
     return this.fridges.find((f) => f.id === this.selectedId) ?? this.fridges[0] ?? null;
   }
 
-  getSelectedId(): number | null {
+  getSelectedId(): string | null {
     return this.getSelected()?.id ?? null;
   }
 
   async fetch(): Promise<Fridge[]> {
-    // 게스트는 서버 호출 없이 가상 냉장고 1개만 들고 다닌다.
+    // 게스트는 서버 호출 없이 가상 냉장고 1개만 들고 다닌다. 앱과 동일하게 'guest' sentinel.
     if (isGuest()) {
       const guestFridge: Fridge = {
-        id: -1,
+        id: 'guest',
         name: '내 냉장고',
         ownerUsername: '',
         isOwner: true,
         members: [],
       };
       this.fridges = [guestFridge];
-      this.selectedId = -1;
+      this.selectedId = 'guest';
       this.notify();
       return this.fridges;
     }
@@ -86,7 +88,7 @@ class FridgeStore {
     }
   }
 
-  select(id: number) {
+  select(id: string) {
     if (!this.fridges.some((f) => f.id === id)) return;
     this.selectedId = id;
     this.persist();
@@ -98,7 +100,7 @@ class FridgeStore {
     if (this.selectedId == null) {
       localStorage.removeItem(SELECTED_FRIDGE_KEY);
     } else {
-      localStorage.setItem(SELECTED_FRIDGE_KEY, String(this.selectedId));
+      localStorage.setItem(SELECTED_FRIDGE_KEY, this.selectedId);
     }
   }
 
@@ -123,7 +125,7 @@ class FridgeStore {
     await this.fetch();
   }
 
-  async rename(id: number, name: string): Promise<void> {
+  async rename(id: string, name: string): Promise<void> {
     const res = await apiFetch(`/api/fridges/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ name }),
@@ -132,13 +134,13 @@ class FridgeStore {
     await this.fetch();
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const res = await apiFetch(`/api/fridges/${id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error(await this.errMsg(res) ?? '삭제 실패');
     await this.fetch();
   }
 
-  async createInvite(id: number): Promise<string> {
+  async createInvite(id: string): Promise<string> {
     const res = await apiFetch(`/api/fridges/${id}/invites`, { method: 'POST' });
     if (!res.ok) throw new Error(await this.errMsg(res) ?? '코드 발급 실패');
     const data = await res.json();
@@ -154,13 +156,13 @@ class FridgeStore {
     await this.fetch();
   }
 
-  async removeMember(fridgeId: number, username: string): Promise<void> {
+  async removeMember(fridgeId: string, username: string): Promise<void> {
     const res = await apiFetch(`/api/fridges/${fridgeId}/members/${username}`, { method: 'DELETE' });
     if (!res.ok) throw new Error(await this.errMsg(res) ?? '실패');
     await this.fetch();
   }
 
-  async leave(fridgeId: number): Promise<void> {
+  async leave(fridgeId: string): Promise<void> {
     const res = await apiFetch(`/api/fridges/${fridgeId}/leave`, { method: 'POST' });
     if (!res.ok) throw new Error(await this.errMsg(res) ?? '실패');
     await this.fetch();

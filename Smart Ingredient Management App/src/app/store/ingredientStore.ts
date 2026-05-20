@@ -57,7 +57,7 @@ function mapFromBackend(item: any): Ingredient {
 }
 
 // 프론트 → 백엔드 변환
-function mapToBackend(ingredient: Omit<Ingredient, 'id'>, fridgeId?: number | null) {
+function mapToBackend(ingredient: Omit<Ingredient, 'id'>, fridgeId?: string | null) {
   const body: Record<string, unknown> = {
     name: ingredient.name,
     category: CATEGORY_TO_KO[ingredient.category] || ingredient.category,

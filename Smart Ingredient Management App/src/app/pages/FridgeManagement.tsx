@@ -31,7 +31,7 @@ export default function FridgeManagement() {
   const [inviteCode, setInviteCode] = useState<{ code: string; fridgeName: string } | null>(null);
   const [textPrompt, setTextPrompt] = useState<TextPromptConfig | null>(null);
   // 상세 모달에 보여줄 냉장고 id. 항상 최신 데이터를 보여주기 위해 id만 들고 store에서 재참조.
-  const [detailId, setDetailId] = useState<number | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
   const detail = detailId != null ? f.fridges.find((x) => x.id === detailId) ?? null : null;
 
   const safe = async (fn: () => Promise<void>) => {

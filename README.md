@@ -21,6 +21,16 @@
 
 팀원 `[디자인수정]` 커밋(`58e766bb`: Ingredients / Recipes / RecipeDetail / Root)이랑 충돌 없이 rebase 통합. "레시피 상세에서 하단 네비 숨김" + 내 활성 색 변경 양쪽 다 살아남음.
 
+### Fridge ID UUID 마이그레이션 (웹 누락분 보정)
+
+백엔드가 Fridge id를 Long → UUID(문자열)로 마이그레이션(IDOR 방어), 앱은 이미 `String?`로 대응했지만 웹 `fridgeStore.ts`는 `id: number` / `selectedId: number` / `parseInt(raw, 10)`로 박혀있어 UUID 받으면 `NaN`으로 깨질 위험이 있었음. 백엔드 `IngredientRequestDto.fridgeId` 등 모두 `UUID` 타입.
+
+- `fridgeStore.ts`: `Fridge.id`, `selectedId` `number → string`. `parseInt` 제거, raw 문자열 그대로 저장/복원. 메서드 시그니처(`select`/`rename`/`remove`/`createInvite`/`removeMember`/`leave`) 모두 `string`. 게스트 가상 냉장고 `id: -1 → 'guest'` (앱과 동일 sentinel).
+- `useFridges.ts`: 노출 메서드 시그니처 동기화
+- `ingredientStore.ts`: `mapToBackend(... fridgeId?: string)` — URL `?fridgeId=${id}` 보간은 string에서도 동일 동작
+- `FamilyActivity.tsx`: `Stats.fridgeId: string`
+- `FridgeManagement.tsx`: `detailId` state `string | null`
+
 ---
 
 ## 이전 작업 정리 (2026-05-18)
