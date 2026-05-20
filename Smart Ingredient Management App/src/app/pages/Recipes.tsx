@@ -203,7 +203,11 @@ function AIRecommendModal({
                 >
                   식재료 선택
                 </p>
-                <p className="text-[10px] text-muted-foreground leading-tight">사용할 재료 고르기</p>
+                <p className="text-[10px] text-muted-foreground leading-tight">
+                  {step >= 2 && selectedIngredients.length > 0
+                    ? `${selectedIngredients.length}개 선택됨`
+                    : '사용할 재료 고르기'}
+                </p>
               </div>
             </div>
 
@@ -324,7 +328,24 @@ function AIRecommendModal({
         {/* ── STEP 2: 요리 스타일 선택 ── */}
         {step === 2 && !isDone && (
           <div className="flex flex-col flex-1 overflow-hidden">
-            <div className="px-5 pb-2">
+            {/* 이전 step에서 선택한 식재료 미리보기 — 뭘 골랐는지 잊지 않게 */}
+            {selectedIngredients.length > 0 && (
+              <div className="px-5 pb-2">
+                <p className="text-xs text-muted-foreground mb-1.5">선택한 재료 ({selectedIngredients.length}개)</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedIngredients.map((name) => (
+                    <span
+                      key={name}
+                      className="inline-block px-2 py-1 rounded-md text-xs bg-card border border-border"
+                      style={{ fontWeight: 600 }}
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="px-5 pt-2 pb-2">
               <p className="text-sm" style={{ fontWeight: 600 }}>원하는 요리 스타일을 선택하세요</p>
               <p className="text-xs text-muted-foreground mt-0.5">중복 선택 가능 · 선택 없으면 전체 스타일 추천</p>
             </div>
