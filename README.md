@@ -31,43 +31,66 @@
 - `FamilyActivity.tsx`: `Stats.fridgeId: string`
 - `FridgeManagement.tsx`: `detailId` state `string | null`
 
-### AI 영양 검색 결합 (capstone-ai `/analyze` 프록시)
+### AI 통합 (capstone-ai FastAPI 서버 결합)
 
-백엔드에 추가된 `POST /api/nutrition/analyze`(외부 AI 서버 위임)를 영양 분석 화면에 결합. 보유 식재료 통계와는 별개 기능 — 음식 이름이나 사진으로 영양정보(kcal/단백질/탄수/지방)를 동적으로 조회.
+AI 담당자의 별도 서버(`Wldgyu/capstone-ai`, 포트 8000)에 있는 3개 endpoint를 웹에 통합. 백엔드에 프록시가 새로 생겨서(`POST /api/nutrition/analyze`, `POST /api/recipes/ai-for-food`, `POST /api/recipes/ai-recommendations`) 웹은 백엔드만 호출.
 
-- `NutritionAnalysis.tsx`: 화면 하단에 "다른 음식 영양 검색" 섹션 추가 — 텍스트 입력 + 사진 업로드 두 옵션, 결과 카드 리스트(food_name / cat / kcal·단백질·탄수·지방)
+**AI 영양 검색 (`/analyze` 프록시)**
+- `NutritionAnalysis.tsx` 하단에 "다른 음식 영양 검색" 섹션 — 텍스트 입력 + 사진 업로드 두 옵션, 결과 카드 리스트(food_name / cat / kcal·단백질·탄수·지방)
 - `apiUpload('/api/nutrition/analyze', FormData)` 호출, 응답 `{data: [...]}` 그대로 매핑
 - 빈 식재료 상태에서도 노출 (등록 전에도 검색 가능)
-- 에러 분기: 503(AI 서버 다운) / 429(rate limit) 별도 메시지
+- 에러 분기: 503(AI 서버 다운) / 429(rate limit)
 
-### 단일 식재료 요리 추천 결합 (`/fdmake` 프록시)
+**단일 식재료 요리 추천 (`/fdmake` 프록시)**
+- 영양 검색 결과 카드에 "이 재료로 요리 추천" 버튼 — `/analyze → /fdmake` 파이프라인
+- 카드별 인덱스 키로 추천/에러 상태 관리(`recommendations`/`recommendError` Record). 새 검색 시 둘 다 초기화
+- 동시에 한 카드만 추천(`recommendingIdx`) — UX/Rate 보호
 
-영양 검색 결과 카드 각각에 "이 재료로 요리 추천" 버튼 — AI 서버 README의 `/analyze → /fdmake` 파이프라인.
+**AI 레시피 추천 페이지 분리 + 즐겨찾기 + 영속화 + 메인 노출**
+- AI 담당자가 만든 모달 → 별도 페이지로 분리 (`pages/AiRecommend.tsx`: Step 1 식재료 선택 / Step 2 요리 스타일 / 로딩 / 결과)
+- 결과 카드 클릭 시 `pages/AiRecipeDetail.tsx` 상세 페이지 (기존 레시피와 동일 흐름) + 하트 즐겨찾기 토글
+- `store/aiRecipeStore.ts` (localStorage) — `SavedAiRecipe` prepend save / getAll / toggleFavorite / remove. 결과 한 번 보면 날아가던 문제 해결
+- `Recipes.tsx` 전체 탭 최상단에 AI 추천 섹션 (✨ 버튼으로 추천 화면 진입). 모달 제거 (바깥 클릭으로 결과 날아가던 사고 방지 포함)
+- mock fetch → `apiFetch('/api/recipes/ai-recommendations', POST, JSON)`. 스타일 id(`'korean'`)를 라벨(`'한식'`)로 변환해서 전달. Step 2에 선택한 식재료 미리보기(이전 선택 망각 방지)
+- 다음 버튼/액션 영역은 하단 바 바로 위로 고정
 
-- 카드별 인덱스 키로 추천 결과/에러 상태 관리(`recommendations`/`recommendError` Record). 새 검색 시 둘 다 초기화 (stale 매칭 방지)
-- `apiFetch('/api/recipes/ai-for-food', POST, JSON)` — `food_name`/`cat`/`nutrition_data` 전송
-- 결과는 카드 아래 인라인으로 펼침 — `dish_name` + 추가 재료 + 효능 + 조리 팁
-- 동시에 한 카드만 추천 받기(`recommendingIdx`) — UX/Rate 보호
+**"1~3분 소요" 안내 + 그대로 노출**
+- AI 서버 응답 평균 1-2분(공공데이터 3페이지 + Gemini 2회). 정확도 위해 줄이기 어렵다는 담당자 의견 → "오래 걸리는 기능"으로 노출
+- `AI_NUTRITION_ENABLED = true` 복귀 + 검색 박스 위 amber 안내 "⏱️ AI 분석은 정확도를 위해 공공데이터 + Gemini를 거쳐서 **1~3분 정도 소요**됩니다"
+- 로딩 메시지 "AI가 분석 중입니다... (최대 3분)" / 백엔드 readTimeout 180초
 
-### AI 추천 모달 백엔드 결합 (`/api/recipes/ai-recommendations`)
+### 레시피 상세 — 부족 재료 영역 정리
 
-AI 담당자가 `Recipes.tsx`에 만들어둔 AI 추천 모달이 mock fetch(`/recipe/ai-recommend`) 상태로 죽어있었음. 실제 백엔드 endpoint로 결합.
+- "부족한 재료" Plus 버튼에 라벨 추가 (단순 `+` 아이콘은 의미 불명확)
+- "장보기에 추가" / "이 레시피 만들었어요" 액션 버튼을 재료 섹션 바로 밑으로 이동 (기존엔 페이지 아래쪽이라 동선 길었음)
 
-- mock fetch → `apiFetch('/api/recipes/ai-recommendations', POST, JSON)` 교체
-- 스타일 id(`'korean'`)를 라벨(`'한식'`)로 변환해서 백엔드에 전달
-- 모달의 `isDone` 블록 placeholder를 실제 추천 결과 카드로 교체 — dish_name + 추가 재료 + 효능 + 조리 팁 (3개)
-- 에러 상태 분기 추가 (503/429/그 외)
-- "AI 분석 1~3분 소요" amber 안내 + 로딩 라벨 "AI 분석 중... (최대 3분)"
-- 식재료 0개면 버튼 disabled
+### 식재료 카드 — 1열 컴팩트 + D-day 왼쪽 + 이모지 chip + 100g
 
-### AI 영양 검색/추천 — "1~3분 소요" 안내 + 그대로 노출
+웹 `[디자인수정]`은 2열 그리드였는데, 사용자 피드백("긴 이름 삭제버튼 침범" / "한 줄에 하나씩")으로 1열 컴팩트로 재설계.
 
-AI 서버 응답이 평균 1-2분 걸리는데(공공데이터 3페이지 + Gemini 2회), 정확도 위해 줄이기 어렵다는 게 담당자 의견. 발표용 별도 페이지 안 만들고 그냥 **"오래 걸리는 기능"으로 노출**하기로.
+- 카드 1열 — Row: [D-day badge(왼쪽)] + [이름 + dot-separated 정보 + chips] + [삭제(세로 가운데, `items-center`)]
+- D-day badge를 이름 왼쪽에 둬서 만료 임박 한눈에 보임
+- 이름 오른쪽에 카테고리 + 보관 chip — `withEmoji(category)` 헬퍼로 이모지 prefix (🥦 채소 / 🥩 육류 / ❄️ 냉장 / 🧊 냉동 / 🌡 실온)
+- 긴 이름은 `pr-8 line-clamp-2` — 삭제 버튼 자리 침범 방지
+- 영양 칩 100g 기준 그대로 표시 (`factor` 제거, 앱과 동일 정책) — 가공 식품 영양정보는 일관성 위해 100g 단위 표준
 
-- `AI_NUTRITION_ENABLED = true` 복귀
-- 검색 박스 위에 amber 색 안내: "⏱️ AI 분석은 정확도를 위해 공공데이터 + Gemini를 거쳐서 **1~3분 정도 소요**됩니다"
-- 로딩 메시지: "AI가 분석 중입니다... (최대 3분)"
-- 백엔드 readTimeout 180초로 늘려서 끝까지 응답 받음
+### 장보기 — "냉장고에 추가" + 수량 카운터 + 키보드 편집
+
+**라벨/UX 변경**
+- "냉장고 이관" → "냉장고에 추가" + 누르면 "[식재료]을(를) 구매하셨나요? 구매 완료로 표시하고 냉장고에 추가됩니다" confirm 다이얼로그 + 호버 툴팁
+
+**[-] 수량 [+] 카운터**
+- 미체크 항목 옆 `QuantityCounter` 컴포넌트 — `[-] [input number] [unit] [+]` 가로 박스
+- 1에서 [-] 누르면 "삭제하시겠습니까?" confirm → 삭제
+- `PATCH /api/shopping-list/{id}/quantity` 호출 (백엔드 신규 endpoint)
+
+**키보드 직접 편집**
+- `input type="number"`로 숫자 직접 입력 가능
+- Enter → blur → onCommit / onBlur → commit. 파싱 실패 시 원복
+- 외부에서 quantity 갱신되면 `useEffect`로 draft 동기화
+
+**순서 보존**
+- `ingredientStore.updateShoppingItemQuantity`가 refetch 대신 `shoppingListCache.map`으로 해당 항목만 patch — 수량 바꾼다고 카드가 밑으로 안 내려감 (사용자 어지러움 방지)
 
 ---
 
