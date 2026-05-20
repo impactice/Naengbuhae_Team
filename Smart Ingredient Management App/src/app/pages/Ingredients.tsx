@@ -339,9 +339,9 @@ export default function Ingredients() {
               const status = getExpiryStatus(daysLeft);
               const statusColor = getStatusColor(status);
 
-              // 영양 정보 계산
+              // 영양 정보 (100g 기준). 장보기 이관 항목은 quantity=1(개/팩)이라 factor 적용 시 0으로
+              // 떨어졌음 — 단위 변환이 정확하지 않은 상황에서 factor 빼고 100g 기준으로 표시 통일.
               const nutrition = nutritionDatabase[ingredient.name] || nutritionDatabase['default'];
-              const factor = ingredient.quantity / 100;
 
               const isSelected = selectedIds.has(ingredient.id);
               const isHighlighted = highlightActive && highlightId === ingredient.id;
@@ -407,16 +407,16 @@ export default function Ingredients() {
                     {ingredient.expirationDate.toLocaleDateString('ko-KR')}
                   </p>
 
-                  {/* 영양 정보 */}
+                  {/* 영양 정보 (100g 기준) */}
                   <div className="flex flex-wrap gap-1">
                     <span className="text-xs px-1.5 py-0.5 bg-background rounded font-medium">
-                      {Math.round(nutrition.calories * factor)}kcal
+                      {Math.round(nutrition.calories)}kcal/100g
                     </span>
                     <span className="text-xs px-1.5 py-0.5 bg-background rounded">
-                      단{Math.round(nutrition.protein * factor)}g
+                      단{Math.round(nutrition.protein)}g
                     </span>
                     <span className="text-xs px-1.5 py-0.5 bg-background rounded">
-                      탄{Math.round(nutrition.carbs * factor)}g
+                      탄{Math.round(nutrition.carbs)}g
                     </span>
                   </div>
 
@@ -446,7 +446,6 @@ export default function Ingredients() {
         const status = getExpiryStatus(daysLeft);
         const statusColor = getStatusColor(status);
         const nutrition = nutritionDatabase[ing.name] || nutritionDatabase['default'];
-        const factor = ing.quantity / 100;
         return (
           <div
             className="fixed inset-0 z-50 flex items-end justify-center"
@@ -519,24 +518,24 @@ export default function Ingredients() {
                   </div>
                 </div>
 
-                {/* 영양 정보 */}
+                {/* 영양 정보 (100g 기준) */}
                 <div className="bg-secondary rounded-xl p-4">
-                  <p className="text-xs text-muted-foreground mb-3" style={{ fontWeight: 600 }}>영양 정보 ({ing.quantity}{ing.unit} 기준)</p>
+                  <p className="text-xs text-muted-foreground mb-3" style={{ fontWeight: 600 }}>영양 정보 (100g 기준)</p>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="bg-background rounded-lg p-3 text-center">
-                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.calories * factor)}</p>
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.calories)}</p>
                       <p className="text-xs text-muted-foreground">kcal</p>
                     </div>
                     <div className="bg-background rounded-lg p-3 text-center">
-                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.protein * factor)}g</p>
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.protein)}g</p>
                       <p className="text-xs text-muted-foreground">단백질</p>
                     </div>
                     <div className="bg-background rounded-lg p-3 text-center">
-                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.carbs * factor)}g</p>
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.carbs)}g</p>
                       <p className="text-xs text-muted-foreground">탄수화물</p>
                     </div>
                     <div className="bg-background rounded-lg p-3 text-center">
-                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.fat * factor)}g</p>
+                      <p className="text-lg" style={{ fontWeight: 700 }}>{Math.round(nutrition.fat)}g</p>
                       <p className="text-xs text-muted-foreground">지방</p>
                     </div>
                   </div>
