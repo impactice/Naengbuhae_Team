@@ -7,6 +7,18 @@ import { Plus, Trash2, Package, Sparkles, AlertTriangle, Search, X, Check, Check
 import { CategoryType, StorageType } from '../types/ingredient';
 import FridgeSelector from '../components/FridgeSelector';
 
+// 카테고리/보관 chip에 붙이는 이모지 아이콘. 한글 라벨 키.
+const CATEGORY_EMOJI: Record<string, string> = {
+  '채소': '🥬', '육류': '🥩', '유제품': '🥛', '곡물': '🌾',
+  '해산물': '🐟', '과일': '🍎', '가공식품': '🥫', '음료': '🥤',
+  '조미료': '🧂', '간식': '🍪', '기타': '📦',
+};
+const STORAGE_EMOJI: Record<string, string> = {
+  '냉장': '❄️', '냉동': '🧊', '실온': '🌡️',
+};
+const categoryEmoji = (label: string) => CATEGORY_EMOJI[label] ?? '📦';
+const storageEmoji = (label: string) => STORAGE_EMOJI[label] ?? '';
+
 export default function Ingredients() {
   const { ingredients, deleteIngredient, bulkDeleteIngredients } = useIngredients();
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | 'all'>('all');
@@ -373,12 +385,12 @@ export default function Ingredients() {
                       <h3 className="text-sm line-clamp-1 leading-tight min-w-0 flex-shrink" style={{ fontWeight: 700 }} title={ingredient.name}>
                         {ingredient.name}
                       </h3>
-                      {/* 카테고리 + 보관 chip */}
+                      {/* 카테고리 + 보관 chip — 이모지 아이콘 추가 */}
                       <span className="flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] bg-secondary text-muted-foreground" style={{ fontWeight: 500 }}>
-                        {getCategoryLabel(ingredient.category)}
+                        {categoryEmoji(getCategoryLabel(ingredient.category))} {getCategoryLabel(ingredient.category)}
                       </span>
                       <span className="flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] bg-secondary text-muted-foreground" style={{ fontWeight: 600 }}>
-                        {getStorageLabel(ingredient.storage)}
+                        {storageEmoji(getStorageLabel(ingredient.storage))} {getStorageLabel(ingredient.storage)}
                       </span>
                       {ingredient.allergyWarnings && ingredient.allergyWarnings.length > 0 && (
                         <span
