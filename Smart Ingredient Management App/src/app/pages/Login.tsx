@@ -96,9 +96,9 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-background flex justify-center items-center">
       <div className="w-full max-w-md bg-background text-foreground min-h-screen shadow-xl flex flex-col">
-        <div className="flex-1 flex flex-col justify-center px-6 py-12">
+        <div className="flex-1 flex flex-col justify-center px-6 py-6">
           {/* 로고 영역 — 배경 투명 PNG */}
-          <div className="mb-6 flex justify-center">
+          <div className="mb-2 flex justify-center">
             <img src={logoFull} alt="Naengbuhae" className="w-full h-auto" />
           </div>
 
@@ -175,7 +175,7 @@ export default function Login() {
         </div>
 
         {/* 구분선 */}
-        <div className="flex items-center gap-4 my-8">
+        <div className="flex items-center gap-4 my-5">
           <div className="flex-1 h-px bg-border"></div>
           <span className="text-sm text-muted-foreground">간편 로그인</span>
           <div className="flex-1 h-px bg-border"></div>
@@ -228,7 +228,7 @@ export default function Login() {
         </div>
 
         {/* 회원가입 링크 */}
-        <div className="mt-8 text-center">
+        <div className="mt-5 text-center">
           <span className="text-muted-foreground">아직 회원이 아니신가요? </span>
           <Link
             to="/signup"
